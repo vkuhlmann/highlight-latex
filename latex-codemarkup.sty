@@ -1,0 +1,160 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{texnicie-codemarkup}[2021/02/05]
+
+% Copyright (c) 2021 Vincent Kuhlmann
+% 
+% Permission is hereby granted, free of charge, to any person
+% obtaining a copy of this software and associated documentation
+% files (the "Software"), to deal in the Software without
+% restriction, including without limitation the rights to use,
+% copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the
+% Software is furnished to do so, subject to the following
+% conditions:
+% 
+% The above copyright notice and this permission notice shall be
+% included in all copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+% OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+% HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+% OTHER DEALINGS IN THE SOFTWARE.
+
+\RequirePackage{listings}
+
+%\usepackage{textcomp}
+
+\RequirePackage{xcolor}
+%\RequirePackage{color}
+
+\colorlet{curlyBrackets}{red!50!blue}
+\colorlet{squareBrackets}{blue!50!white}
+
+\definecolor{accA}{RGB}{0,149,255}
+\colorlet{accB}{green!60!black}
+\colorlet{accC}{red!60!black}
+\colorlet{accD}{orange!100!black}
+\colorlet{accE}{green!60!black}
+\colorlet{accF}{green!60!black}
+
+\colorlet{accDefault}{blue!90!black}
+
+\colorlet{codeBackground}{gray!10!white}
+
+\lstset{
+	classoffset=0,
+	backgroundcolor=\color{codeBackground},
+	keywordstyle=\bfseries\color{accDefault},
+	basicstyle=\footnotesize\ttfamily,
+	commentstyle=\color{green!40!black},
+	numbers=none,
+	tabsize=2
+}
+
+\catcode`\{=11
+\let\myopenbrace={
+\catcode`\{=1
+
+\catcode`\}=11
+\let\myclosebrace=}
+\catcode`\}=2
+
+\lstdefinelanguage{LaTeXniCie}
+[LaTeX]{TeX}{
+	classoffset=0,
+	moretexcs={subsection,thesubsection,thesection,greek,Greek,Nwords,enumbinary,foreignlanguage,theoremstyle},
+%	
+	classoffset=1,
+%	otherkeywords={->,=>},
+%	morekeywords={aaaaa,iiiis,->,=>},
+	keywordstyle=\color{red},
+	%classoffset=0,
+	%moretexcs={commandinred},
+	texcsstyle=*\color{red},
+%
+	classoffset=2,
+	texcsstyle=*\color{green},
+%	
+	classoffset=3,
+	texcsstyle=*\color{blue},
+% cmdA
+	classoffset=4,
+	keywordstyle=\color{accA},
+	texcsstyle=*\color{accA},
+% cmdB
+	classoffset=5,
+	keywordstyle=\color{accB},
+	texcsstyle=*\color{accB},
+% cmdC
+	classoffset=6,
+	keywordstyle=\color{accC},
+	texcsstyle=*\color{accC},
+% cmdD
+	classoffset=7,
+	keywordstyle=\color{accD},
+	texcsstyle=*\color{accD},
+% cmdE
+	classoffset=8,
+	keywordstyle=\color{accD},
+	texcsstyle=*\color{accD},
+% cmdF
+	classoffset=9,
+	keywordstyle=\color{accD},
+	texcsstyle=*\color{accD},
+%
+	classoffset=20,	
+	%keywordstyle=\color{white},
+	%	otherkeywords={\{,\}},
+	%	morekeywords=[2]{\{,\}},
+	%	otherkeywords={\{}
+	%morekeywords={\{,\},\[,\]},
+	keywordstyle=\color{blue!50!white},
+%	
+	classoffset=21,
+	moredelim=[s][\bfseries\color{green!30!black}]{!}{!},
+	%moredelim=[is][\space]{~}{~},
+	escapeinside=~~,
+%	
+	classoffset=0,
+	%literate={daag}{hey}{3}%
+	%https://tex.stackexchange.com/questions/172945/coloring-in-listing
+	literate={\{}{{\textcolor{curlyBrackets}{\myopenbrace}}}{1}
+		{\}}{{\textcolor{curlyBrackets}{\myclosebrace}}}{1}
+		{[}{{\textcolor{squareBrackets}{[}}}{1}
+		{]}{{\textcolor{squareBrackets}{]}}}{1}%
+	%		{(}{{\textcolor{delimiterColor}{(}}}{1}
+	%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
+	%texcsstyle=\color{blue}
+}
+\lstset{language=LaTeXniCie}
+
+\newcommand\cmdDefault[1]{\lstset{moretexcs={#1}}}
+\newcommand\cmdRed[1]{\lstset{classoffset=1,moretexcs={#1},classoffset=0}}
+\newcommand\cmdGreen[1]{\lstset{classoffset=2,moretexcs={#1},classoffset=0}}
+\newcommand\cmdPurple[1]{\lstset{classoffset=3,moretexcs={#1},texcsstyle=*\color{purple},classoffset=0}}
+
+\newcommand\cmdA[1]{\lstset{deletetexcs={#1},classoffset=4,moretexcs={#1},classoffset=0}}
+\newcommand\cmdB[1]{\lstset{deletetexcs={#1},classoffset=5,moretexcs={#1},classoffset=0}}
+\newcommand\cmdC[1]{\lstset{deletetexcs={#1},classoffset=6,moretexcs={#1},classoffset=0}}
+\newcommand\cmdD[1]{\lstset{deletetexcs={#1},classoffset=7,moretexcs={#1},classoffset=0}}
+\newcommand\cmdE[1]{\lstset{deletetexcs={#1},classoffset=8,moretexcs={#1},classoffset=0}}
+\newcommand\cmdF[1]{\lstset{deletetexcs={#1},classoffset=9,moretexcs={#1},classoffset=0}}
+
+\newcommand\highlightA[1]{\lstset{deletekeywords={#1},classoffset=4,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+\newcommand\highlightB[1]{\lstset{deletekeywords={#1},classoffset=5,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+\newcommand\highlightC[1]{\lstset{deletekeywords={#1},classoffset=6,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+\newcommand\highlightD[1]{\lstset{deletekeywords={#1},classoffset=7,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+\newcommand\highlightE[1]{\lstset{deletekeywords={#1},classoffset=8,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+\newcommand\highlightF[1]{\lstset{deletekeywords={#1},classoffset=9,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+
+
+%\cmdRed{dadada}
+%\cmdGreen{bababa}
+%\cmdPurple{uwuwuwu}
+
+%\newcommand\colorcmd[2]{\lstset{classoffset=3,moretexcs={#2},texcsstyle=*\color{#1},classoffset=0}}
+
