@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{texnicie-codemarkup}[2021/02/05]
+\ProvidesPackage{highlight-latex}[2021/03/11]
 
 % Copyright (c) 2021 Vincent Kuhlmann
 % 
@@ -63,7 +63,7 @@
 \let\myclosebrace=}
 \catcode`\}=2
 
-\lstdefinelanguage{LaTeXniCie}
+\lstdefinelanguage{ColoredLaTeX}
 [LaTeX]{TeX}{
 	classoffset=0,
 	moretexcs={subsection,thesubsection,thesection,greek,Greek,Nwords,enumbinary,foreignlanguage,theoremstyle},
@@ -130,7 +130,7 @@
 	%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
 	%texcsstyle=\color{blue}
 }
-\lstset{language=LaTeXniCie}
+\lstset{language=ColoredLaTeX}
 
 \newcommand\cmdDefault[1]{\lstset{moretexcs={#1}}}
 \newcommand\cmdRed[1]{\lstset{classoffset=1,moretexcs={#1},classoffset=0}}
@@ -151,10 +151,34 @@
 \newcommand\highlightE[1]{\lstset{deletekeywords={#1},classoffset=8,otherkeywords={#1},morekeywords={#1},classoffset=0}}
 \newcommand\highlightF[1]{\lstset{deletekeywords={#1},classoffset=9,otherkeywords={#1},morekeywords={#1},classoffset=0}}
 
+\cmdA{begin}
+\cmdA{end}
 
 %\cmdRed{dadada}
 %\cmdGreen{bababa}
 %\cmdPurple{uwuwuwu}
 
 %\newcommand\colorcmd[2]{\lstset{classoffset=3,moretexcs={#2},texcsstyle=*\color{#1},classoffset=0}}
+
+\colorlet{grayCodeBackground}{gray!10!white}
+
+\newcommand{\higlightLight}{%
+	\colorlet{codeBackground}{grayCodeBackground}%
+%	\lstset{framesep=10pt}%
+%	\lstset{framesep=0.1cm,frame=lines}%
+	%\lstset{framesep=0.0cm,frame=lines,framerule=20pt}%
+	\lstset{framesep=0.0cm,frame=lines,framerule=0.4pt,rulesep=0pt}%
+}
+
+%\renewcommand{\higlightLight}{%
+%	\colorlet{codeBackground}{grayCodeBackground}%
+%	%\lstset{frame=lines}%
+%	%\lstset{framesep=0cm,frame=lines}%
+%}
+
+\lstnewenvironment{latexlight}[1][]
+{\begingroup\higlightLight\lstset{#1}\lstset{gobble=4}}{\endgroup}
+
+\lstnewenvironment{lsttest}[0]
+{\begingroup}{\endgroup}
 

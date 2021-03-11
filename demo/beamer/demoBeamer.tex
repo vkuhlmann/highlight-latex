@@ -1,0 +1,60 @@
+\documentclass{beamer}
+
+\usepackage{../../highlight-latex}
+
+\usetheme{Dresden}
+\usecolortheme{dolphin}
+
+\title{LaTeX highlight demo}
+\author{Vincent Kuhlmann}
+\date{11 March 2021}
+
+\newbox\codebox
+\newbox\codeboxB
+\newbox\codeboxC
+\newbox\codeboxD
+\newbox\codeboxE
+
+\begin{document}
+	
+\begin{frame}
+	\titlepage
+	\centering
+	Let's start
+\end{frame}
+
+\begin{lrbox}{\codeboxB}%
+%	\par\vskip\lineheight
+	%\LARGE	
+%	\begin{latexlight}[linewidth=17em]
+%		Hey
+%		there
+%	\end{latexlight}
+	\begin{latexlight}[linewidth=17em]
+		% File: document.tex
+		\documentclass[a4paper]{article}
+		\usepackage{amsmath}
+		
+		\begin{document}
+			Insert math like $\sqrt{2}$.
+			
+		\end{document}
+	\end{latexlight}
+\end{lrbox}
+
+\begin{frame}
+	And your code should now look like:
+	%\par\bigskip
+	\par{\setlength{\fboxsep}{0pt}\fcolorbox{orange}{yellow}{%
+		%\hspace{-3pt}%
+		\usebox\codeboxB%\par\medskip
+	}}
+	bbb
+	\par
+%	ccc
+%	\par\colorbox{grayCodeBackground}{%
+%		\usebox\codeboxB
+%	}
+\end{frame}
+
+\end{document}
