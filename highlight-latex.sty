@@ -154,6 +154,12 @@
 \cmdA{begin}
 \cmdA{end}
 
+\newbox\codebox
+\newbox\codeboxB
+\newbox\codeboxC
+\newbox\codeboxD
+\newbox\codeboxE
+
 %\cmdRed{dadada}
 %\cmdGreen{bababa}
 %\cmdPurple{uwuwuwu}
@@ -164,21 +170,23 @@
 
 \newcommand{\higlightLight}{%
 	\colorlet{codeBackground}{grayCodeBackground}%
-%	\lstset{framesep=10pt}%
-%	\lstset{framesep=0.1cm,frame=lines}%
-	%\lstset{framesep=0.0cm,frame=lines,framerule=20pt}%
-	\lstset{framesep=0.0cm,frame=lines,framerule=0.4pt,rulesep=0pt}%
+	\lstset{framesep=0.1cm,frame=lines,framerule=0.6pt}%
 }
 
-%\renewcommand{\higlightLight}{%
-%	\colorlet{codeBackground}{grayCodeBackground}%
-%	%\lstset{frame=lines}%
-%	%\lstset{framesep=0cm,frame=lines}%
-%}
+\newcommand\defaultgobble{4}
 
 \lstnewenvironment{latexlight}[1][]
-{\begingroup\higlightLight\lstset{#1}\lstset{gobble=4}}{\endgroup}
+{\begingroup\higlightLight\lstset{belowskip=0pt,gobble=\defaultgobble}\lstset{#1}}{\endgroup}
 
-\lstnewenvironment{lsttest}[0]
-{\begingroup}{\endgroup}
+\def\newcodebox#1{%
+	\expandafter\newbox\csname #1\endcsname
+	\expandafter\def\csname use#1\endcsname{%
+		\par\expandafter\usebox\csname #1\endcsname\par	
+	}%
+}
 
+\newcodebox{codebox}
+\newcodebox{codeboxB}
+\newcodebox{codeboxC}
+\newcodebox{codeboxD}
+\newcodebox{codeboxE}

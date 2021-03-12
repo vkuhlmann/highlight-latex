@@ -48,26 +48,40 @@
 \begin{document}
 	\begin{multicols*}{2}
 		Verander hiervoor de maximale nummerdiepte
-		\begin{lstlisting}[belowskip=0pt,aboveskip=2pt]
-% Here is some code
-\setcounter{secnumdepth}{1}
-\begin{document}
-	\section{Met nummer (diepte 1)}
-	
-	\setcounter{secnumdepth}{0}
-	\section{Zo ook hier geen nummers}
-	\ongekendcommando\gekendcommando
-	\inAccB\inAccC\inAccD
-	\section ~\smash{\ensuremath{\sqrt{2}}}~
-\end{document}
-		\end{lstlisting}
+		\begin{latexlight}[gobble=6]
+			% Here is some code
+			\setcounter{secnumdepth}{1}
+			\begin{document}
+				\section{Met nummer (diepte 1)}
+				
+				\setcounter{secnumdepth}{0}
+				\section{Zo ook hier geen nummers}
+				\ongekendcommando\gekendcommando
+				\inAccB\inAccC\inAccD
+				\section ~\smash{\ensuremath{\sqrt{2}}}~
+			\end{document}
+		\end{latexlight}
+		
+%		\begin{lstlisting}[belowskip=0pt,aboveskip=2pt]
+%% Here is some code
+%\setcounter{secnumdepth}{1}
+%\begin{document}
+%	\section{Met nummer (diepte 1)}
+%	
+%	\setcounter{secnumdepth}{0}
+%	\section{Zo ook hier geen nummers}
+%	\ongekendcommando\gekendcommando
+%	\inAccB\inAccC\inAccD
+%	\section ~\smash{\ensuremath{\sqrt{2}}}~
+%\end{document}
+%		\end{lstlisting}
 		
 		De \lstinline|\thesection| en \lstinline|\thesubsection| is hoe het nummer verschijnt. Het gedeelte \lstinline|\alph{subsection}| toont het ondertitel nummer in alfabetnummering.
 	
-		\lstset{classoffset=0,morekeywords={one,three,five},keywordstyle=\color{red},classoffset=1,morekeywords={two,four,six},keywordstyle=\color{blue},classoffset=0}
-		\begin{lstlisting}
-one two three four five six
-		\end{lstlisting}
+%		\lstset{classoffset=0,morekeywords={one,three,five},keywordstyle=\color{red},classoffset=1,morekeywords={two,four,six},keywordstyle=\color{blue},classoffset=0}
+%		\begin{lstlisting}
+%one two three four five six
+%		\end{lstlisting}
 	
 		cc
 		\begin{latexlight}

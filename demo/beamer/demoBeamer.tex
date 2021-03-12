@@ -9,14 +9,11 @@
 \author{Vincent Kuhlmann}
 \date{11 March 2021}
 
-\newbox\codebox
-\newbox\codeboxB
-\newbox\codeboxC
-\newbox\codeboxD
-\newbox\codeboxE
+% A command you want to highlight
+\cmdD{usepackage}
 
 \begin{document}
-	
+		
 \begin{frame}
 	\titlepage
 	\centering
@@ -24,13 +21,7 @@
 \end{frame}
 
 \begin{lrbox}{\codeboxB}%
-%	\par\vskip\lineheight
-	%\LARGE	
-%	\begin{latexlight}[linewidth=17em]
-%		Hey
-%		there
-%	\end{latexlight}
-	\begin{latexlight}[linewidth=17em]
+	\begin{latexlight}[linewidth=19em]
 		% File: document.tex
 		\documentclass[a4paper]{article}
 		\usepackage{amsmath}
@@ -43,6 +34,13 @@
 \end{lrbox}
 
 \begin{frame}
+	\frametitle{Simple document}
+	And your code should now look like:
+	\usecodeboxB
+\end{frame}
+
+\begin{frame}
+	\frametitle{Debug}
 	And your code should now look like:
 	%\par\bigskip
 	\par{\setlength{\fboxsep}{0pt}\fcolorbox{orange}{yellow}{%
@@ -51,10 +49,7 @@
 	}}
 	bbb
 	\par
-%	ccc
-%	\par\colorbox{grayCodeBackground}{%
-%		\usebox\codeboxB
-%	}
+	ccc
 \end{frame}
 
 \end{document}
