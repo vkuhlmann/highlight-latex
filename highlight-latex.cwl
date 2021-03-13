@@ -9,4 +9,3 @@
 \definecolor{name}{type}{specification}
 \begin{highlightblock}
 \end{highlightblock}#S
-

@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-\usepackage{../../highlight-latex}
+\usepackage{../highlight-latex}
 
 \usetheme{Dresden}
 \usecolortheme{dolphin}
@@ -21,19 +21,19 @@
 	name = default,
 	color = {blue!90!black},
 	macros = {
-		\gekendcommando
+		\knowncommand
 	}
 }
 
 \definecolor{accA}{RGB}{0,149,255}
 
-\updatehighlight{
-	name = accentA,
-	color = accA,
-	macros = {
-		begin,end
-	}
-}
+%\updatehighlight{
+%	name = structure,
+%	color = accA,
+%	macros = {
+%		\begin, \end
+%	}
+%}
 
 \colorlet{accB}{green!60!black}
 \updatehighlight{
@@ -43,7 +43,7 @@
 		\inAccB
 	},
 	keywords = {
-		nummer
+		$
 	}
 }
 

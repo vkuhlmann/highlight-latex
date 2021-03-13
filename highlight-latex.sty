@@ -61,6 +61,8 @@
 \colorlet{accDefault}{blue!90!black}
 \definecolor{accStructure}{RGB}{0,149,255}
 
+\colorlet{accentB}{green!60!black}
+
 \lstset{
 	classoffset=0,
 	backgroundcolor=\color{codeBackground},
@@ -85,6 +87,7 @@
 	keywordstyle={\color{accDefault}},
 	texcsstyle={*\color{accDefault}},
 	moretexcs={subsection,thesubsection,thesection,greek,Greek,Nwords,enumbinary,foreignlanguage,theoremstyle},
+	deletetexcs={begin,end},
 %
 	classoffset=1,
 	keywordstyle={\color{accStructure}},
@@ -302,7 +305,6 @@
 	\gdef\@highlight@latex@label{}%
 	\setkeys{updatehighlight}{#1}%
 	%
-	\hll@update@fixclassoffset
+	\lstset{classoffset=0}%
 }
-
 
