@@ -25,17 +25,14 @@
 % OTHER DEALINGS IN THE SOFTWARE.
 
 \RequirePackage{listings}
-
-%\usepackage{textcomp}
-
 \RequirePackage{xcolor}
-%\RequirePackage{color}
 
 \RequirePackage{xkeyval}
 \RequirePackage{etoolbox}
 
 \def\@highlight@frame{lines}
 \newif\ifhllStyleAnywhere
+\newcommand\defaultgobble{4}
 
 \DeclareOptionX{frame}{
 	%\typeout{Frame option was supplied}
@@ -57,20 +54,12 @@
 
 \ProcessOptionsX\relax
 
-
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
-
-\definecolor{accA}{RGB}{0,149,255}
-\colorlet{accB}{green!60!black}
-\colorlet{accC}{red!60!black}
-\colorlet{accD}{orange!100!black}
-\colorlet{accE}{green!60!black}
-\colorlet{accF}{green!60!black}
+\colorlet{codeBackground}{gray!10!white}
 
 \colorlet{accDefault}{blue!90!black}
-
-\colorlet{codeBackground}{gray!10!white}
+\definecolor{accStructure}{RGB}{0,149,255}
 
 \lstset{
 	classoffset=0,
@@ -93,61 +82,22 @@
 \lstdefinelanguage{ColoredLaTeX}
 [LaTeX]{TeX}{
 	classoffset=0,
+	keywordstyle={\color{accDefault}},
+	texcsstyle={*\color{accDefault}},
 	moretexcs={subsection,thesubsection,thesection,greek,Greek,Nwords,enumbinary,foreignlanguage,theoremstyle},
-%	
+%
 	classoffset=1,
-%	otherkeywords={->,=>},
-%	morekeywords={aaaaa,iiiis,->,=>},
-	keywordstyle=\color{red},
-	%classoffset=0,
-	%moretexcs={commandinred},
-	texcsstyle=*\color{red},
-%
+	keywordstyle={\color{accStructure}},
+	texcsstyle={*\color{accStructure}},
+	moretexcs={begin,end},
+%	
 	classoffset=2,
-	texcsstyle=*\color{green},
-%	
-	classoffset=3,
-	texcsstyle=*\color{blue},
-% cmdA
-	classoffset=4,
-	keywordstyle=\color{accA},
-	texcsstyle=*\color{accA},
-% cmdB
-	classoffset=5,
-	keywordstyle=\color{accB},
-	texcsstyle=*\color{accB},
-% cmdC
-	classoffset=6,
-	keywordstyle=\color{accC},
-	texcsstyle=*\color{accC},
-% cmdD
-	classoffset=7,
-	keywordstyle=\color{accD},
-	texcsstyle=*\color{accD},
-% cmdE
-	classoffset=8,
-	keywordstyle=\color{accD},
-	texcsstyle=*\color{accD},
-% cmdF
-	classoffset=9,
-	keywordstyle=\color{accD},
-	texcsstyle=*\color{accD},
-%
-	classoffset=20,	
-	%keywordstyle=\color{white},
-	%	otherkeywords={\{,\}},
-	%	morekeywords=[2]{\{,\}},
-	%	otherkeywords={\{}
-	%morekeywords={\{,\},\[,\]},
-	keywordstyle=\color{blue!50!white},
-%	
-	classoffset=21,
 	%moredelim=[s][\bfseries\color{green!30!black}]{!}{!},
 	%moredelim=[is][\space]{~}{~},
 	escapeinside=~~,
 %	
 	classoffset=0,
-	%literate={daag}{hey}{3}%
+	%literate={textA}{textB}{3}%
 	%https://tex.stackexchange.com/questions/172945/coloring-in-listing
 	literate={\{}{{\textcolor{curlyBrackets}{\myopenbrace}}}{1}
 		{\}}{{\textcolor{curlyBrackets}{\myclosebrace}}}{1}
@@ -159,113 +109,27 @@
 }
 \lstset{language=ColoredLaTeX}
 
-\newcommand\cmdDefault[1]{\lstset{moretexcs={#1}}}
-\newcommand\cmdRed[1]{\lstset{classoffset=1,moretexcs={#1},classoffset=0}}
-\newcommand\cmdGreen[1]{\lstset{classoffset=2,moretexcs={#1},classoffset=0}}
-\newcommand\cmdPurple[1]{\lstset{classoffset=3,moretexcs={#1},texcsstyle=*\color{purple},classoffset=0}}
 
-\newcommand\cmdA[1]{\lstset{deletetexcs={#1},classoffset=4,moretexcs={#1},classoffset=0}}
-\newcommand\cmdB[1]{\lstset{deletetexcs={#1},classoffset=5,moretexcs={#1},classoffset=0}}
-\newcommand\cmdC[1]{\lstset{deletetexcs={#1},classoffset=6,moretexcs={#1},classoffset=0}}
-\newcommand\cmdD[1]{\lstset{deletetexcs={#1},classoffset=7,moretexcs={#1},classoffset=0}}
-\newcommand\cmdE[1]{\lstset{deletetexcs={#1},classoffset=8,moretexcs={#1},classoffset=0}}
-\newcommand\cmdF[1]{\lstset{deletetexcs={#1},classoffset=9,moretexcs={#1},classoffset=0}}
+\def\hll@assignlabel#1#2{%
+	\expandafter\gdef\csname @highlight@latex@label@#1\endcsname{#2}%
+}
 
-\newcommand\highlightA[1]{\lstset{deletekeywords={#1},classoffset=4,otherkeywords={#1},morekeywords={#1},classoffset=0}}
-\newcommand\highlightB[1]{\lstset{deletekeywords={#1},classoffset=5,otherkeywords={#1},morekeywords={#1},classoffset=0}}
-\newcommand\highlightC[1]{\lstset{deletekeywords={#1},classoffset=6,otherkeywords={#1},morekeywords={#1},classoffset=0}}
-\newcommand\highlightD[1]{\lstset{deletekeywords={#1},classoffset=7,otherkeywords={#1},morekeywords={#1},classoffset=0}}
-\newcommand\highlightE[1]{\lstset{deletekeywords={#1},classoffset=8,otherkeywords={#1},morekeywords={#1},classoffset=0}}
-\newcommand\highlightF[1]{\lstset{deletekeywords={#1},classoffset=9,otherkeywords={#1},morekeywords={#1},classoffset=0}}
+\hll@assignlabel{default}{0}
+\hll@assignlabel{structure}{1}
 
-\cmdA{begin}
-\cmdA{end}
 
-\newbox\codebox
-\newbox\codeboxB
-\newbox\codeboxC
-\newbox\codeboxD
-\newbox\codeboxE
-
-%\cmdRed{dadada}
-%\cmdGreen{bababa}
-%\cmdPurple{uwuwuwu}
-
-%\newcommand\colorcmd[2]{\lstset{classoffset=3,moretexcs={#2},texcsstyle=*\color{#1},classoffset=0}}
-
-\colorlet{grayCodeBackground}{gray!10!white}
-
-\newcommand{\higlightLight}{%
-	\colorlet{codeBackground}{grayCodeBackground}%
+\newcommand{\hllPrepareBlock}{%
+%	\colorlet{codeBackground}{grayCodeBackground}%
 	\lstset{framesep=0.1cm,framerule=0.6pt}%
 	\def\setHighlightFrame##1{%
 		\lstset{frame=##1}%
 	}%
 	\expandafter\setHighlightFrame\expandafter{\@highlight@frame}%
+	\lstset{belowskip=0pt,gobble=\defaultgobble}%
 }
 
-\newcommand\defaultgobble{4}
-
-\lstnewenvironment{latexlight}[1][]
-{\begingroup\higlightLight\lstset{belowskip=0pt,gobble=\defaultgobble}\lstset{#1}}{\endgroup}
-
-\def\newcodebox#1{%
-	\expandafter\newbox\csname #1\endcsname
-	\expandafter\def\csname use#1\endcsname{%
-		\par\expandafter\usebox\csname #1\endcsname\par	
-	}%
-}
-
-\newcodebox{codebox}
-\newcodebox{codeboxB}
-\newcodebox{codeboxC}
-\newcodebox{codeboxD}
-\newcodebox{codeboxE}
-
-
-%\newenvironment{savecode}[1]{%
-%	\expandafter\ifx\csname @codebox@#1\endcsname\relax
-%		\expandafter\newbox\csname @codebox@#1\endcsname\relax
-%	\fi
-%	%\newbox\@codebox@simpledocument
-%	%\newbox\@codebox@A
-%	%
-%	%\setbox\@codebox@A\vbox{sometest}
-%	% The trick from latex/base/latex.ltx	
-%	\edef\@bracehack{%
-%		\endgroup
-%		\expandafter\setbox\csname @codebox@simpledocument\endcsname\vbox{%
-%			\begingroup\aftergroup}%
-%	}%
-%	\@bracehack
-%	\begingroup
-%}
-%{%
-%	\endgroup
-%}
-
-%\def\savecode#1{%
-%	\expandafter\ifx\csname @codebox@#1\endcsname\relax
-%	\expandafter\newbox\csname @codebox@#1\endcsname\relax
-%	\fi
-%	%\newbox\@codebox@simpledocument
-%	%\newbox\@codebox@A
-%	%
-%	%\setbox\@codebox@A\vbox{sometest}
-%	% The trick from latex/base/latex.ltx	
-%	\edef\@bracehack{%
-%		\endgroup
-%		\expandafter\setbox\csname @codebox@simpledocument\endcsname\vbox{%
-%			\begingroup\aftergroup}%
-%		\def\noexpand\@currenvir{\@currenvir}%
-%		\def\noexpand\@currenvline{\on@line}}%
-%	}%
-%	\@bracehack
-%	\begingroup
-%}
-%\def\endsavecode{%
-%	\endgroup
-%}
+\lstnewenvironment{highlightblock}[1][]
+{\begingroup\hllPrepareBlock\lstset{#1}}{\endgroup}
 
 \newenvironment{savecode}[1]{%
 	\expandafter\ifx\csname @codebox@#1\endcsname\relax
@@ -285,19 +149,6 @@
 	\endgroup
 }
 
-%\def\loadcode{%
-%	\@ifstar{\loadcode@i[1]}{\loadcode@i}
-%}
-
-%\newcommand\loadcode[2][]{%
-%	\ifx\relax#1\relax
-%		\expandafter\usebox\csname @codebox@#2\endcsname\par
-%	\else
-%		\leavevmode\expandafter\box\csname @codebox@#2\endcsname\relax
-%		\expandafter\let\csname @codebox@#2\endcsname\relax\par
-%	\fi
-%}
-
 \newcommand\copycode[1]{%
 	\expandafter\usebox\csname @codebox@#1\endcsname\par
 }
@@ -313,11 +164,19 @@
 \newcounter{hll@update@state}
 
 \newcounter{highlight@latex@nextclassoffset}
-\setcounter{highlight@latex@nextclassoffset}{22}
+\setcounter{highlight@latex@nextclassoffset}{5}
 
 \newcounter{highlight@latex@classoffset}
 
 \define@key{updatehighlight}{label}{%
+	\hll@update@setlabel{#1}%
+}
+
+\define@key{updatehighlight}{name}{%
+	\hll@update@setlabel{#1}%
+}
+
+\def\hll@update@setlabel#1{
 	\gdef\@highlight@latex@label{#1}%
 	\expandafter\def\expandafter\@capturedlabel\expandafter{\csname @highlight@latex@label@#1\endcsname}%
 	\expandafter\unless\expandafter\ifx\@capturedlabel\relax\relax
@@ -335,6 +194,7 @@
 		\expandafter\xdef\@capturedlabel{\@val}%
 	\fi
 }
+
 
 \define@key{updatehighlight}{classoffset}{%
 	\setcounter{highlight@latex@classoffset}{#1}%
@@ -388,7 +248,6 @@
 \def\hll@update@addmacro#1#2{%
 	\if\noexpand#2\relax
 		\edef\keywordpure{\expandafter\@gobble\string#2}%
-		%(Keywords is \meaning\keywordpure)%
 		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
 		\expandafter\callwithpure\expandafter{\keywordpure}%
 	\else

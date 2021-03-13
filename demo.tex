@@ -2,7 +2,7 @@
 
 \usepackage{amsmath}
 
-\usepackage[]{highlight-latex}
+\usepackage{highlight-latex}
 
 \usepackage{geometry}
 \usepackage{parskip}
@@ -18,141 +18,93 @@
 % All options exposed here. Feel free to delete or comment out what you want!
 % Colors accA ... accF. These are the default colors.
 
-\colorlet{accDefault}{blue!90!black}
-\cmdDefault{gekendcommando}
-
-\definecolor{accA}{RGB}{0,149,255}
-\cmdA{begin}
-\cmdA{end}
-
-\colorlet{accB}{green!60!black}
-\cmdB{inAccB}
-\highlightB{nummers}
-
-\colorlet{accC}{red!60!black}
-%\cmdC{inAccC}
-
-\colorlet{accD}{orange!100!black}
-\cmdD{inAccD}
-
-\colorlet{accE}{green!60!black}
-
-\colorlet{accF}{green!60!black}
-
-\colorlet{codeBackground}{gray!10!white}
-
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
-
+\colorlet{codeBackground}{gray!10!white}
+\renewcommand{\defaultgobble}{6}
 
 \updatehighlight{
-	color={red!80!black},
-	macros={
-		\ongekendcommando%,\inAccD
-	},
-	keywords={
-		nummer
-	},
-	%
-	color=accB
+	name = default,
+	color = {blue!90!black},
+	macros = {
+		\knowncommand
+	}
 }
 
-%\begin{savecode}{mytest}
-%	aaa
-%\end{savecode}
+\definecolor{accA}{RGB}{0,149,255}
+
+%\updatehighlight{
+%	name = structure,
+%	color = accA,
+%	macros = {
+%		\begin,\end
+%	}
+%}
+
+\colorlet{accB}{green!60!black}
+\updatehighlight{
+	name = accentB,
+	color = accB,
+	macros = {
+		\inAccB
+	},
+	keywords = { % Non-commands you want to highlight
+		number
+	}
+}
+
+
+\colorlet{accC}{red!60!black}
+
+\updatehighlight{
+	name = accentC,
+	color = accC,
+	macros = {
+		\inAccC	
+	}
+}
+
+\colorlet{accD}{orange!100!black}
+
+\updatehighlight{
+	name = accentD,
+	color = accD,
+	macros = {
+		\inAccD
+	}
+}
+
 
 \begin{document}
-	\begin{savecode}{somebox}
-		bbb
-	\end{savecode}
-	
-	\begin{multicols*}{2}		
-		Verander hiervoor de maximale nummerdiepte
-		\begin{latexlight}[gobble=6]
+	\begin{multicols*}{2}
+		For this, change the maximal number depth
+		\begin{highlightblock}
 			% Here is some code
 			\setcounter{secnumdepth}{1}
 			\begin{document}
-				\section{Met nummer (diepte 1)}
+				\section{With number (depth 1)}
 				
 				\setcounter{secnumdepth}{0}
-				\section{Zo ook hier geen nummers}
-				\ongekendcommando\gekendcommando
+				\section{No number}
+				\unknowncommand\knowncommand
 				\inAccB\inAccC\inAccD
-				\section ~\smash{\ensuremath{\sqrt{2}}}~
+				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} sneaky!~
 			\end{document}
-		\end{latexlight}
-	
-		\copycode{somebox}
+		\end{highlightblock}
+		and some text after it.
 		
-		
-%		\begin{lstlisting}[belowskip=0pt,aboveskip=2pt]
-%% Here is some code
-%\setcounter{secnumdepth}{1}
-%\begin{document}
-%	\section{Met nummer (diepte 1)}
-%	
-%	\setcounter{secnumdepth}{0}
-%	\section{Zo ook hier geen nummers}
-%	\ongekendcommando\gekendcommando
-%	\inAccB\inAccC\inAccD
-%	\section ~\smash{\ensuremath{\sqrt{2}}}~
-%\end{document}
-%		\end{lstlisting}
-		
-		De \lstinline|\thesection| en \lstinline|\thesubsection| is hoe het nummer verschijnt. Het gedeelte \lstinline|\alph{subsection}| toont het ondertitel nummer in alfabetnummering.
-		
-		\updatehighlight{
-			label=myname
-		}
+		Let's also show square brackets:
+		\begin{highlightblock}[linewidth=19em]
+			% File: document.tex
+			\documentclass[a4paper]{article}
+			\usepackage{amsmath}
+			
+			\begin{document}
+				Insert math like $\sqrt{2}$.
+				
+			\end{document}
+		\end{highlightblock}
 	
-		\updatehighlight{
-			label=myname
-		}
-
-		\updatehighlight{
-			label=newname
-		}
-	
-	
-		\updatehighlight{
-			label=myname
-		}
-	
-		\updatehighlight{
-			label=red
-		}
-	
-%		\updatehighlight{
-%			label=itsatest,
-%			macros={
-%				2,3,6, daag
-%			}
-%		}
-	
-		\updatehighlight{
-			color=accA,
-			macros={
-				\ongekendcommando
-			},
-			keywords={
-				nummer
-			},
-			%
-			color=accB,
-			macros={
-%				inAccC	
-			}
-		}
-	
-%		\lstset{classoffset=0,morekeywords={one,three,five},keywordstyle=\color{red},classoffset=1,morekeywords={two,four,six},keywordstyle=\color{blue},classoffset=0}
-%		\begin{lstlisting}
-%one two three four five six
-%		\end{lstlisting}
-	
-		cc
-		\begin{latexlight}
-			dddd
-		\end{latexlight}
-		eee
-	\end{multicols*}	
+		We can also have code inline, like \lstinline|\thesection|, or \lstinline|\author{you}|.
+	\end{multicols*}
 \end{document}

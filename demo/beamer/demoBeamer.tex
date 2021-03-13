@@ -7,49 +7,76 @@
 
 \title{LaTeX highlight demo}
 \author{Vincent Kuhlmann}
-\date{11 March 2021}
+\date{13 March 2021}
 
-% A command you want to highlight
-\cmdD{usepackage}
 
-\typeout{test}
+% All options exposed here. Feel free to delete or comment out what you want!
+% Colors accA ... accF. These are the default colors.
+
+\colorlet{curlyBrackets}{red!50!blue}
+\colorlet{squareBrackets}{blue!50!white}
+\colorlet{codeBackground}{gray!10!white}
+
+\updatehighlight{
+	name = default,
+	color = {blue!90!black},
+	macros = {
+		\gekendcommando
+	}
+}
+
+\definecolor{accA}{RGB}{0,149,255}
+
+\updatehighlight{
+	name = accentA,
+	color = accA,
+	macros = {
+		begin,end
+	}
+}
+
+\colorlet{accB}{green!60!black}
+\updatehighlight{
+	name = accentB,
+	color = accB,
+	macros = {
+		\inAccB
+	},
+	keywords = {
+		nummer
+	}
+}
+
+
+\colorlet{accC}{red!60!black}
+
+\updatehighlight{
+	name = accentC,
+	color = accC,
+	macros = {
+		\inAccC	
+	}
+}
+
+\colorlet{accD}{orange!100!black}
+
+\updatehighlight{
+	name = accentD,
+	color = accD,
+	macros = {
+		\inAccD
+	}
+}
 
 \begin{document}
-		
-\begin{frame}
-	\titlepage
-	\centering
-	Let's start
-\end{frame}
-
-%\begin{lrbox}{\codeboxB}%
-%	\begin{latexlight}[linewidth=19em]
-%		% File: document.tex
-%		\documentclass[a4paper]{article}
-%		\usepackage{amsmath}
-%		
-%		\begin{document}
-%			Insert math like $\sqrt{2}$.
-%			
-%		\end{document}
-%	\end{latexlight}
-%\end{lrbox}
-%
-%\setbox\codeboxB\vbox{
-%\begin{latexlight}[linewidth=19em,gobble=2]
-%	% File: document.tex
-%	\documentclass[a4paper]{article}
-%	\usepackage{amsmath}
-%	
-%	\begin{document}
-%		Insert math like $\sqrt{2}$.
-%		
-%	\end{document}
-%\end{latexlight}
-%}
+	\begin{frame}
+		\titlepage
+		\centering
+		Let's start
+	\end{frame}
 
 	\begin{savecode}{simpledocument}
-		\begin{latexlight}[linewidth=19em,gobble=4]
+		\begin{highlightblock}[linewidth=19em,gobble=4]
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
@@ -58,7 +85,7 @@
 				Insert math like $\sqrt{2}$.
 				
 			\end{document}
-		\end{latexlight}
+		\end{highlightblock}
 	\end{savecode}
 	
 	\begin{frame}
@@ -67,26 +94,4 @@
 		\copycode{simpledocument}
 		after it
 	\end{frame}
-	
-	\begin{frame}
-		\frametitle{Simple document}
-		And your code should now look like:
-		\consumecode{simpledocument}
-		after it
-	\end{frame}
-
-
-%\begin{frame}
-%	\frametitle{Debug}
-%	And your code should now look like:
-%	%\par\bigskip
-%	\par{\setlength{\fboxsep}{0pt}\fcolorbox{orange}{yellow}{%
-%		%\hspace{-3pt}%
-%		\usebox\codeboxB%\par\medskip
-%	}}
-%	bbb
-%	\par
-%	ccc
-%\end{frame}
-
 \end{document}
