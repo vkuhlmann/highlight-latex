@@ -1,19 +1,14 @@
-\documentclass{article}
+\documentclass{beamer}
 
-\usepackage{amsmath}
+\usepackage{../highlight-latex}
 
-\usepackage{highlight-latex}
+\usetheme{Dresden}
+\usecolortheme{dolphin}
 
-\usepackage{geometry}
-\usepackage{parskip}
-\usepackage[dutch]{babel}
-\usepackage{multicol}
+\title{LaTeX highlight demo}
+\author{Vincent Kuhlmann}
+\date{13 March 2021}
 
-\geometry{
-	paperwidth=182mm,
-	paperheight=80mm,
-	margin=1.5cm
-}
 
 % All options exposed here. Feel free to delete or comment out what you want!
 % Colors accA ... accF. These are the default colors.
@@ -21,7 +16,6 @@
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
 \colorlet{codeBackground}{gray!10!white}
-\renewcommand{\defaultgobble}{6}
 
 \updatehighlight{
 	name = default,
@@ -31,8 +25,8 @@
 	}
 }
 
-%\definecolor{accA}{RGB}{0,149,255}
-%
+\definecolor{accA}{RGB}{0,149,255}
+
 %\updatehighlight{
 %	name = structure,
 %	color = accA,
@@ -48,8 +42,8 @@
 	macros = {
 		\inAccB
 	},
-	keywords = { % Non-commands you want to highlight
-		number
+	keywords = {
+		$
 	}
 }
 
@@ -74,27 +68,15 @@
 	}
 }
 
-
 \begin{document}
-	\begin{multicols*}{2}
-		For this, change the maximal number depth
-		\begin{highlightblock}
-			% Here is some code
-			\setcounter{secnumdepth}{1}
-			\begin{document}
-				\section{With number (depth 1)}
-				
-				\setcounter{secnumdepth}{0}
-				\section{No number}
-				\unknowncommand\knowncommand
-				\inAccB\inAccC\inAccD
-				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} sneaky!~
-			\end{document}
-		\end{highlightblock}
-		and some text after it.
-		
-		Let's also show square brackets:
-		\begin{highlightblock}[linewidth=19em]
+	\begin{frame}
+		\titlepage
+		\centering
+		Let's start
+	\end{frame}
+
+	\begin{savecode}{simpledocument}
+		\begin{highlightblock}[linewidth=19em,gobble=4]
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
@@ -104,7 +86,12 @@
 				
 			\end{document}
 		\end{highlightblock}
+	\end{savecode}
 	
-		We can also have code inline, like \lstinline|\thesection|, or \lstinline|\author{you}|.
-	\end{multicols*}
+	\begin{frame}
+		\frametitle{Simple document}
+		And your code should now look like:
+		\copycode{simpledocument}
+		after it
+	\end{frame}
 \end{document}

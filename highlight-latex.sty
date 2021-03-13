@@ -1,0 +1,310 @@
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{highlight-latex}[2021/03/13]
+
+% Copyright (c) 2021 Vincent Kuhlmann
+% 
+% Permission is hereby granted, free of charge, to any person
+% obtaining a copy of this software and associated documentation
+% files (the "Software"), to deal in the Software without
+% restriction, including without limitation the rights to use,
+% copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the
+% Software is furnished to do so, subject to the following
+% conditions:
+% 
+% The above copyright notice and this permission notice shall be
+% included in all copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+% OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+% HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+% OTHER DEALINGS IN THE SOFTWARE.
+
+\RequirePackage{listings}
+\RequirePackage{xcolor}
+
+\RequirePackage{xkeyval}
+\RequirePackage{etoolbox}
+
+\def\@highlight@frame{lines}
+\newif\ifhllStyleAnywhere
+\newcommand\defaultgobble{4}
+
+\DeclareOptionX{frame}{
+	%\typeout{Frame option was supplied}
+	\ifx\relax#1\relax
+		\gdef\@highlight@frame{lines}
+		%\typeout{Frame without value}
+	\else
+		\gdef\@highlight@frame{#1}
+		%\typeout{Frame was supplied with value #1}
+	\fi
+}
+
+\DeclareOptionX{styleanywhere}{
+	\hllStyleAnywheretrue
+}
+
+\DeclareOptionX*{\PackageWarning{highlight-latex}{`\CurrentOption' ignored}}
+\ExecuteOptionsX{}
+
+\ProcessOptionsX\relax
+
+\colorlet{curlyBrackets}{red!50!blue}
+\colorlet{squareBrackets}{blue!50!white}
+\colorlet{codeBackground}{gray!10!white}
+
+\colorlet{accDefault}{blue!90!black}
+\definecolor{accStructure}{RGB}{0,149,255}
+
+\colorlet{accentB}{green!60!black}
+
+\lstset{
+	classoffset=0,
+	backgroundcolor=\color{codeBackground},
+	keywordstyle=\bfseries\color{accDefault},
+	basicstyle=\footnotesize\ttfamily,
+	commentstyle=\color{green!40!black},
+	numbers=none,
+	tabsize=2
+}
+
+\catcode`\{=11
+\let\myopenbrace={
+\catcode`\{=1
+
+\catcode`\}=11
+\let\myclosebrace=}
+\catcode`\}=2
+
+\lstdefinelanguage{ColoredLaTeX}
+[LaTeX]{TeX}{
+	classoffset=0,
+	keywordstyle={\color{accDefault}},
+	texcsstyle={*\color{accDefault}},
+	moretexcs={subsection,thesubsection,thesection,greek,Greek,Nwords,enumbinary,foreignlanguage,theoremstyle},
+	deletetexcs={begin,end},
+%
+	classoffset=1,
+	keywordstyle={\color{accStructure}},
+	texcsstyle={*\color{accStructure}},
+	moretexcs={begin,end},
+%	
+	classoffset=2,
+	%moredelim=[s][\bfseries\color{green!30!black}]{!}{!},
+	%moredelim=[is][\space]{~}{~},
+	escapeinside=~~,
+%	
+	classoffset=0,
+	%literate={textA}{textB}{3}%
+	%https://tex.stackexchange.com/questions/172945/coloring-in-listing
+	literate={\{}{{\textcolor{curlyBrackets}{\myopenbrace}}}{1}
+		{\}}{{\textcolor{curlyBrackets}{\myclosebrace}}}{1}
+		{[}{{\textcolor{squareBrackets}{[}}}{1}
+		{]}{{\textcolor{squareBrackets}{]}}}{1}%
+	%		{(}{{\textcolor{delimiterColor}{(}}}{1}
+	%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
+	%texcsstyle=\color{blue}
+}
+\lstset{language=ColoredLaTeX}
+
+
+\def\hll@assignlabel#1#2{%
+	\expandafter\gdef\csname @highlight@latex@label@#1\endcsname{#2}%
+}
+
+\hll@assignlabel{default}{0}
+\hll@assignlabel{structure}{1}
+
+
+\newcommand{\hllPrepareBlock}{%
+%	\colorlet{codeBackground}{grayCodeBackground}%
+	\lstset{framesep=0.1cm,framerule=0.6pt}%
+	\def\setHighlightFrame##1{%
+		\lstset{frame=##1}%
+	}%
+	\expandafter\setHighlightFrame\expandafter{\@highlight@frame}%
+	\lstset{belowskip=0pt,gobble=\defaultgobble}%
+}
+
+\lstnewenvironment{highlightblock}[1][]
+{\begingroup\hllPrepareBlock\lstset{#1}}{\endgroup}
+
+\newenvironment{savecode}[1]{%
+	\expandafter\ifx\csname @codebox@#1\endcsname\relax
+		\expandafter\newbox\csname @codebox@#1\endcsname\relax
+	\fi
+	%
+	% The trick from latex/base/latex.ltx
+	\edef\@bracehack{%
+		\endgroup
+		\expandafter\setbox\csname @codebox@#1\endcsname\vbox{%
+			\begingroup\aftergroup}%
+		\def\noexpand\@currenvir{\@currenvir}%
+		\def\noexpand\@currenvline{\on@line}}%
+	\@bracehack
+	\begingroup\ignorespaces
+}{%
+	\endgroup
+}
+
+\newcommand\copycode[1]{%
+	\expandafter\usebox\csname @codebox@#1\endcsname\par
+}
+
+\newcommand\consumecode[1]{%
+	\leavevmode\expandafter\box\csname @codebox@#1\endcsname\relax
+	\expandafter\let\csname @codebox@#1\endcsname\relax\par
+}
+
+
+\def\@highlight@latex@label{}
+
+\newcounter{hll@update@state}
+
+\newcounter{highlight@latex@nextclassoffset}
+\setcounter{highlight@latex@nextclassoffset}{5}
+
+\newcounter{highlight@latex@classoffset}
+
+\define@key{updatehighlight}{label}{%
+	\hll@update@setlabel{#1}%
+}
+
+\define@key{updatehighlight}{name}{%
+	\hll@update@setlabel{#1}%
+}
+
+\def\hll@update@setlabel#1{
+	\gdef\@highlight@latex@label{#1}%
+	\expandafter\def\expandafter\@capturedlabel\expandafter{\csname @highlight@latex@label@#1\endcsname}%
+	\expandafter\unless\expandafter\ifx\@capturedlabel\relax\relax
+		% Label exists
+		\edef\@val{\@capturedlabel}%
+		\setcounter{highlight@latex@classoffset}{\@val}%
+		\setcounter{hll@update@state}{1}%
+	\else
+		% Allocate new label
+		\edef\@val{\thehighlight@latex@nextclassoffset}%
+		\setcounter{highlight@latex@classoffset}{\@val}%
+		\stepcounter{highlight@latex@nextclassoffset}%
+		\setcounter{hll@update@state}{1}%
+		%
+		\expandafter\xdef\@capturedlabel{\@val}%
+	\fi
+}
+
+
+\define@key{updatehighlight}{classoffset}{%
+	\setcounter{highlight@latex@classoffset}{#1}%
+	\setcounter{hll@update@state}{1}%
+}
+
+\define@key{updatehighlight}{macros}{%
+	\hll@update@macros{#1}%
+}
+
+\define@key{updatehighlight}{commands}{%
+	\hll@update@macros{#1}%
+}
+
+\define@key{updatehighlight}{style}{%
+	\hll@update@fixclassoffset
+	\unless\ifhllStyleAnywhere
+		\ifnum\value{hll@update@state}>1\relax
+			\setcounter{hll@update@state}{0}%
+			\hll@update@fixclassoffset
+		\fi
+	\fi
+	%
+	\expandafter\hll@update@setstyle\expandafter{\the\c@highlight@latex@classoffset}{#1}%
+}
+
+\define@key{updatehighlight}{color}{%
+	\hll@update@fixclassoffset
+	\unless\ifhllStyleAnywhere
+		\ifnum\value{hll@update@state}>1\relax
+			\setcounter{hll@update@state}{0}%
+			\hll@update@fixclassoffset
+		\fi
+	\fi
+	%
+	\expandafter\hll@update@setcolor\expandafter{\the\c@highlight@latex@classoffset}{#1}%
+}
+
+\define@key{updatehighlight}{keywords}{%
+	\hll@update@keywords{#1}%
+}
+
+\def\hll@update@macros#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@addmacro{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@highlight@latex@classoffset}
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@addmacro#1#2{%
+	\if\noexpand#2\relax
+		\edef\keywordpure{\expandafter\@gobble\string#2}%
+		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
+		\expandafter\callwithpure\expandafter{\keywordpure}%
+	\else
+		\hll@update@addmacro@i{#1}{#2}%
+	\fi
+}
+
+\def\hll@update@addmacro@i#1#2{%
+	\lstset{deletetexcs={#2},classoffset=#1,moretexcs={#2},classoffset=0}%
+}
+
+\def\hll@update@keywords#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@addkeyword{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@highlight@latex@classoffset}%
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@addkeyword#1#2{%
+	\lstset{deletetexcs={#2},classoffset=#1,otherkeywords={#2},morekeywords={#2},classoffset=0}%
+}
+
+%%
+
+\def\hll@update@fixclassoffset{%
+	\ifnum\value{hll@update@state}<1\relax
+		\setcounter{highlight@latex@classoffset}{\thehighlight@latex@nextclassoffset}%
+		\stepcounter{highlight@latex@nextclassoffset}%
+		\setcounter{hll@update@state}{1}%
+	\fi
+}
+
+\def\hll@update@setcolor#1#2{%
+	\lstset{%
+		classoffset=#1,
+		keywordstyle={\color{#2}},
+		texcsstyle={*\color{#2}},
+	}%
+}
+
+\def\hll@update@setstyle#1#2{%
+	\lstset{%
+		classoffset=#1,
+		keywordstyle={#2},
+		texcsstyle={*#2},
+	}%
+}
+
+\newcommand{\updatehighlight}[1]{%
+	\setcounter{hll@update@state}{-1}%
+	\gdef\@highlight@latex@label{}%
+	\setkeys{updatehighlight}{#1}%
+	%
+	\lstset{classoffset=0}%
+}
+
