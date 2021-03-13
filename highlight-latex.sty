@@ -32,18 +32,24 @@
 %\RequirePackage{color}
 
 \RequirePackage{xkeyval}
+\RequirePackage{etoolbox}
 
 \def\@highlight@frame{none}
+\newif\ifhllAllowLateStyle
 
 \DeclareOptionX{frame}{
-	\typeout{Frame option was supplied}
+	%\typeout{Frame option was supplied}
 	\ifx\relax#1\relax
 		\gdef\@highlight@frame{lines}
-		\typeout{Frame without value}
+		%\typeout{Frame without value}
 	\else
 		\gdef\@highlight@frame{#1}
-		\typeout{Frame was supplied with value #1}
+		%\typeout{Frame was supplied with value #1}
 	\fi
+}
+
+\DeclareOptionX{latestyle}{
+	\hllAllowLateStyletrue
 }
 
 \DeclareOptionX*{\PackageWarning{highlight-latex}{`\CurrentOption' ignored}}
@@ -218,7 +224,8 @@
 
 
 \def\@highlight@latex@label{}
-\newif\if@classoffset@override
+
+\newcounter{hll@update@state}
 
 \newcounter{highlight@latex@nextclassoffset}
 \setcounter{highlight@latex@nextclassoffset}{22}
@@ -229,17 +236,16 @@
 	\gdef\@highlight@latex@label{#1}%
 	\expandafter\def\expandafter\@capturedlabel\expandafter{\csname @highlight@latex@label@#1\endcsname}%
 	\expandafter\unless\expandafter\ifx\@capturedlabel\relax\relax
-		(Exists!)
+		% Label exists
 		\edef\@val{\@capturedlabel}%
 		\setcounter{highlight@latex@classoffset}{\@val}%
-		\@classoffset@overridetrue
+		\setcounter{hll@update@state}{1}%
 	\else
-		(Does not exist!)
+		% Allocate new label
 		\edef\@val{\thehighlight@latex@nextclassoffset}%
-		\typeout{Val is \meaning\@val}%
 		\setcounter{highlight@latex@classoffset}{\@val}%
 		\stepcounter{highlight@latex@nextclassoffset}%
-		\@classoffset@overridetrue
+		\setcounter{hll@update@state}{1}%
 		%
 		\expandafter\xdef\@capturedlabel{\@val}%
 	\fi
@@ -247,16 +253,112 @@
 
 \define@key{updatehighlight}{classoffset}{%
 	\setcounter{highlight@latex@classoffset}{#1}%
-	\@classoffset@overridetrue
+	\setcounter{hll@update@state}{1}%
+}
+
+\define@key{updatehighlight}{macros}{%
+	\hll@update@macros{#1}%
+}
+
+\define@key{updatehighlight}{commands}{%
+	\hll@update@macros{#1}%
+}
+
+\define@key{updatehighlight}{style}{%
+	\hll@update@fixclassoffset
+	\unless\ifhllAllowLateStyle
+		\ifnum\value{hll@update@state}>1\relax
+			\setcounter{hll@update@state}{0}%
+			\hll@update@fixclassoffset
+		\fi
+	\fi
+	%
+	\expandafter\hll@update@setstyle\expandafter{\the\c@highlight@latex@classoffset}{#1}%
+}
+
+\define@key{updatehighlight}{color}{%
+	\hll@update@fixclassoffset
+	\unless\ifhllAllowLateStyle
+		\ifnum\value{hll@update@state}>1\relax
+			\setcounter{hll@update@state}{0}%
+			\hll@update@fixclassoffset
+		\fi
+	\fi
+	%
+	\expandafter\hll@update@setcolor\expandafter{\the\c@highlight@latex@classoffset}{#1}%
+}
+
+\define@key{updatehighlight}{keywords}{%
+	\hll@update@keywords{#1}%
+}
+
+\def\hll@update@macros#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@addmacro{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@highlight@latex@classoffset}
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@addmacro#1#2{%
+	\if\noexpand#2\relax
+		\edef\keywordpure{\expandafter\@gobble\string#2}%
+		%(Keywords is \meaning\keywordpure)%
+		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
+		\expandafter\callwithpure\expandafter{\keywordpure}%
+	\else
+		\hll@update@addmacro@i{#1}{#2}%
+	\fi
+}
+
+\def\hll@update@addmacro@i#1#2{%
+	\lstset{deletetexcs={#2},classoffset=#1,moretexcs={#2},classoffset=0}%
+}
+
+\def\hll@update@keywords#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@addkeyword{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@highlight@latex@classoffset}%
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@addkeyword#1#2{%
+	\lstset{deletetexcs={#2},classoffset=#1,otherkeywords={#2},morekeywords={#2},classoffset=0}%
+}
+
+%%
+
+\def\hll@update@fixclassoffset{%
+	\ifnum\value{hll@update@state}<1\relax
+		\setcounter{highlight@latex@classoffset}{\thehighlight@latex@nextclassoffset}%
+		\stepcounter{highlight@latex@nextclassoffset}%
+		\setcounter{hll@update@state}{1}%
+	\fi
+}
+
+\def\hll@update@setcolor#1#2{%
+	\lstset{%
+		classoffset=#1,
+		keywordstyle={\color{#2}},
+		texcsstyle={*\color{#2}},
+	}%
+}
+
+\def\hll@update@setstyle#1#2{%
+	\lstset{%
+		classoffset=#1,
+		keywordstyle={#2},
+		texcsstyle={*#2},
+	}%
 }
 
 \newcommand{\updatehighlight}[1]{%
-	\@classoffset@overridefalse
+	\setcounter{hll@update@state}{-1}%
 	\gdef\@highlight@latex@label{}%
 	\setkeys{updatehighlight}{#1}%
-	Classoffset override is \meaning\if@classoffset@override.
-	Name is \@highlight@latex@label.
-	Class offset is \thehighlight@latex@nextclassoffset.
+	%
+	\hll@update@fixclassoffset
 }
 
 

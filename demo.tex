@@ -30,7 +30,7 @@
 \highlightB{nummers}
 
 \colorlet{accC}{red!60!black}
-\cmdC{inAccC}
+%\cmdC{inAccC}
 
 \colorlet{accD}{orange!100!black}
 \cmdD{inAccD}
@@ -45,8 +45,30 @@
 \colorlet{squareBrackets}{blue!50!white}
 
 
+\updatehighlight{
+	color={red!80!black},
+	macros={
+		\ongekendcommando%,\inAccD
+	},
+	keywords={
+		nummer
+	},
+	%
+	color=accB,
+	macros={
+		inAccC	
+	},
+	color=accA,
+	macros={
+	},
+	color=accC,
+	macros={
+	}
+}
+
+
 \begin{document}
-	\begin{multicols*}{2}
+	\begin{multicols*}{2}		
 		Verander hiervoor de maximale nummerdiepte
 		\begin{latexlight}[gobble=6]
 			% Here is some code
@@ -88,6 +110,37 @@
 
 		\updatehighlight{
 			label=newname
+		}
+	
+	
+		\updatehighlight{
+			label=myname
+		}
+	
+		\updatehighlight{
+			label=red
+		}
+	
+%		\updatehighlight{
+%			label=itsatest,
+%			macros={
+%				2,3,6, daag
+%			}
+%		}
+	
+		\updatehighlight{
+			color=accA,
+			macros={
+				\ongekendcommando
+			},
+			keywords={
+				nummer
+			},
+			%
+			color=accB,
+			macros={
+%				inAccC	
+			}
 		}
 	
 %		\lstset{classoffset=0,morekeywords={one,three,five},keywordstyle=\color{red},classoffset=1,morekeywords={two,four,six},keywordstyle=\color{blue},classoffset=0}
