@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{highlight-latex}[2021/03/11]
+\ProvidesPackage{highlight-latex}[2021/03/13]
 
 % Copyright (c) 2021 Vincent Kuhlmann
 % 
@@ -30,6 +30,27 @@
 
 \RequirePackage{xcolor}
 %\RequirePackage{color}
+
+\RequirePackage{xkeyval}
+
+\def\@highlight@frame{none}
+
+\DeclareOptionX{frame}{
+	\typeout{Frame option was supplied}
+	\ifx\relax#1\relax
+		\gdef\@highlight@frame{lines}
+		\typeout{Frame without value}
+	\else
+		\gdef\@highlight@frame{#1}
+		\typeout{Frame was supplied with value #1}
+	\fi
+}
+
+\DeclareOptionX*{\PackageWarning{highlight-latex}{`\CurrentOption' ignored}}
+\ExecuteOptionsX{}
+
+\ProcessOptionsX\relax
+
 
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
@@ -170,7 +191,11 @@
 
 \newcommand{\higlightLight}{%
 	\colorlet{codeBackground}{grayCodeBackground}%
-	\lstset{framesep=0.1cm,frame=lines,framerule=0.6pt}%
+	\lstset{framesep=0.1cm,framerule=0.6pt}%
+	\def\setHighlightFrame##1{%
+		\lstset{frame=##1}%
+	}%
+	\expandafter\setHighlightFrame\expandafter{\@highlight@frame}%
 }
 
 \newcommand\defaultgobble{4}
@@ -190,3 +215,48 @@
 \newcodebox{codeboxC}
 \newcodebox{codeboxD}
 \newcodebox{codeboxE}
+
+
+\def\@highlight@latex@label{}
+\newif\if@classoffset@override
+
+\newcounter{highlight@latex@nextclassoffset}
+\setcounter{highlight@latex@nextclassoffset}{22}
+
+\newcounter{highlight@latex@classoffset}
+
+\define@key{updatehighlight}{label}{%
+	\gdef\@highlight@latex@label{#1}%
+	\expandafter\def\expandafter\@capturedlabel\expandafter{\csname @highlight@latex@label@#1\endcsname}%
+	\expandafter\unless\expandafter\ifx\@capturedlabel\relax\relax
+		(Exists!)
+		\edef\@val{\@capturedlabel}%
+		\setcounter{highlight@latex@classoffset}{\@val}%
+		\@classoffset@overridetrue
+	\else
+		(Does not exist!)
+		\edef\@val{\thehighlight@latex@nextclassoffset}%
+		\typeout{Val is \meaning\@val}%
+		\setcounter{highlight@latex@classoffset}{\@val}%
+		\stepcounter{highlight@latex@nextclassoffset}%
+		\@classoffset@overridetrue
+		%
+		\expandafter\xdef\@capturedlabel{\@val}%
+	\fi
+}
+
+\define@key{updatehighlight}{classoffset}{%
+	\setcounter{highlight@latex@classoffset}{#1}%
+	\@classoffset@overridetrue
+}
+
+\newcommand{\updatehighlight}[1]{%
+	\@classoffset@overridefalse
+	\gdef\@highlight@latex@label{}%
+	\setkeys{updatehighlight}{#1}%
+	Classoffset override is \meaning\if@classoffset@override.
+	Name is \@highlight@latex@label.
+	Class offset is \thehighlight@latex@nextclassoffset.
+}
+
+
