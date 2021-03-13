@@ -2,7 +2,7 @@
 
 \usepackage{amsmath}
 
-\usepackage{highlight-latex}
+\usepackage[]{highlight-latex}
 
 \usepackage{geometry}
 \usepackage{parskip}
@@ -54,20 +54,18 @@
 		nummer
 	},
 	%
-	color=accB,
-	macros={
-		inAccC	
-	},
-	color=accA,
-	macros={
-	},
-	color=accC,
-	macros={
-	}
+	color=accB
 }
 
+%\begin{savecode}{mytest}
+%	aaa
+%\end{savecode}
 
 \begin{document}
+	\begin{savecode}{somebox}
+		bbb
+	\end{savecode}
+	
 	\begin{multicols*}{2}		
 		Verander hiervoor de maximale nummerdiepte
 		\begin{latexlight}[gobble=6]
@@ -83,6 +81,9 @@
 				\section ~\smash{\ensuremath{\sqrt{2}}}~
 			\end{document}
 		\end{latexlight}
+	
+		\copycode{somebox}
+		
 		
 %		\begin{lstlisting}[belowskip=0pt,aboveskip=2pt]
 %% Here is some code

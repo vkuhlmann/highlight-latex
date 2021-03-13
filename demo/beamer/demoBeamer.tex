@@ -1,6 +1,6 @@
 \documentclass{beamer}
 
-\usepackage[frame=lines]{../../highlight-latex}
+\usepackage{../../highlight-latex}
 
 \usetheme{Dresden}
 \usecolortheme{dolphin}
@@ -22,36 +22,71 @@
 	Let's start
 \end{frame}
 
-\begin{lrbox}{\codeboxB}%
-	\begin{latexlight}[linewidth=19em]
-		% File: document.tex
-		\documentclass[a4paper]{article}
-		\usepackage{amsmath}
-		
-		\begin{document}
-			Insert math like $\sqrt{2}$.
+%\begin{lrbox}{\codeboxB}%
+%	\begin{latexlight}[linewidth=19em]
+%		% File: document.tex
+%		\documentclass[a4paper]{article}
+%		\usepackage{amsmath}
+%		
+%		\begin{document}
+%			Insert math like $\sqrt{2}$.
+%			
+%		\end{document}
+%	\end{latexlight}
+%\end{lrbox}
+%
+%\setbox\codeboxB\vbox{
+%\begin{latexlight}[linewidth=19em,gobble=2]
+%	% File: document.tex
+%	\documentclass[a4paper]{article}
+%	\usepackage{amsmath}
+%	
+%	\begin{document}
+%		Insert math like $\sqrt{2}$.
+%		
+%	\end{document}
+%\end{latexlight}
+%}
+
+	\begin{savecode}{simpledocument}
+		\begin{latexlight}[linewidth=19em,gobble=4]
+			% File: document.tex
+			\documentclass[a4paper]{article}
+			\usepackage{amsmath}
 			
-		\end{document}
-	\end{latexlight}
-\end{lrbox}
+			\begin{document}
+				Insert math like $\sqrt{2}$.
+				
+			\end{document}
+		\end{latexlight}
+	\end{savecode}
+	
+	\begin{frame}
+		\frametitle{Simple document}
+		And your code should now look like:
+		\copycode{simpledocument}
+		after it
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Simple document}
+		And your code should now look like:
+		\consumecode{simpledocument}
+		after it
+	\end{frame}
 
-\begin{frame}
-	\frametitle{Simple document}
-	And your code should now look like:
-	\usecodeboxB
-\end{frame}
 
-\begin{frame}
-	\frametitle{Debug}
-	And your code should now look like:
-	%\par\bigskip
-	\par{\setlength{\fboxsep}{0pt}\fcolorbox{orange}{yellow}{%
-		%\hspace{-3pt}%
-		\usebox\codeboxB%\par\medskip
-	}}
-	bbb
-	\par
-	ccc
-\end{frame}
+%\begin{frame}
+%	\frametitle{Debug}
+%	And your code should now look like:
+%	%\par\bigskip
+%	\par{\setlength{\fboxsep}{0pt}\fcolorbox{orange}{yellow}{%
+%		%\hspace{-3pt}%
+%		\usebox\codeboxB%\par\medskip
+%	}}
+%	bbb
+%	\par
+%	ccc
+%\end{frame}
 
 \end{document}

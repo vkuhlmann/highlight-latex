@@ -34,8 +34,8 @@
 \RequirePackage{xkeyval}
 \RequirePackage{etoolbox}
 
-\def\@highlight@frame{none}
-\newif\ifhllAllowLateStyle
+\def\@highlight@frame{lines}
+\newif\ifhllStyleAnywhere
 
 \DeclareOptionX{frame}{
 	%\typeout{Frame option was supplied}
@@ -48,8 +48,8 @@
 	\fi
 }
 
-\DeclareOptionX{latestyle}{
-	\hllAllowLateStyletrue
+\DeclareOptionX{styleanywhere}{
+	\hllStyleAnywheretrue
 }
 
 \DeclareOptionX*{\PackageWarning{highlight-latex}{`\CurrentOption' ignored}}
@@ -223,6 +223,91 @@
 \newcodebox{codeboxE}
 
 
+%\newenvironment{savecode}[1]{%
+%	\expandafter\ifx\csname @codebox@#1\endcsname\relax
+%		\expandafter\newbox\csname @codebox@#1\endcsname\relax
+%	\fi
+%	%\newbox\@codebox@simpledocument
+%	%\newbox\@codebox@A
+%	%
+%	%\setbox\@codebox@A\vbox{sometest}
+%	% The trick from latex/base/latex.ltx	
+%	\edef\@bracehack{%
+%		\endgroup
+%		\expandafter\setbox\csname @codebox@simpledocument\endcsname\vbox{%
+%			\begingroup\aftergroup}%
+%	}%
+%	\@bracehack
+%	\begingroup
+%}
+%{%
+%	\endgroup
+%}
+
+%\def\savecode#1{%
+%	\expandafter\ifx\csname @codebox@#1\endcsname\relax
+%	\expandafter\newbox\csname @codebox@#1\endcsname\relax
+%	\fi
+%	%\newbox\@codebox@simpledocument
+%	%\newbox\@codebox@A
+%	%
+%	%\setbox\@codebox@A\vbox{sometest}
+%	% The trick from latex/base/latex.ltx	
+%	\edef\@bracehack{%
+%		\endgroup
+%		\expandafter\setbox\csname @codebox@simpledocument\endcsname\vbox{%
+%			\begingroup\aftergroup}%
+%		\def\noexpand\@currenvir{\@currenvir}%
+%		\def\noexpand\@currenvline{\on@line}}%
+%	}%
+%	\@bracehack
+%	\begingroup
+%}
+%\def\endsavecode{%
+%	\endgroup
+%}
+
+\newenvironment{savecode}[1]{%
+	\expandafter\ifx\csname @codebox@#1\endcsname\relax
+		\expandafter\newbox\csname @codebox@#1\endcsname\relax
+	\fi
+	%
+	% The trick from latex/base/latex.ltx
+	\edef\@bracehack{%
+		\endgroup
+		\expandafter\setbox\csname @codebox@#1\endcsname\vbox{%
+			\begingroup\aftergroup}%
+		\def\noexpand\@currenvir{\@currenvir}%
+		\def\noexpand\@currenvline{\on@line}}%
+	\@bracehack
+	\begingroup\ignorespaces
+}{%
+	\endgroup
+}
+
+%\def\loadcode{%
+%	\@ifstar{\loadcode@i[1]}{\loadcode@i}
+%}
+
+%\newcommand\loadcode[2][]{%
+%	\ifx\relax#1\relax
+%		\expandafter\usebox\csname @codebox@#2\endcsname\par
+%	\else
+%		\leavevmode\expandafter\box\csname @codebox@#2\endcsname\relax
+%		\expandafter\let\csname @codebox@#2\endcsname\relax\par
+%	\fi
+%}
+
+\newcommand\copycode[1]{%
+	\expandafter\usebox\csname @codebox@#1\endcsname\par
+}
+
+\newcommand\consumecode[1]{%
+	\leavevmode\expandafter\box\csname @codebox@#1\endcsname\relax
+	\expandafter\let\csname @codebox@#1\endcsname\relax\par
+}
+
+
 \def\@highlight@latex@label{}
 
 \newcounter{hll@update@state}
@@ -266,7 +351,7 @@
 
 \define@key{updatehighlight}{style}{%
 	\hll@update@fixclassoffset
-	\unless\ifhllAllowLateStyle
+	\unless\ifhllStyleAnywhere
 		\ifnum\value{hll@update@state}>1\relax
 			\setcounter{hll@update@state}{0}%
 			\hll@update@fixclassoffset
@@ -278,7 +363,7 @@
 
 \define@key{updatehighlight}{color}{%
 	\hll@update@fixclassoffset
-	\unless\ifhllAllowLateStyle
+	\unless\ifhllStyleAnywhere
 		\ifnum\value{hll@update@state}>1\relax
 			\setcounter{hll@update@state}{0}%
 			\hll@update@fixclassoffset
