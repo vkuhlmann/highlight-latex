@@ -4,107 +4,150 @@
 
 \usetheme{Dresden}
 \usecolortheme{dolphin}
+\useoutertheme{miniframes}
+
+\usepackage{hyperref}
 
 \title{LaTeX highlight demo}
 \author{Vincent Kuhlmann}
-\date{13 March 2021}
+\date{14 March 2021}
 
-
-% All options exposed here. Feel free to delete or comment out what you want!
-% Colors accA ... accF. These are the default colors.
-
-\colorlet{curlyBrackets}{red!50!blue}
-\colorlet{squareBrackets}{blue!50!white}
-\colorlet{codeBackground}{gray!10!white}
+% Override if you want. Else you can delete it.
+%\colorlet{curlyBrackets}{red!50!blue}
+%\colorlet{squareBrackets}{blue!50!white}
+%\colorlet{codeBackground}{gray!10!white}
+%\colorlet{comment}{green!40!black}
+\def\defaultgobble{6}
 
 \updatehighlight{
 	name = default,
+	% 90% blue, remaining is black
 	color = {blue!90!black},
-	macros = {
-		\knowncommand, \includegraphics
-	}
+	add = {
+		\knowncommand
+	},
+	% You can't have blank lines when providing these key-values
+	% (blank line means new paragraph, and that terminates this command)
+	% So use percent signs (%) to comment out the newline character.
+	%
+	name = structure,
+	add = {
+		% Default:
+		%\begin, \end
+	},
+	%^ This extra comma doesn't hurt. In fact, it helps when you're
+	% reordering code; you don't want missing comma's.
 }
 
-\definecolor{accA}{RGB}{0,149,255}
-
-%\updatehighlight{
-%	name = structure,
-%	color = accA,
-%	macros = {
-%		\begin, \end
-%	}
-%}
-
-\colorlet{accB}{green!60!black}
 \updatehighlight{
+	% Some characters might not work as keyword. Don't go too
+	% crazy.
+	name = greenDollar,
+	style = {\itshape\color{green!70!black}},
+	add = {
+		% The dollar sign is provided an extra time just to
+		% calm down TeXstudio's code highlighting.
+		$, $
+	},
+	%
+	name = accentA,
+	color = green!60!black,
+	add = {
+		\inAccA, Hi!
+	},
+	%
 	name = accentB,
-	color = accB,
-	commands = {
+	color = red!60!black,
+	add = {
 		\inAccB
 	},
-	keywords = {
-		$
-	}
-}
-
-
-\colorlet{accC}{red!60!black}
-
-\updatehighlight{
+	%
 	name = accentC,
-	color = accC,
-	commands = {
-		\inAccC	
+	color = orange!100!black,
+	add = {
+		\inAccC
 	}
 }
-
-\colorlet{accD}{orange!100!black}
-
-\updatehighlight{
-	name = accentD,
-	color = accD,
-	commands = {
-		\inAccD
-	}
-}
-
-\def\defaultgobble{6}
 
 \begin{document}
+	\section{Beautiful code}
 	\begin{frame}
 		\titlepage
 		\centering
 		Let's start
 	\end{frame}
 
-	\begin{saveblock}{simpledocument}
+	\begin{saveblock}{arealjumble}
 		\begin{highlightblock}[linewidth=19em,gobble=6]
+			% Here is some code
+			\setcounter{secnumdepth}{1}
+			\begin{document}
+				\section{My section (and Hi!)}
+				
+				\unknowncommand\knowncommand
+				\inAccA\inAccB\inAccC
+				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} cool!~
+				
+				Insert literal tildes like ~\textasciitilde~. Hi!
+			\end{document}
+		\end{highlightblock}
+	\end{saveblock}
+		
+	\begin{frame}
+		\frametitle{Beautiful code}
+		And look at this beautiful code
+		\useblock{arealjumble}
+		with some text after it.
+		
+	\end{frame}
+
+	\begin{frame}
+		\frametitle{Beautiful code}
+		Even more beautiful when we center it:
+		\begin{center}
+			\consumeblock{arealjumble}
+		\end{center}
+	\end{frame}
+
+	% The name allows us to modify what we had set for it.
+	\updatehighlight{
+		name = accentB,
+		% Removes all commands and keywords from it
+		clear,
+		name = accentA,
+		add = {
+			\inAccB	
+		}
+	}
+	
+	\begin{saveblock}{nextpart}
+		\begin{highlightblock}[linewidth=0.6\textwidth]
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
 			
 			\begin{document}
 				Insert math like $\sqrt{2}$.
+				\inAccA\inAccB\inAccC
 				
 			\end{document}
 		\end{highlightblock}
 	\end{saveblock}
-	
-	\begin{frame}
-		\frametitle{Simple document}
-		And your code should now look like:
-		\consumeblock{simpledocument}
-		after it
-	\end{frame}
 
 	\begin{frame}
-		\frametitle{Simple document: Analysis}
+		\frametitle{Continuing}
+		Let's also show square brackets:
+		
+		\begin{center}
+			\useblock{nextpart}
+		\end{center}
+		
+		\pause
 		% Note we need to escape characters!
-		The first line was of the form \hll|\\documentclass[]\{\}|.
+		The first line was of the form \hll|\\documentclass[]\{\}|. Very interesting.
 		
 		\pause
 		Note the \hll|\$| are only green because we defined it as a keyword.
-		
 	\end{frame}
 
 	\begin{saveblock}{basicfigure}
@@ -138,6 +181,14 @@
 				
 			\end{column}
 		\end{columns}
+	\end{frame}
+
+	\section{Repository}
+	\begin{frame}
+		\begin{center}
+			{\Large Go to}\\
+			\url{https://github.com/vkuhlmann/highlight-latex}
+		\end{center}
 	\end{frame}
 	
 \end{document}

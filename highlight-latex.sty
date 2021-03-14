@@ -90,21 +90,12 @@
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
 \colorlet{codeBackground}{gray!10!white}
+\colorlet{comment}{green!40!black}
 
 \colorlet{accDefault}{blue!90!black}
 \definecolor{accStructure}{RGB}{0,149,255}
 
 \colorlet{accentB}{green!60!black}
-
-\lstset{
-	classoffset=0,
-	backgroundcolor=\color{codeBackground},
-	keywordstyle=\bfseries\color{accDefault},
-	basicstyle=\footnotesize\ttfamily,
-	commentstyle=\color{green!40!black},
-	numbers=none,
-	tabsize=2
-}
 
 \catcode`\{=11
 \let\myopenbrace={
@@ -116,20 +107,27 @@
 
 \lstdefinelanguage{ColoredLaTeX}
 [LaTeX]{TeX}{
+	backgroundcolor=\color{codeBackground},
+	keywordstyle=\bfseries\color{accDefault},
+	basicstyle=\footnotesize\ttfamily,
+	commentstyle=\color{comment},
+	numbers=none,
+	tabsize=2,
+	mathescape=false,
+	alsoletter={$@_!|?$},
+%
 	classoffset=0,
-	keywordstyle={\color{accDefault}},
-	texcsstyle={*\color{accDefault}},
-	moretexcs={subsection,thesubsection,thesection,greek,Greek,Nwords,enumbinary,foreignlanguage,theoremstyle},
+	keywordstyle=\color{accDefault},
+	texcsstyle=*\color{accDefault},
+	moretexcs={subsection,thesubsection,thesection,theoremstyle},
 	deletetexcs={begin,end},
 %
 	classoffset=1,
-	keywordstyle={\color{accStructure}},
-	texcsstyle={*\color{accStructure}},
+	keywordstyle=\color{accStructure},
+	texcsstyle=*\color{accStructure},
 	moretexcs={begin,end},
-%	
+%
 	classoffset=2,
-	%moredelim=[s][\bfseries\color{green!30!black}]{!}{!},
-	%moredelim=[is][\space]{~}{~},
 	escapeinside=~~,
 %	
 	classoffset=0,
@@ -146,6 +144,22 @@
 \lstset{language=ColoredLaTeX}
 
 
+\newcommand{\hllDelimDollar}[1][\color{green!40!black}]{%
+	\lstset{
+		classoffset=2,
+		moredelim=**[s][#1]{$}{$},
+		classoffset=0
+	}%
+}
+
+\newcommand{\hllDelimParen}[1][\color{green!40!black}]{%
+	\lstset{
+		classoffset=2,
+		moredelim=**[s][#1]{\(}{\)},
+		classoffset=0
+	}%
+}
+
 \def\hll@assignlabel#1#2{%
 	\expandafter\gdef\csname hll@labeltoclassoffset@#1\endcsname{#2}%
 }
@@ -159,16 +173,28 @@
 % =========================
 
 \newcommand{\hllPrepareBlock}{%
-%	\colorlet{codeBackground}{grayCodeBackground}%
 	\lstset{framesep=0.1cm,framerule=0.6pt}%
 	\def\setHighlightFrame##1{%
 		\lstset{frame=##1}%
 	}%
 	\expandafter\setHighlightFrame\expandafter{\@highlight@frame}%
-	\lstset{belowskip=0pt,aboveskip=0pt,gobble=\defaultgobble}%
+	\lstset{belowskip=0pt,aboveskip=0pt,belowcaptionskip=0pt,gobble=\defaultgobble}%
+	\setlength\parskip{0pt}%
+	\setlength\parindent{0pt}%
 }
 
 \lstnewenvironment{highlightblock}[1][]
+{%
+	\vspace{\hllBeforeSkip}%
+	\begingroup
+	\hllPrepareBlock\lstset{#1}%
+}{%
+	\nointerlineskip
+	\endgroup
+	\vspace{\hllAfterSkip}%
+}
+
+\lstnewenvironment{hllblock}[1][]
 {%
 	\vspace{\hllBeforeSkip}%
 	\begingroup
@@ -322,16 +348,86 @@
 
 \def\hll@update@addmacro#1#2{%
 	\if\noexpand#2\relax
-	\edef\keywordpure{\expandafter\@gobble\string#2}%
-	\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
+		\edef\keywordpure{\expandafter\@gobble\string#2}%
+		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
 	\expandafter\callwithpure\expandafter{\keywordpure}%
 	\else
-	\hll@update@addmacro@i{#1}{#2}%
+		\hll@update@addmacro@i{#1}{#2}%
 	\fi
 }
 
 \def\hll@update@addmacro@i#1#2{%
-	\lstset{deletetexcs={#2},classoffset=#1,moretexcs={#2},classoffset=0}%
+	\lstset{
+		classoffset=0,deletetexcs={#2},
+		classoffset=1,deletetexcs={#2},
+		classoffset=#1,moretexcs={#2},
+		classoffset=0
+	}%
+}
+
+
+%%% KEY: add
+%%% --------
+
+\define@key{updatehighlight}{add}{%
+	\hll@update@add{#1}%
+}
+
+\def\hll@update@add#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@additem{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@hll@update@classoffset}
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@additem#1#2{%
+	\if\noexpand#2\relax
+		\edef\keywordpure{\expandafter\@gobble\string#2}%
+		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
+		\expandafter\callwithpure\expandafter{\keywordpure}%
+	\else
+		\hll@update@addkeyword{#1}{#2}%
+	\fi
+}
+
+%%% KEY: remove
+%%% -----------
+
+\define@key{updatehighlight}{remove}{%
+	\hll@update@remove{#1}%
+}
+
+\def\hll@update@remove#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@removeitem{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@hll@update@classoffset}
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@removeitem#1#2{%
+	\if\noexpand#2\relax
+		\edef\keywordpure{\expandafter\@gobble\string#2}%
+		\def\callwithpure##1{\hll@update@removemacro{#1}{##1}}%
+		\expandafter\callwithpure\expandafter{\keywordpure}%
+	\else
+		\hll@update@removekeyword{#1}{#2}%
+	\fi
+}
+
+\def\hll@update@removemacro#1#2{%
+	\lstset{
+		classoffset={#1},
+		deletetexcs={#2}
+	}%
+}
+
+\def\hll@update@removekeyword#1#2{%
+	\lstset{
+		classoffset={#1},
+		deletekeywords={#2}
+	}%
 }
 
 
@@ -352,12 +448,17 @@
 }
 
 \def\hll@update@addkeyword#1#2{%
-	\lstset{deletetexcs={#2},classoffset=#1,otherkeywords={#2},morekeywords={#2},classoffset=0}%
+	\lstset{
+		classoffset=0,deletekeywords={#2},
+		classoffset=1,deletekeywords={#2},
+		classoffset=#1,otherkeywords={#2},morekeywords={#2},
+		classoffset=0
+	}%
 }
 
 
 %%% KEY: style
-%%% -----------
+%%% ----------
 
 \define@key{updatehighlight}{style}{%
 	\hll@update@fixclassoffset
@@ -399,6 +500,23 @@
 		classoffset=#1,
 		keywordstyle={\color{#2}},
 		texcsstyle={*\color{#2}},
+	}%
+}
+
+%%% KEY: clear
+%%% ----------
+
+\define@key{updatehighlight}{clear}[]{%
+	\hll@update@fixclassoffset
+	\expandafter\hll@update@clear\expandafter{\the\c@hll@update@classoffset}%
+}
+
+\def\hll@update@clear#1{%
+	\lstset{
+		classoffset=#1,
+		texcs={},
+		keywords={},
+		classoffset=0
 	}%
 }
 
