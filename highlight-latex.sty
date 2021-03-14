@@ -134,7 +134,7 @@
 \lstnewenvironment{highlightblock}[1][]
 {\begingroup\hllPrepareBlock\lstset{#1}}{\endgroup}
 
-\newenvironment{savecode}[1]{%
+\newenvironment{saveblock}[1]{%
 	\expandafter\ifx\csname @codebox@#1\endcsname\relax
 		\expandafter\newbox\csname @codebox@#1\endcsname\relax
 	\fi
@@ -152,11 +152,11 @@
 	\endgroup
 }
 
-\newcommand\copycode[1]{%
+\newcommand\useblock[1]{%
 	\expandafter\usebox\csname @codebox@#1\endcsname\par
 }
 
-\newcommand\consumecode[1]{%
+\newcommand\consumeblock[1]{%
 	\leavevmode\expandafter\box\csname @codebox@#1\endcsname\relax
 	\expandafter\let\csname @codebox@#1\endcsname\relax\par
 }
