@@ -1,5 +1,5 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{highlight-latex}[2021/03/13]
+\ProvidesPackage{highlight-latex}[2021/03/14]
 
 % Copyright (c) 2021 Vincent Kuhlmann
 % 
@@ -30,18 +30,51 @@
 \RequirePackage{xkeyval}
 \RequirePackage{etoolbox}
 
-\def\@highlight@frame{lines}
+% Snippet source:
+% https://tex.stackexchange.com/questions/406015/defining-macro-gsetlength-as-global-setlength-reliable
+\gdef\gsetlength#1#2{%
+	\begingroup
+		\setlength\skip@{#2}%
+		\global#1=\skip@
+	\endgroup
+}
+
+
+\def\@highlight@frame{none}
+\newlength{\hll@offset@fixskip}
+\setlength{\hll@offset@fixskip}{0pt}
+
 \newif\ifhllStyleAnywhere
-\newcommand\defaultgobble{4}
+\newcommand\defaultgobble{0}
+\newif\ifhllDebugFrame
+%\hllDebugFrametrue
+\newlength\hllBeforeSkip
+\setlength\hllBeforeSkip{2pt}
+\newlength\hllAfterSkip
+\setlength\hllAfterSkip{0pt}
+
 
 \DeclareOptionX{frame}{
-	%\typeout{Frame option was supplied}
+	\setframe{#1}
+}
+
+\DeclareOptionX{noframe}{
+	\setframe{none}
+}
+
+\def\setframe#1{%
+	\def\frameval{#1}%
 	\ifx\relax#1\relax
-		\gdef\@highlight@frame{lines}
-		%\typeout{Frame without value}
+		\def\frameval{lines}%
+	\fi
+	\def\linesvalue{lines}%
+	%
+	\xdef\@highlight@frame{\frameval}%
+	%
+	\ifx\frameval\linesvalue
+		\gsetlength{\hll@offset@fixskip}{6pt}%
 	\else
-		\gdef\@highlight@frame{#1}
-		%\typeout{Frame was supplied with value #1}
+		\gsetlength{\hll@offset@fixskip}{0pt}%
 	\fi
 }
 
@@ -50,7 +83,7 @@
 }
 
 \DeclareOptionX*{\PackageWarning{highlight-latex}{`\CurrentOption' ignored}}
-\ExecuteOptionsX{}
+\ExecuteOptionsX{frame=lines}
 
 \ProcessOptionsX\relax
 
@@ -121,6 +154,10 @@
 \hll@assignlabel{structure}{1}
 
 
+% =========================
+%   block & inline markup
+% =========================
+
 \newcommand{\hllPrepareBlock}{%
 %	\colorlet{codeBackground}{grayCodeBackground}%
 	\lstset{framesep=0.1cm,framerule=0.6pt}%
@@ -128,11 +165,24 @@
 		\lstset{frame=##1}%
 	}%
 	\expandafter\setHighlightFrame\expandafter{\@highlight@frame}%
-	\lstset{belowskip=0pt,gobble=\defaultgobble}%
+	\lstset{belowskip=0pt,aboveskip=0pt,gobble=\defaultgobble}%
 }
 
 \lstnewenvironment{highlightblock}[1][]
-{\begingroup\hllPrepareBlock\lstset{#1}}{\endgroup}
+{%
+	\vspace{\hllBeforeSkip}%
+	\begingroup
+	\hllPrepareBlock\lstset{#1}%
+}{%
+	\endgroup
+	\vspace{\hllAfterSkip}%
+}
+
+\def\hll{\lstinline}
+
+% ================
+%   block saving
+% ================
 
 \newenvironment{saveblock}[1]{%
 	\expandafter\ifx\csname @codebox@#1\endcsname\relax
@@ -147,18 +197,39 @@
 		\def\noexpand\@currenvir{\@currenvir}%
 		\def\noexpand\@currenvline{\on@line}}%
 	\@bracehack
-	\begingroup\ignorespaces
+	\begingroup\vspace{\hll@offset@fixskip}
+	\ignorespaces%
 }{%
 	\endgroup
 }
 
 \newcommand\useblock[1]{%
-	\expandafter\usebox\csname @codebox@#1\endcsname\par
+	\ifhllDebugFrame
+		\par
+		{%
+			\setlength{\fboxsep}{0pt}%
+			\fcolorbox{orange}{red}{\expandafter\usebox\csname @codebox@#1\endcsname}%
+		}%
+		\par
+	\else
+		\par\expandafter\usebox\csname @codebox@#1\endcsname\par
+	\fi
 }
 
 \newcommand\consumeblock[1]{%
-	\leavevmode\expandafter\box\csname @codebox@#1\endcsname\relax
-	\expandafter\let\csname @codebox@#1\endcsname\relax\par
+	\ifhllDebugFrame
+		\par
+		{%
+			\setlength{\fboxsep}{0pt}%
+			\setlength{\fboxrule}{1pt}%
+			\fcolorbox{orange}{red}{\leavevmode\expandafter\box\csname @codebox@#1\endcsname\relax}%
+		}
+		\par
+		\expandafter\let\csname @codebox@#1\endcsname\relax
+	\else
+		\par\leavevmode\expandafter\box\csname @codebox@#1\endcsname\relax\par
+		\expandafter\let\csname @codebox@#1\endcsname\relax
+	\fi
 }
 
 % ===================

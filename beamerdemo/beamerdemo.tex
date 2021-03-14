@@ -21,7 +21,7 @@
 	name = default,
 	color = {blue!90!black},
 	macros = {
-		\knowncommand
+		\knowncommand, \includegraphics
 	}
 }
 
@@ -68,6 +68,8 @@
 	}
 }
 
+\def\defaultgobble{6}
+
 \begin{document}
 	\begin{frame}
 		\titlepage
@@ -76,7 +78,7 @@
 	\end{frame}
 
 	\begin{saveblock}{simpledocument}
-		\begin{highlightblock}[linewidth=19em,gobble=4]
+		\begin{highlightblock}[linewidth=19em,gobble=6]
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
@@ -94,4 +96,48 @@
 		\consumeblock{simpledocument}
 		after it
 	\end{frame}
+
+	\begin{frame}
+		\frametitle{Simple document: Analysis}
+		% Note we need to escape characters!
+		The first line was of the form \hll|\\documentclass[]\{\}|.
+		
+		\pause
+		Note the \hll|\$| are only green because we defined it as a keyword.
+		
+	\end{frame}
+
+	\begin{saveblock}{basicfigure}
+		\begin{highlightblock}[linewidth=0.6\textwidth]
+			\begin{figure}
+				\includegraphics
+				[width=0.9\linewidth]
+				{myPlot.pdf}
+				
+				\caption{My plot}
+				\label{fig:myplot}
+			\end{figure}
+		\end{highlightblock}
+	\end{saveblock}
+
+	\begin{saveblock}{figureplacement}
+		\begin{highlightblock}[linewidth=0.4\textwidth]
+			\begin{figure}[htbp]
+		\end{highlightblock}
+	\end{saveblock}
+
+	\begin{frame}
+		\frametitle{Next to eachother}
+		\begin{columns}
+			\begin{column}{0.6\textwidth}
+				\consumeblock{basicfigure}
+			\end{column}
+			\begin{column}{0.4\textwidth}
+				You could have here code too:
+				\consumeblock{figureplacement}
+				
+			\end{column}
+		\end{columns}
+	\end{frame}
+	
 \end{document}
