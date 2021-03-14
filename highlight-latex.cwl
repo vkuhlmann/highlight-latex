@@ -7,5 +7,10 @@
 \end{latexlight}#S
 \colorlet{name}{specification}
 \definecolor{name}{type}{specification}
+\hll|text|
 \begin{highlightblock}
 \end{highlightblock}#S
+\begin{hllblock}
+\end{hllblock}#S
+\hllDelimDollar
+\hllDelimParen

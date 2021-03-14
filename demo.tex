@@ -8,103 +8,121 @@
 \usepackage{parskip}
 \usepackage[dutch]{babel}
 \usepackage{multicol}
+\usepackage{hyperref}
 
 \geometry{
 	paperwidth=182mm,
-	paperheight=80mm,
-	margin=1.5cm
+	paperheight=85mm,
+	margin=1cm
 }
 
-% All options exposed here. Feel free to delete or comment out what you want!
-% Colors accA ... accF. These are the default colors.
+\pagestyle{empty}
 
-\colorlet{curlyBrackets}{red!50!blue}
-\colorlet{squareBrackets}{blue!50!white}
-\colorlet{codeBackground}{gray!10!white}
-\renewcommand{\defaultgobble}{6}
+% Override if you want. Else you can delete it.
+%\colorlet{curlyBrackets}{red!50!blue}
+%\colorlet{squareBrackets}{blue!50!white}
+%\colorlet{codeBackground}{gray!10!white}
+%\colorlet{comment}{green!40!black}
+\def\defaultgobble{6}
 
 \updatehighlight{
 	name = default,
+	% 90% blue, remaining is black
 	color = {blue!90!black},
-	macros = {
+	add = {
 		\knowncommand
-	}
+	},
+	% You can't have blank lines when providing these key-values
+	% (blank line means new paragraph, and that terminates this command)
+	% So use percent signs (%) to comment out the newline character.
+	%
+	name = structure,
+	add = {
+		% Default:
+		%\begin, \end
+	},
+	%^ This extra comma doesn't hurt. In fact, it helps when you're
+	% reordering code; you don't want missing comma's.
 }
 
-%\definecolor{accA}{RGB}{0,149,255}
-%
-%\updatehighlight{
-%	name = structure,
-%	color = accA,
-%	macros = {
-%		\begin, \end
-%	}
-%}
-
-\colorlet{accB}{green!60!black}
 \updatehighlight{
+	% Some characters might not work as keyword. Don't go too
+	% crazy.
+	name = greenDollar,
+	style = {\itshape\color{green!70!black}},
+	add = {
+		% The dollar sign is provided an extra time just to
+		% calm down TeXstudio's code highlighting.
+		$, $
+	},
+%
+	name = accentA,
+	color = green!60!black,
+	add = {
+		\inAccA, Hi!
+	},
+%
 	name = accentB,
-	color = accB,
-	macros = {
+	color = red!60!black,
+	add = {
 		\inAccB
 	},
-	keywords = { % Non-commands you want to highlight
-		number
-	}
-}
-
-
-\colorlet{accC}{red!60!black}
-
-\updatehighlight{
+%
 	name = accentC,
-	color = accC,
-	macros = {
-		\inAccC	
+	color = orange!100!black,
+	add = {
+		\inAccC
 	}
 }
-
-\colorlet{accD}{orange!100!black}
-
-\updatehighlight{
-	name = accentD,
-	color = accD,
-	macros = {
-		\inAccD
-	}
-}
-
 
 \begin{document}
-	\begin{multicols*}{2}
-		For this, change the maximal number depth
+	\begin{multicols}{2}
+		And look at this beautiful code
 		\begin{highlightblock}
 			% Here is some code
 			\setcounter{secnumdepth}{1}
 			\begin{document}
-				\section{With number (depth 1)}
+				\section{My section (and Hi!)}
 				
-				\setcounter{secnumdepth}{0}
-				\section{No number}
 				\unknowncommand\knowncommand
-				\inAccB\inAccC\inAccD
-				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} sneaky!~
+				\inAccA\inAccB\inAccC
+				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} cool!~
+				
+				Insert literal tildes like ~\textasciitilde~. Hi!
 			\end{document}
 		\end{highlightblock}
-		and some text after it.
+		with some text after it.
+		
+		\vfill\leavevmode\columnbreak
+		
+		% The name allows us to modify what we had set for it.
+		\updatehighlight{
+			name = accentB,
+			% Removes all commands and keywords from it
+			clear,
+			name = accentA,
+			add = {
+				\inAccB	
+			}
+		}
 		
 		Let's also show square brackets:
-		\begin{highlightblock}[linewidth=19em]
+		\begin{highlightblock}
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
 			
 			\begin{document}
 				Insert math like $\sqrt{2}$.
+				\inAccA\inAccB\inAccC
 				
 			\end{document}
 		\end{highlightblock}
 	
-		We can also have code inline, like \lstinline|\thesection|, or \lstinline|\author{you}|.
-	\end{multicols*}
+		The first line was of the form \hll|\documentclass[]{}|. Very interesting.
+		Note the \hll|$| are only green because we defined it as a keyword.
+	\end{multicols}
+	\begin{center}
+		Go to \url{https://github.com/vkuhlmann/highlight-latex}
+	\end{center}
 \end{document}
