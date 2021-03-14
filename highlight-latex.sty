@@ -114,7 +114,7 @@
 
 
 \def\hll@assignlabel#1#2{%
-	\expandafter\gdef\csname @highlight@latex@label@#1\endcsname{#2}%
+	\expandafter\gdef\csname hll@labeltoclassoffset@#1\endcsname{#2}%
 }
 
 \hll@assignlabel{default}{0}
@@ -161,15 +161,38 @@
 	\expandafter\let\csname @codebox@#1\endcsname\relax\par
 }
 
+% ===================
+%   updatehighlight
+% ===================
 
-\def\@highlight@latex@label{}
+\def\hll@update@label{}
 
 \newcounter{hll@update@state}
 
-\newcounter{highlight@latex@nextclassoffset}
-\setcounter{highlight@latex@nextclassoffset}{5}
+\newcounter{hll@update@nextclassoffset}
+\setcounter{hll@update@nextclassoffset}{5}
 
-\newcounter{highlight@latex@classoffset}
+\newcounter{hll@update@classoffset}
+
+\def\hll@update@fixclassoffset{%
+	\ifnum\value{hll@update@state}<1\relax
+	\setcounter{hll@update@classoffset}{\thehll@update@nextclassoffset}%
+	\stepcounter{hll@update@nextclassoffset}%
+	\setcounter{hll@update@state}{1}%
+	\fi
+}
+
+\newcommand{\updatehighlight}[1]{%
+	\setcounter{hll@update@state}{-1}%
+	\gdef\hll@update@label{}%
+	\setkeys{updatehighlight}{#1}%
+	%
+	\lstset{classoffset=0}%
+}
+
+
+%%% KEY: label
+%%% ----------
 
 \define@key{updatehighlight}{label}{%
 	\hll@update@setlabel{#1}%
@@ -180,29 +203,34 @@
 }
 
 \def\hll@update@setlabel#1{
-	\gdef\@highlight@latex@label{#1}%
-	\expandafter\def\expandafter\@capturedlabel\expandafter{\csname @highlight@latex@label@#1\endcsname}%
+	\gdef\hll@update@label{#1}%
+	\expandafter\def\expandafter\@capturedlabel\expandafter{\csname hll@labeltoclassoffset@#1\endcsname}%
 	\expandafter\unless\expandafter\ifx\@capturedlabel\relax\relax
 		% Label exists
 		\edef\@val{\@capturedlabel}%
-		\setcounter{highlight@latex@classoffset}{\@val}%
+		\setcounter{hll@update@classoffset}{\@val}%
 		\setcounter{hll@update@state}{1}%
 	\else
 		% Allocate new label
-		\edef\@val{\thehighlight@latex@nextclassoffset}%
-		\setcounter{highlight@latex@classoffset}{\@val}%
-		\stepcounter{highlight@latex@nextclassoffset}%
+		\edef\@val{\thehll@update@nextclassoffset}%
+		\setcounter{hll@update@classoffset}{\@val}%
+		\stepcounter{hll@update@nextclassoffset}%
 		\setcounter{hll@update@state}{1}%
 		%
 		\expandafter\xdef\@capturedlabel{\@val}%
 	\fi
 }
 
+%%% KEY: classoffset
+%%% ----------------
 
 \define@key{updatehighlight}{classoffset}{%
-	\setcounter{highlight@latex@classoffset}{#1}%
+	\setcounter{hll@update@classoffset}{#1}%
 	\setcounter{hll@update@state}{1}%
 }
+
+%%% KEY: commands
+%%% -------------
 
 \define@key{updatehighlight}{macros}{%
 	\hll@update@macros{#1}%
@@ -211,6 +239,54 @@
 \define@key{updatehighlight}{commands}{%
 	\hll@update@macros{#1}%
 }
+
+
+\def\hll@update@macros#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@addmacro{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@hll@update@classoffset}
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@addmacro#1#2{%
+	\if\noexpand#2\relax
+	\edef\keywordpure{\expandafter\@gobble\string#2}%
+	\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
+	\expandafter\callwithpure\expandafter{\keywordpure}%
+	\else
+	\hll@update@addmacro@i{#1}{#2}%
+	\fi
+}
+
+\def\hll@update@addmacro@i#1#2{%
+	\lstset{deletetexcs={#2},classoffset=#1,moretexcs={#2},classoffset=0}%
+}
+
+
+%%% KEY: keywords
+%%% -------------
+
+\define@key{updatehighlight}{keywords}{%
+	\hll@update@keywords{#1}%
+}
+
+
+\def\hll@update@keywords#1{%
+	\hll@update@fixclassoffset
+	\def\@inv##1{\forcsvlist{\hll@update@addkeyword{##1}}{#1}}%
+	\expandafter\@inv\expandafter{\the\c@hll@update@classoffset}%
+	%
+	\setcounter{hll@update@state}{2}%
+}
+
+\def\hll@update@addkeyword#1#2{%
+	\lstset{deletetexcs={#2},classoffset=#1,otherkeywords={#2},morekeywords={#2},classoffset=0}%
+}
+
+
+%%% KEY: style
+%%% -----------
 
 \define@key{updatehighlight}{style}{%
 	\hll@update@fixclassoffset
@@ -221,75 +297,7 @@
 		\fi
 	\fi
 	%
-	\expandafter\hll@update@setstyle\expandafter{\the\c@highlight@latex@classoffset}{#1}%
-}
-
-\define@key{updatehighlight}{color}{%
-	\hll@update@fixclassoffset
-	\unless\ifhllStyleAnywhere
-		\ifnum\value{hll@update@state}>1\relax
-			\setcounter{hll@update@state}{0}%
-			\hll@update@fixclassoffset
-		\fi
-	\fi
-	%
-	\expandafter\hll@update@setcolor\expandafter{\the\c@highlight@latex@classoffset}{#1}%
-}
-
-\define@key{updatehighlight}{keywords}{%
-	\hll@update@keywords{#1}%
-}
-
-\def\hll@update@macros#1{%
-	\hll@update@fixclassoffset
-	\def\@inv##1{\forcsvlist{\hll@update@addmacro{##1}}{#1}}%
-	\expandafter\@inv\expandafter{\the\c@highlight@latex@classoffset}
-	%
-	\setcounter{hll@update@state}{2}%
-}
-
-\def\hll@update@addmacro#1#2{%
-	\if\noexpand#2\relax
-		\edef\keywordpure{\expandafter\@gobble\string#2}%
-		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
-		\expandafter\callwithpure\expandafter{\keywordpure}%
-	\else
-		\hll@update@addmacro@i{#1}{#2}%
-	\fi
-}
-
-\def\hll@update@addmacro@i#1#2{%
-	\lstset{deletetexcs={#2},classoffset=#1,moretexcs={#2},classoffset=0}%
-}
-
-\def\hll@update@keywords#1{%
-	\hll@update@fixclassoffset
-	\def\@inv##1{\forcsvlist{\hll@update@addkeyword{##1}}{#1}}%
-	\expandafter\@inv\expandafter{\the\c@highlight@latex@classoffset}%
-	%
-	\setcounter{hll@update@state}{2}%
-}
-
-\def\hll@update@addkeyword#1#2{%
-	\lstset{deletetexcs={#2},classoffset=#1,otherkeywords={#2},morekeywords={#2},classoffset=0}%
-}
-
-%%
-
-\def\hll@update@fixclassoffset{%
-	\ifnum\value{hll@update@state}<1\relax
-		\setcounter{highlight@latex@classoffset}{\thehighlight@latex@nextclassoffset}%
-		\stepcounter{highlight@latex@nextclassoffset}%
-		\setcounter{hll@update@state}{1}%
-	\fi
-}
-
-\def\hll@update@setcolor#1#2{%
-	\lstset{%
-		classoffset=#1,
-		keywordstyle={\color{#2}},
-		texcsstyle={*\color{#2}},
-	}%
+	\expandafter\hll@update@setstyle\expandafter{\the\c@hll@update@classoffset}{#1}%
 }
 
 \def\hll@update@setstyle#1#2{%
@@ -300,11 +308,27 @@
 	}%
 }
 
-\newcommand{\updatehighlight}[1]{%
-	\setcounter{hll@update@state}{-1}%
-	\gdef\@highlight@latex@label{}%
-	\setkeys{updatehighlight}{#1}%
+%%% KEY: color
+%%% ----------
+
+\define@key{updatehighlight}{color}{%
+	\hll@update@fixclassoffset
+	\unless\ifhllStyleAnywhere
+		\ifnum\value{hll@update@state}>1\relax
+			\setcounter{hll@update@state}{0}%
+			\hll@update@fixclassoffset
+		\fi
+	\fi
 	%
-	\lstset{classoffset=0}%
+	\expandafter\hll@update@setcolor\expandafter{\the\c@hll@update@classoffset}{#1}%
 }
+
+\def\hll@update@setcolor#1#2{%
+	\lstset{%
+		classoffset=#1,
+		keywordstyle={\color{#2}},
+		texcsstyle={*\color{#2}},
+	}%
+}
+
 
