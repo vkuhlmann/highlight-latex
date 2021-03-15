@@ -16,7 +16,7 @@ alt="highlight demo" title="Highlight demo">
 ## Manual installation
 
 1. Download the `.sty` file, e.g.
-[right click here and select 'save as'](https://github.com/vkuhlmann/highlight-latex/raw/main/highlight-latex.sty).
+[right click here and select 'save as'](https://github.com/vkuhlmann/highlight-latex/raw/main/highlightlatex.sty).
 2. Copy the file to the directory where your `.tex` file is at...
 3. ... or make it available for all your `.tex` files by placing the file in
    your TEXMF root.
@@ -43,12 +43,12 @@ alt="highlight demo" title="Highlight demo">
 
    **Adding the package**
 
-   Add a new directory called `highlight-latex` and place the `.sty` file in it.
+   Add a new directory called `highlightlatex` and place the `.sty` file in it.
    Then refresh the file name database:
    * For MiKTeX on Windows open MiKTeX Console and execute `Tasks > Refresh file
      name database`.
    * For TeX Live on Linux or Mac, execute in a terminal `sudo texhash`.
-4. Add `\usepackage{highlight-latex}` to your `.tex` file.
+4. Add `\usepackage{highlightlatex}` to your `.tex` file.
 5. For usage of this package, consult the demo files, or read the
    documentation below.
 
