@@ -1,8 +1,8 @@
 ---
-title: "Package highlight-latex manual"
-author: Vincent Kuhlmann
-date: 15 March 2021
-geometry: margin=2cm
+#title: "Package highlight-latex manual"
+#author: Vincent Kuhlmann
+#date: 15 March 2021
+#geometry: margin=2cm
 # output: pdf_document
 ---
 
