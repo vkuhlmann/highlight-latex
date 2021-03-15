@@ -261,3 +261,7 @@ This gives you full control over how tight or spacious your document looks.
 Just use commands like `\medskip` to add extra spacing. The package doesn't
 currently include an option to have that done everywhere automatically.
 
+## License
+
+The package is available under MIT License. See LICENSE.txt
+
