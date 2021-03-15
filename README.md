@@ -1,3 +1,11 @@
+---
+title: "Package highlight-latex manual"
+author: Vincent Kuhlmann
+date: 15 March 2021
+geometry: margin=2cm
+# output: pdf_document
+---
+
 # Highlight LaTeX: Pretty LaTeX code within LaTeX
 
 Teaching other people LaTeX is great fun, and I've seen plenty of slides and
@@ -12,6 +20,8 @@ colored highlighting for LaTeX. The file `demo.tex` achieves this:
 
 <img src="assets/demoshowoff.png" width="600"
 alt="highlight demo" title="Highlight demo">
+
+<!-- ![Syntax highlight demonstration](assets/demoshowoff.png "Highlight demo") -->
 
 ## Manual installation
 
@@ -116,7 +126,7 @@ in a different color. You do this with
     % A name like 'focus' or 'orange' would be more descriptive,
     % this is just to show you can make up the name yourself.
     name = orangejuice,
-    color = orange
+    color = orange,
     add = {
         \tableofcontents
     }
@@ -142,6 +152,7 @@ within the argument is often irrelevant. If you need a comma in the value,
 surround your value with braces.
 
 The possible keys are:
+
 * **name**: Create or modify a named rule. This key is optional.
 
   The default keys are `default`, which includes a bunch of basic commands,
@@ -195,6 +206,7 @@ There are some global parameters involved in the appearance:
 Each line can be set independent of eachother, and each shows its default value.
 
 There are package options you can use as well:
+
 * **frame** (default `lines`): specify the frame you want around code. My
   favorites are `lines` and `none`. Check the
   [listings package documentation](https://www.ctan.org/pkg/listings) for all
@@ -213,7 +225,7 @@ as a real command. To prevent this behavior, everything from `\verb`, to the
 `verbatim`-environment, to the `listings` package the highlight LaTeX package
 uses temporarily changes the interpretation of characters that are still to be
 read. The blackslash before maketitle in `\hll|\maketitle|` will be read as
-`just text' (a _letter_ technically).
+'just text' (a _letter_ technically).
 
 When content has already been interpreted, like the `frame`-environment in
 `beamer` does, this trick can't be done anymore. Instead, you either need to
@@ -249,10 +261,10 @@ loaded in memory till your PDF has fully generated. The `\consumeblock` works
 like `\useblock`, except the saved block is deleted from memory after its use.
 Note this can also result in unexpected behavior, for example animations in a
 beamer frame might need the code line to be executed multiple times. Use
-`\useblock` when you can't make the guarantee this is the last use.
+`\useblock` when you can't make the guarantee the last use of a block.
 
-For this special, but very important, situation, I've created a separate demo,
-which you find at `deamerdemo/deamerdemo.tex`.
+Fragile breaking situations has it's own demo, which you find at
+`deamerdemo/deamerdemo.tex`.
 
 ## Adding extra space
 
@@ -263,5 +275,5 @@ currently include an option to have that done everywhere automatically.
 
 ## License
 
-The package is available under MIT License. See LICENSE.txt
+The package is available under MIT License. See LICENSE.txt.
 
