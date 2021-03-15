@@ -22,7 +22,8 @@ colored highlighting for LaTeX. The file `demo.tex` achieves this:
 <img src="assets/demoshowoff.png" width="600"
 alt="highlight demo" title="Highlight demo">
 
-<!-- ![Syntax highlight demonstration](assets/demoshowoff.png "Highlight demo") -->
+<!-- ![Syntax highlight demonstration](assets/demoshowoff.png "syntax highlighting
+demonstration. Partial output of `demo.tex`") -->
 
 ## Manual installation
 
@@ -120,13 +121,12 @@ recommend putting it in your preamble (before the `\begin{document}`).
 
 ## Custom highlighting rules
 
-As shown `demo.tex`, you can put any command or keyword you want to highlight on
-in a different color. You do this with
+As shown `demo.tex`, you can put any command or keyword you want to highlight in
+a different color. You do this with
 ```
 \updatehighlight{
-    % A name like 'focus' or 'orange' would be more descriptive,
-    % this is just to show you can make up the name yourself.
-    name = orangejuice,
+    % Whatever name you like to refer it with.
+    name = spotlight,
     color = orange,
     add = {
         \tableofcontents
