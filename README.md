@@ -73,8 +73,8 @@ After having added the package, you can add LaTeX in two ways:
       Your file begins with a line of the form \hll|\documentclass[]{}|. The
       square brackets ...
 
-  The first non-space character following `\hll` is delimits the argument to
-  this command.
+  The first non-space character following `\hll` delimits the argument of this
+  command.
 
 * Block style:
 
