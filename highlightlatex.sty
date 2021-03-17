@@ -1,7 +1,8 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{highlightlatex}[2021/03/14]
+\ProvidesPackage{highlightlatex}[2021/03/17 highlightlatex v1.0.0 + Dev]
 
 % Repository: https://github.com/vkuhlmann/highlight-latex
+% Version: v1.0.0 + Dev
 
 % Copyright (c) 2021 Vincent Kuhlmann
 % 
@@ -290,12 +291,8 @@
 }
 
 
-%%% KEY: label
-%%% ----------
-
-\define@key{updatehighlight}{label}{%
-	\hll@update@setlabel{#1}%
-}
+%%% KEY: name
+%%% ---------
 
 \define@key{updatehighlight}{name}{%
 	\hll@update@setlabel{#1}%
@@ -328,46 +325,6 @@
 	\setcounter{hll@update@state}{1}%
 }
 
-%%% KEY: commands
-%%% -------------
-
-\define@key{updatehighlight}{macros}{%
-	\hll@update@macros{#1}%
-}
-
-\define@key{updatehighlight}{commands}{%
-	\hll@update@macros{#1}%
-}
-
-
-\def\hll@update@macros#1{%
-	\hll@update@fixclassoffset
-	\def\@inv##1{\forcsvlist{\hll@update@addmacro{##1}}{#1}}%
-	\expandafter\@inv\expandafter{\the\c@hll@update@classoffset}
-	%
-	\setcounter{hll@update@state}{2}%
-}
-
-\def\hll@update@addmacro#1#2{%
-	\if\noexpand#2\relax
-		\edef\keywordpure{\expandafter\@gobble\string#2}%
-		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
-	\expandafter\callwithpure\expandafter{\keywordpure}%
-	\else
-		\hll@update@addmacro@i{#1}{#2}%
-	\fi
-}
-
-\def\hll@update@addmacro@i#1#2{%
-	\lstset{
-		classoffset=0,deletetexcs={#2},
-		classoffset=1,deletetexcs={#2},
-		classoffset=#1,moretexcs={#2},
-		classoffset=0
-	}%
-}
-
-
 %%% KEY: add
 %%% --------
 
@@ -386,11 +343,29 @@
 \def\hll@update@additem#1#2{%
 	\if\noexpand#2\relax
 		\edef\keywordpure{\expandafter\@gobble\string#2}%
-		\def\callwithpure##1{\hll@update@addmacro@i{#1}{##1}}%
+		\def\callwithpure##1{\hll@update@addmacro{#1}{##1}}%
 		\expandafter\callwithpure\expandafter{\keywordpure}%
 	\else
 		\hll@update@addkeyword{#1}{#2}%
 	\fi
+}
+
+\def\hll@update@addmacro#1#2{%
+	\lstset{
+		classoffset=0,deletetexcs={#2},
+		classoffset=1,deletetexcs={#2},
+		classoffset=#1,moretexcs={#2},
+		classoffset=0
+	}%
+}
+
+\def\hll@update@addkeyword#1#2{%
+	\lstset{
+		classoffset=0,deletekeywords={#2},
+		classoffset=1,deletekeywords={#2},
+		classoffset={#1},otherkeywords={#2},morekeywords={#2},
+		classoffset=0
+	}%
 }
 
 %%% KEY: remove
@@ -421,43 +396,18 @@
 \def\hll@update@removemacro#1#2{%
 	\lstset{
 		classoffset={#1},
-		deletetexcs={#2}
+		deletetexcs={#2},
+		classoffset=0
 	}%
 }
 
 \def\hll@update@removekeyword#1#2{%
 	\lstset{
 		classoffset={#1},
-		deletekeywords={#2}
-	}%
-}
-
-
-%%% KEY: keywords
-%%% -------------
-
-\define@key{updatehighlight}{keywords}{%
-	\hll@update@keywords{#1}%
-}
-
-
-\def\hll@update@keywords#1{%
-	\hll@update@fixclassoffset
-	\def\@inv##1{\forcsvlist{\hll@update@addkeyword{##1}}{#1}}%
-	\expandafter\@inv\expandafter{\the\c@hll@update@classoffset}%
-	%
-	\setcounter{hll@update@state}{2}%
-}
-
-\def\hll@update@addkeyword#1#2{%
-	\lstset{
-		classoffset=0,deletekeywords={#2},
-		classoffset=1,deletekeywords={#2},
-		classoffset=#1,otherkeywords={#2},morekeywords={#2},
+		deletekeywords={#2},
 		classoffset=0
 	}%
 }
-
 
 %%% KEY: style
 %%% ----------
@@ -476,7 +426,7 @@
 
 \def\hll@update@setstyle#1#2{%
 	\lstset{%
-		classoffset=#1,
+		classoffset={#1},
 		keywordstyle={#2},
 		texcsstyle={*#2},
 	}%
@@ -499,7 +449,7 @@
 
 \def\hll@update@setcolor#1#2{%
 	\lstset{%
-		classoffset=#1,
+		classoffset={#1},
 		keywordstyle={\color{#2}},
 		texcsstyle={*\color{#2}},
 	}%
@@ -515,7 +465,7 @@
 
 \def\hll@update@clear#1{%
 	\lstset{
-		classoffset=#1,
+		classoffset={#1},
 		texcs={},
 		keywords={},
 		classoffset=0
