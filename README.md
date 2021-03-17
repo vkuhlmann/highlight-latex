@@ -67,6 +67,7 @@ demonstration. Partial output of `demo.tex`") -->
 ## Getting started
 
 After having added the package, you can add LaTeX in two ways:
+
 * Inline style:
 
       Your file begins with a line of the form \hll|\documentclass[]{}|. The
