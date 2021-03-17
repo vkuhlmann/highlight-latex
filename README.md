@@ -1,11 +1,11 @@
 <!-- ---
-title: "Package highlight-latex manual"
+title: "Package manual of highlightlatex"
 author: Vincent Kuhlmann
-date: 15 March 2021
+date: 17 March 2021
 geometry: margin=2cm
 output: pdf_document
----
--->
+--- -->
+
 
 # Highlight LaTeX: Pretty LaTeX code within LaTeX
 
@@ -22,8 +22,9 @@ colored highlighting for LaTeX. The file `demo.tex` achieves this:
 <img src="assets/demoshowoff.png" width="600"
 alt="highlight demo" title="Highlight demo">
 
-<!-- ![Syntax highlight demonstration](assets/demoshowoff.png "syntax highlighting
-demonstration. Partial output of `demo.tex`") -->
+<!-- ![An example of syntax highlighting using highlight-latex. This was generated
+by `demo.tex`.](assets/demoshowoff.png "Syntax highlighting
+example") -->
 
 ## Manual installation
 
@@ -86,10 +87,11 @@ After having added the package, you can add LaTeX in two ways:
           \end{document}
       \end{highlightblock}
 
-  To prevent indentation of our `highlightblock` (here one tab), to be shown as
-  part of the code, the `gobble` parameters strips them off. Play around with
-  it until everything looks right. I recommend to set this value globally using
-  `\def\defaultgobble{2}`. You can still override that, if necessary.
+  To prevent indentation of our `highlightblock` (here one tab) to be shown as
+  part of the code, the `gobble` parameter strips them off. Play around with it
+  until everything looks right. I recommend to set this value globally using
+  `\def\defaultgobble{2}`. You can still override it on a per-block basis, if
+  necessary.
 
   There are situations where width of the block could run out of the page. For
   example, when using beamer and storing a block as described in the section
@@ -117,16 +119,17 @@ rules:
 }
 ```
 
-The changes will affect only code after it. For a use as this example, I
-recommend putting it in your preamble (before the `\begin{document}`).
+The change will only affect code after it. I recommend issuing `updatehighlight`
+in your preamble (before the `\begin{document}`). In some situations you might
+want to change things mid-document. That's possible too.
 
 ## Custom highlighting rules
 
-As shown `demo.tex`, you can put any command or keyword you want to highlight in
-a different color. You do this with
+As shown in `demo.tex`, you can put any command or keyword you want to highlight
+in a different color. You do this with
 ```
 \updatehighlight{
-    % Whatever name you like to refer it with.
+    % name: How you like to refer to it. Allows you to modify the style later.
     name = spotlight,
     color = orange,
     add = {
@@ -149,7 +152,7 @@ two `\updatehighlight` in one. No need to close and reopen `\updatehighlight`
 for each highlighting rule.
 
 You might be tempted to add a blank line for clarity; that means a new paragraph
-too LaTeX, don't do it. Instead, just put a line with only a `%` sign. Spacing
+to LaTeX, don't do it. Instead, just put a line with only a `%` sign. Spacing
 within the argument is often irrelevant. If you need a comma in the value,
 surround your value with braces.
 
@@ -192,8 +195,9 @@ The possible keys are:
 * **style**: Specify a style for the rule. A rule can only have one style. If
   you specify a style after `add`, `remove`, `keywords` (deprecated), `macros`
   (deprecated) or `commands` (deprecated), this starts a new (unnamed) rule.
-  In practice, the only style which will probably work for you is only a color,
-  so just use it instead. But hey, you have the option if you want to. :)
+  In practice, the only style which will probably work for you is just a color.
+  For that, using the 'color' key is just a bit easier and neater.
+  But hey, you have the option to set whatever style you want. :)
 
 ## Global settings
 There are some global parameters involved in the appearance:
@@ -205,11 +209,12 @@ There are some global parameters involved in the appearance:
 \def\defaultgobble{0}
 ```
 
-Each line can be set independent of eachother, and each shows its default value.
+Each line can be set independent of each other, and each shows its default
+value.
 
 There are package options you can use as well:
 
-* **frame** (default `lines`): specify the frame you want around code. My
+* **frame** (default: `lines`): specify the frame you want around code. My
   favorites are `lines` and `none`. Check the
   [listings package documentation](https://www.ctan.org/pkg/listings) for all
   possibilities.
@@ -222,12 +227,12 @@ There are package options you can use as well:
 ## Fragile breaking situations (like beamer frames)
 
 When passing command arguments around, or storing environment content, LaTeX
-interprets all characters. This includes seeing `\maketitle` in `\hll|\maketitle|`
-as a real command. To prevent this behavior, everything from `\verb`, to the
-`verbatim`-environment, to the `listings` package the highlight LaTeX package
-uses temporarily changes the interpretation of characters that are still to be
-read. The blackslash before maketitle in `\hll|\maketitle|` will be read as
-'just text' (a _letter_ technically).
+interprets all characters. This includes seeing `\maketitle` in
+`\hll|\maketitle|` as a real command. To prevent this behavior, everything from
+`\verb`, to the `verbatim`-environment, to the `listings` package the highlight
+LaTeX package uses temporarily changes the interpretation of characters that are
+still to be read. The blackslash before maketitle in `\hll|\maketitle|` will be
+read as 'just text' (a _letter_ technically).
 
 When content has already been interpreted, like the `frame`-environment in
 `beamer` does, this trick can't be done anymore. Instead, you either need to
@@ -273,9 +278,23 @@ Fragile breaking situations has it's own demo, which you find at
 By default, highlight-latex follows an approach where it minimizes spacing.
 This gives you full control over how tight or spacious your document looks.
 Just use commands like `\medskip` to add extra spacing. The package doesn't
-currently include an option to have that done everywhere automatically.
+currently include an option to do it everywhere automatically.
 
 ## License
 
 The package is available under MIT License. See LICENSE.txt.
 
+## Credits
+
+Thanks for minor fixes:
+
+gemmaro
+
+---
+
+For any small fix, bug, feature request, unclarity etc., you're welcome to
+open an issue on
+
+[https://github.com/vkuhlmann/highlight-latex/issues](https://github.com/vkuhlmann/highlight-latex/issues)
+
+Thanks for thinking along!
