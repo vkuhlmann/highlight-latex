@@ -46,7 +46,7 @@
 \colorlet{codeBackground}{gray!6!white}
 
 \newcommand\fhref[2]{%
-	\href{#1}{#2}\footnote{\url{#1}}%
+	\href{#1}{#2}\;\footnote{\,\url{#1}}\,%
 }
 
 \newlength\centerlabelledwidth
@@ -137,7 +137,7 @@
 %
 % This package provides colored syntax highlighting for \LaTeX{} source code,
 % without aid from outside \LaTeX. This is in response to the general trend that people often fall back to verbatim for displaying code. This package aims to make good looking \LaTeX{} source code feasible for all users. For this, it
-% builds further on the generic `listings' package. A possible output is shown in \autoref{fig:demoOutput}.
+% builds further on the generic `listings' package. A possible output is shown in \autoref{fig:demoOutput}\,.
 
 % \end{abstract}
 % 
@@ -187,10 +187,10 @@
 % \begin{highlightblock}[gobble=5]
 %     Your basic document now looks like
 %     \begin{highlightblock}[gobble=2]
-%        \documentclass[a4paper]{article}
-%        \begin{document}
-%           Hello world!
-%        \end{document}
+%       \documentclass[a4paper]{article}
+%       \begin{document}
+%          Hello world!
+%       \end{document}
 %     \end{~{}~highlightblock}
 % \end{highlightblock}
 % \end{showcase}
@@ -212,8 +212,8 @@
 
 %
 % There are more keys you can provide. Check the
-% \href{https://www.ctan.org/pkg/listings}{\hll|listings| package
-% documentation}\footnote{\url{https://www.ctan.org/pkg/listings}} for options
+% \fhref{https://www.ctan.org/pkg/listings}{\hll|listings| package
+% documentation} for options
 % available to the \hll|lstlisting|-environment and \hll|lstset| command.
 %
 % \newbox\uphbox
@@ -263,7 +263,7 @@
 % You can use the \hll|xcolor| syntax for describing colors as well. If you find the
 % orange too bright, you can replace it with \hll|orange!90!black|: 90\% orange,
 % remaining is black. For more information on color definitions and name, refer
-% to \href{https://en.wikibooks.org/wiki/LaTeX/Colors}{LaTeX/Colors on Wikibooks}\footnote{\url{https://en.wikibooks.org/wiki/LaTeX/Colors}}.
+% to \fhref{https://en.wikibooks.org/wiki/LaTeX/Colors}{LaTeX/Colors on Wikibooks}.
 %
 % \iffalse\medskip\rule{5cm}{0.4pt}\medskip\fi
 %
@@ -471,8 +471,7 @@
 % 
 % \rule{5cm}{0.4pt}
 % 
-% For any small fix, bug, feature request, unclarity etc., you're welcome to
-% open an issue or pull-request on
+% For any bug, feature request, unclarity, or whatever else related to this package, you're welcome to open an issue or pull-request. Go to
 % 
 % \url{https://github.com/vkuhlmann/highlight-latex/issues}
 % 
