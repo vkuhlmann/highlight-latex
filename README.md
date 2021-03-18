@@ -166,7 +166,7 @@ The possible keys are:
 * **classoffset**: Set the `listings` classoffset manually. Try to avoid this.
   Use **name** to refer to existing rules instead.
 
-* **add**: Add a commands (`\mycommand`) oor keywords (`Hi!`) to the current
+* **add**: Add a command (`\mycommand`) or keyword (`Hi!`) to the current
   rule. The value can contain multiple values by opening braces, and comma
   separating values within them.
 
