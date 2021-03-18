@@ -22,13 +22,18 @@
     \updatehighlight{
     	name = default,
     	add = {
-    		\defaultgobble
+    		\defaultgobble,\colorlet,\includegraphics,\maketitle,\mycommand,\tableofcontents,\figref,\color
 	    },
     	name = hll,
     	color = orange!90!black,
     	add = {
-    		\hll, highlightblock, \updatehighlight
+    		\hll, highlightblock
     	},
+    	name = hllOth,
+    	color = red!90!black,
+    	add = {
+    		\useblock,\consumeblock,\updatehighlight,saveblock
+    	},    	
     	name = vert,
     	color = red,
     	add = {
@@ -250,7 +255,7 @@
 % \begin{showcase}[label=example]
 %	  \begin{highlightblock}[gobble=9]
 %         \updatehighlight{
-%           % name: How you like to refer to it. Allows you to modify the style later.
+%           % The name allows you to modify the style later.
 %           name = spotlight,
 %           color = orange,
 %           add = {
@@ -415,11 +420,11 @@
 % \emph{escape} code, or \emph{pre-process} the code outside a fragile breaking situation.
 % 
 % Escaping is done by preceding the special character with a backslash. For
-% example, \hll!\hll|\documentclass[]{}|! becomes \hll!\hll|\\documentclass[]\{\}|!.
+% example, \hll!\hll|\documentclass[]{}|! becomes \hll!\hll|\\!\hll!documentclass[]\{\}|!.
 % 
 % For large code blocks, this is undesirable. Therefore, the package provides for
-% a companion to the \hll|highlightblock|-environment: surround it with a \hll|saveblock|
-% environment which takes a single argument: a name to assign it. We use it to
+% a companion to the \hll|highlightblock|-environment: surround it with a \hll|saveblock|-environment
+% which takes a single argument: a name to assign it. We use it to
 % refer to it later. For example:
 % \begin{showcase}[label=example]
 %     \begin{highlightblock}[gobble=9]
