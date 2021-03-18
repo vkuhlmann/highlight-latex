@@ -120,8 +120,12 @@
 \end{document}
 %</driver>
 % \fi
+%
+% \newbox\cmdintitle
+% \setbox\cmdintitle=\hbox{\hll|highlightlatex|}%
+% \setbox\cmdintitle=\hbox{\adjustbox{height=2.0\height}{\usebox\cmdintitle}}
 % 
-% \title{Highlight \LaTeX{} manual}
+% \title{\vspace{-2cm}Package \usebox\cmdintitle{} manual}
 % \author{%
 %    Vincent Kuhlmann\\
 %     \texttt{vincent.kuhlmann@hotmail.com}
@@ -139,7 +143,7 @@
 % 
 % \tableofcontents
 % 
-% \vfil
+% %\vfil
 %
 % \begin{figure}[htbp]
 %     \centering
