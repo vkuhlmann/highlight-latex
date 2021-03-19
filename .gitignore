@@ -6,3 +6,7 @@
 *.out
 *.snm
 *.toc
+*.fdb_latexmk
+*.fls
+*.xdv
+.vscode/
