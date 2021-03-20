@@ -10,7 +10,7 @@ def main():
         print("Script does not take any arguments")
         return
     #extract_doc_from_dtx("highlightlatex.dtx", "highlightlatex_doc.tex")
-    generate_dtx("highlightlatex_doc.tex", None, "publish/highlightlatex.dtx")
+    generate_dtx("highlightlatex_doc.tex", "highlightlatex.sty", "publish/highlightlatex.dtx")
 
     pass
 
@@ -21,7 +21,7 @@ def generate_dtx(docFile, styFile, path):
 
             for l in templ:
                 if "%% DOC-PREAMBLE" in l:
-                    m = re.fullmatch(r"(?P<before>.*?)%% DOC-PREAMBLE(?P<after>.*)", l.strip())
+                    m = re.fullmatch(r"(?P<before>.*?)%% DOC-PREAMBLE(?P<after>.*)\n", l)
                     before = m.group("before")
                     after = m.group("after")
                     with open(docFile, "r") as doc:
@@ -31,7 +31,7 @@ def generate_dtx(docFile, styFile, path):
                             outp.write(before + docline + after)
 
                 elif "%% DOC-DOCUMENT" in l:
-                    m = re.fullmatch(r"(?P<before>.*?)%% DOC-DOCUMENT(?P<after>.*)", l.strip())
+                    m = re.fullmatch(r"(?P<before>.*?)%% DOC-DOCUMENT(?P<after>.*)\n", l)
                     before = m.group("before")
                     after = m.group("after")
                     with open(docFile, "r") as doc:
@@ -46,6 +46,9 @@ def generate_dtx(docFile, styFile, path):
                             if docline.startswith("\\end{document}"):
                                 break
                             line = docline
+                            if line.startswith("%"):
+                                continue
+
                             if stripIndent:
                                 if line.startswith("\t"):
                                     line = line[1:]
@@ -55,6 +58,16 @@ def generate_dtx(docFile, styFile, path):
                                     stripIndent = False
 
                             outp.write(before + line + after)
+                elif "%% STY" in l:
+                    m = re.fullmatch(r"(?P<before>.*?)%% STY(?P<after>.*)\n", l)
+                    before = m.group("before")
+                    after = m.group("after")
+                    with open(styFile, "r") as doc:
+                        for docline in doc:
+                            if docline.startswith("%%%"):
+                                continue
+                            docline = docline.replace("\t", "  ")
+                            outp.write(before + docline + after)
 
                 else:
                     outp.write(l)

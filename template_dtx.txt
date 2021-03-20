@@ -17,6 +17,13 @@
 %
 % %% DOC-DOCUMENT
 % 
+%
+% \section{Implementation}
+%
+%    \begin{macrocode}
+%% STY
+%    \end{macrocode}
+%
 % \Finale
 %
 \endinput

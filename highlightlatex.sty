@@ -33,8 +33,8 @@
 \RequirePackage{xkeyval}
 \RequirePackage{etoolbox}
 
-% Snippet source:
-% https://tex.stackexchange.com/questions/406015/defining-macro-gsetlength-as-global-setlength-reliable
+%% Snippet source:
+%% https://tex.stackexchange.com/questions/406015/defining-macro-gsetlength-as-global-setlength-reliable
 \gdef\gsetlength#1#2{%
 	\begingroup
 		\setlength\skip@{#2}%
@@ -56,7 +56,10 @@
 \newlength\hllAfterSkip
 \setlength\hllAfterSkip{0pt}
 
+%    \end{macrocode}
+% \subsection{Package options}
 
+%    \begin{macrocode}
 \DeclareOptionX{frame}{
 	\setframe{#1}
 }
@@ -90,6 +93,10 @@
 
 \ProcessOptionsX\relax
 
+%    \end{macrocode}
+% \subsection{Initialization}
+
+%    \begin{macrocode}
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
 \colorlet{codeBackground}{gray!10!white}
@@ -146,6 +153,16 @@
 }
 \lstset{language=ColoredLaTeX}
 
+\def\hll@assignlabel#1#2{%
+	\expandafter\gdef\csname hll@labeltoclassoffset@#1\endcsname{#2}%
+}
+
+\hll@assignlabel{default}{0}
+\hll@assignlabel{structure}{1}
+
+%    \end{macrocode}
+% \subsection{Options}
+%    \begin{macrocode}
 
 \newcommand{\hllDelimDollar}[1][\color{green!40!black}]{%
 	\lstset{
@@ -163,17 +180,13 @@
 	}%
 }
 
-\def\hll@assignlabel#1#2{%
-	\expandafter\gdef\csname hll@labeltoclassoffset@#1\endcsname{#2}%
-}
+%    \end{macrocode}
+% \subsection{Block and inline markup}
+%    \begin{macrocode}
 
-\hll@assignlabel{default}{0}
-\hll@assignlabel{structure}{1}
-
-
-% =========================
-%   block & inline markup
-% =========================
+%%% =========================
+%%%   block & inline markup
+%%% =========================
 
 \newcommand{\hllPrepareBlock}{%
 	\lstset{framesep=0.1cm,framerule=0.6pt}%
@@ -209,16 +222,22 @@
 
 \def\hll{\lstinline}
 
-% ================
-%   block saving
-% ================
+%    \end{macrocode}
+% \subsection{Block saving}
+
+%%% ================
+%%%   block saving
+%%% ================
+
+%    \begin{macrocode}
+
 
 \newenvironment{saveblock}[1]{%
 	\expandafter\ifx\csname @codebox@#1\endcsname\relax
 		\expandafter\newbox\csname @codebox@#1\endcsname\relax
 	\fi
 	%
-	% The trick from latex/base/latex.ltx
+	%% The trick from latex/base/latex.ltx
 	\edef\@bracehack{%
 		\endgroup
 		\expandafter\setbox\csname @codebox@#1\endcsname\vbox{%
@@ -261,10 +280,14 @@
 	\fi
 }
 
-% ===================
-%   updatehighlight
-% ===================
+%    \end{macrocode}
+% \subsection{Macro \textbackslash updatehighlight}
 
+%%% ===================
+%%%   updatehighlight
+%%% ===================
+
+%    \begin{macrocode}
 \def\hll@update@label{}
 
 \newcounter{hll@update@state}
@@ -290,10 +313,13 @@
 	\lstset{classoffset=0}%
 }
 
+%    \end{macrocode}
+% \subsubsection{Key `name'}
 
 %%% KEY: name
 %%% ---------
 
+%    \begin{macrocode}
 \define@key{updatehighlight}{name}{%
 	\hll@update@setlabel{#1}%
 }
@@ -317,17 +343,28 @@
 	\fi
 }
 
+%    \end{macrocode}
+% \subsubsection{Key `classoffset'}
+
 %%% KEY: classoffset
 %%% ----------------
 
+%    \begin{highlightblock}[numbers=left,firstnumber=last]
+% ~{\makeatletter\meaning\lstenv@endstring\expandafter\def\expandafter\lstenv@endstring\expandafter{\lstenv@endstring a}}~
 \define@key{updatehighlight}{classoffset}{%
 	\setcounter{hll@update@classoffset}{#1}%
 	\setcounter{hll@update@state}{1}%
 }
+%%%~\iffalse
+%%%    \fi~\end{highlightblock}
+% tadaaa
+% \end{highlightblock}aaa
+% \subsubsection{Key `add'}
 
 %%% KEY: add
 %%% --------
 
+%    \begin{macrocode}
 \define@key{updatehighlight}{add}{%
 	\hll@update@add{#1}%
 }
@@ -368,9 +405,13 @@
 	}%
 }
 
+%    \end{macrocode}
+% \subsubsection{Key `remove'}
+
 %%% KEY: remove
 %%% -----------
 
+%    \begin{macrocode}
 \define@key{updatehighlight}{remove}{%
 	\hll@update@remove{#1}%
 }
@@ -409,9 +450,13 @@
 	}%
 }
 
+%    \end{macrocode}
+% \subsubsection{Key `style'}
+
 %%% KEY: style
 %%% ----------
 
+%    \begin{macrocode}
 \define@key{updatehighlight}{style}{%
 	\hll@update@fixclassoffset
 	\unless\ifhllStyleAnywhere
@@ -432,9 +477,13 @@
 	}%
 }
 
+%    \end{macrocode}
+% \subsubsection{Key `color'}
+
 %%% KEY: color
 %%% ----------
 
+%    \begin{macrocode}
 \define@key{updatehighlight}{color}{%
 	\hll@update@fixclassoffset
 	\unless\ifhllStyleAnywhere
@@ -455,9 +504,13 @@
 	}%
 }
 
+%    \end{macrocode}
+% \subsubsection{Key `clear'}
+
 %%% KEY: clear
 %%% ----------
 
+%    \begin{macrocode}
 \define@key{updatehighlight}{clear}[]{%
 	\hll@update@fixclassoffset
 	\expandafter\hll@update@clear\expandafter{\the\c@hll@update@classoffset}%
@@ -471,5 +524,3 @@
 		classoffset=0
 	}%
 }
-
-
