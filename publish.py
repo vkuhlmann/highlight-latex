@@ -41,23 +41,44 @@ def generate_dtx(docFile, styFile, path):
                                 break
 
                         stripIndent = True
-
                         for docline in dociter:
                             if docline.startswith("\\end{document}"):
                                 break
                             line = docline
                             if line.startswith("%"):
                                 continue
+                            line = line.replace("\t", "    ")
+                            if line == r"\def\defaultgobble{8}" + "\n":
+                                line = f"\\def\\defaultgobble{{{8 + len(before)}}}\n"
 
-                            if stripIndent:
-                                if line.startswith("\t"):
-                                    line = line[1:]
-                                elif line.startswith("    "):
-                                    line = line[4:]
-                                else:
-                                    stripIndent = False
+                            line = doHighlightBlockLogic(line, before)
+
+                            # highlBlockBegin = re.fullmatch(
+                            #     r"(?P<argsBefore>(?P<indent>\s*)" + 
+                            #     r"\\begin\{highlightblock\})\[(?P<args>.*)\]" + 
+                            #     r"(?P<argsAfter>\n?)", line)
+                            # if highlBlockBegin != None:
+                            #     highlighBlockIndent = highlBlockBegin.group("indent")
+                            #     newgobble = len(highlighBlockIndent) + 4 + len(before)
+
+                            #     gobbleMatch = re.fullmatch(r"(?P<before>.*,\s*)?gobble=\d+(?P<after>\s*,.*)?", highlBlockBegin.group("args"))
+                            #     if gobbleMatch != None:
+                            #         line = highlBlockBegin.group("argsBefore") \
+                            #         + f"[{gobbleMatch.group('before') or ''}gobble={newgobble}" \
+                            #         + f"{gobbleMatch.group('after') or ''}]" \
+                            #         + highlBlockBegin.group("argsAfter")
+
+                            # if stripIndent:
+                            #     if line.startswith("\t"):
+                            #         line = line[1:]
+                            #     elif line.startswith("    "):
+                            #         line = line[4:]
+                            #     else:
+                            #         stripIndent = False
 
                             outp.write(before + line + after)
+
+
                 elif "%% STY" in l:
                     m = re.fullmatch(r"(?P<before>.*?)%% STY(?P<after>.*)\n", l)
                     before = m.group("before")
@@ -66,11 +87,49 @@ def generate_dtx(docFile, styFile, path):
                         for docline in doc:
                             if docline.startswith("%%%"):
                                 continue
-                            docline = docline.replace("\t", "  ")
+                            docline = docline.replace("\t", "    ")
                             outp.write(before + docline + after)
 
                 else:
                     outp.write(l)
+
+highlightBlockIndent = None
+
+def doHighlightBlockLogic(line, before):
+    global highlightBlockIndent
+
+    if highlightBlockIndent != None:
+        m = re.fullmatch(
+        r"(?P<argsBefore>(?P<indent>\s*)" + 
+        r"\\end\{highlightblock\})(?P<argsAfter>\n?)", line)
+
+        if m != None:
+            highlightBlockIndent = None
+        return line
+
+    m = re.fullmatch(
+        r"(?P<argsBefore>(?P<indent>\s*)" + 
+        r"\\begin\{highlightblock\})(\[(?P<args>.*)\])?" + 
+        r"(?P<argsAfter>\n?)", line)
+    if m == None:
+        return line
+
+    highlightBlockIndent = m.group("indent")
+    newgobble = len(highlightBlockIndent) + 4 + len(before)
+
+    gobbleMatch = None
+
+    if m.group("args") != None:
+        gobbleMatch = re.fullmatch(r"(?P<before>.*,\s*)?gobble=\d+(?P<after>\s*,.*)?",
+            m.group("args"))
+
+    if gobbleMatch == None:
+        return line
+    
+    return m.group("argsBefore") \
+        + f"[{gobbleMatch.group('before') or ''}gobble={newgobble}" \
+        + f"{gobbleMatch.group('after') or ''}]" \
+        + m.group("argsAfter")
 
 
 def extract_doc_from_dtx(dtxFile, texFile):
