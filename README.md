@@ -6,7 +6,6 @@ geometry: margin=2cm
 output: pdf_document
 --- -->
 
-
 # Highlight LaTeX: Pretty LaTeX code within LaTeX
 
 Teaching other people LaTeX is great fun, and I've seen plenty of slides and
@@ -22,7 +21,7 @@ colored highlighting for LaTeX. The file `demo.tex` achieves this:
 <img src="assets/demoshowoff.png" width="600"
 alt="highlight demo" title="Highlight demo">
 
-<!-- ![An example of syntax highlighting using highlight-latex. This was generated
+<!-- ![An example of syntax highlighting using highlightlatex. This was generated
 by `demo.tex`.](assets/demoshowoff.png "Syntax highlighting
 example") -->
 
@@ -74,8 +73,8 @@ After having added the package, you can add LaTeX in two ways:
       Your file begins with a line of the form \hll|\documentclass[]{}|. The
       square brackets ...
 
-  The first non-space character following `\hll` is delimits the argument to
-  this command.
+  The first non-space character following `\hll` delimits the argument of this
+  command.
 
 * Block style:
 
@@ -164,17 +163,12 @@ The possible keys are:
   and has by default a dark blue color, and `structure`, which consists of
   `\begin` and `\end` and prints them in light blue.
 
-  _Deprecated alias: label_
-
 * **classoffset**: Set the `listings` classoffset manually. Try to avoid this.
   Use **name** to refer to existing rules instead.
 
-* **add**: Add a commands (`\mycommand`) oor keywords (`Hi!`) to the current
+* **add**: Add a command (`\mycommand`) or keyword (`Hi!`) to the current
   rule. The value can contain multiple values by opening braces, and comma
   separating values within them.
-
-  _Deprecated aliases: macros (only for commands), commands (only for commands),
-  and keywords (only for keywords)_
 
 * **remove**: Remove a commands or keywords from the current rule. The value can
   contain multiple values by opening braces, and comma separating values within
@@ -193,8 +187,7 @@ The possible keys are:
   **color** key. So `color=red` and `style=\color{red}` are equivalent.
 
 * **style**: Specify a style for the rule. A rule can only have one style. If
-  you specify a style after `add`, `remove`, `keywords` (deprecated), `macros`
-  (deprecated) or `commands` (deprecated), this starts a new (unnamed) rule.
+  you specify a style after `add` or `remove`, this starts a new (unnamed) rule.
   In practice, the only style which will probably work for you is just a color.
   For that, using the 'color' key is just a bit easier and neater.
   But hey, you have the option to set whatever style you want. :)
@@ -270,7 +263,7 @@ Note this can also result in unexpected behavior, for example animations in a
 beamer frame might need the code line to be executed multiple times. Use
 `\useblock` when you can't make the guarantee the last use of a block.
 
-Fragile breaking situations has it's own demo, which you find at
+There is a separate demo for fragile breaking situations. You can find it at
 `deamerdemo/deamerdemo.tex`.
 
 ## Adding extra space

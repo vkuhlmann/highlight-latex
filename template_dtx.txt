@@ -1,0 +1,29 @@
+% \iffalse meta-comment
+% (c) 2021 Vincent Kuhlmann
+% 
+% \fi
+% \iffalse
+%<*driver>
+\ProvidesFile{highlightlatex.dtx}[2021/03/19 highlightlatex v1.0.0 + Dev]
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+
+%% DOC-PREAMBLE
+
+\begin{document}
+    \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% %% DOC-DOCUMENT
+% 
+%
+% \section{Implementation}
+%
+%    \begin{macrocode}
+%% STY
+%    \end{macrocode}
+%
+% \Finale
+%
+\endinput
