@@ -26,7 +26,7 @@ example") -->
 
 The package is now available from CTAN. You can use `\usepackage{highlightlatex}` and
 if your system requires manual installation, the package is called teh same. If you wish
-to install the package version of the repository, refer to [the wiki](wiki/Manual-installation).
+to install the package version of the repository, refer to ['Manual installation' on the wiki](https://github.com/vkuhlmann/highlight-latex/wiki/Manual-installation).
 
 ## Quickstart
 
