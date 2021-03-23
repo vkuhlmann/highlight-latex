@@ -161,7 +161,15 @@
 	\rule{2cm}{1pt}
 
 	\bigskip
-	\includegraphics[width=\textwidth,trim=1cm 1cm 1cm 1cm, clip]{demo.pdf}
+	\IfFileExists{demo/demo.pdf}{
+		\includegraphics[width=\textwidth,trim=1cm 1cm 1cm 1cm, clip]{demo/demo.pdf}
+	}{
+		\IfFileExists{demo.pdf}{
+			\includegraphics[width=\textwidth,trim=1cm 1cm 1cm 1cm, clip]{demo.pdf}
+		}{
+			[Generate \texttt{demo.pdf} for an illustration here]
+		}
+	}
 	\caption{Output of `demo.tex'.}\label{fig:demoOutput}
 	\bigskip
 	\rule{2cm}{1pt}

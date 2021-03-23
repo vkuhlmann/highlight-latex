@@ -1,0 +1,147 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+
+% [unpublished] Relative path to the highlightlatex.sty. When it is in the same
+% [unpublished] directory as this file, remove the '../'. Also do this if you
+% [unpublished] have properly installed highlightlatex.
+\usepackage[gobbletabs=3,tabsize=2]{../highlightlatex}
+
+\usepackage{geometry}
+\usepackage{parskip}
+\usepackage[dutch]{babel}
+\usepackage{multicol}
+\usepackage{hyperref}
+
+\geometry{
+	paperwidth=182mm,
+	paperheight=85mm,
+	margin=1cm
+}
+
+\pagestyle{empty}
+
+% Default config. These options can be set as package options as well.
+\hllconfigure{
+%	mathdollar = {
+%		off
+%	},
+%	mathdollarcolor=red,
+%	frame=lines,
+%	tabsize=4,
+%	gobble=0,
+%  %gobbletabs=0,
+%	backgroundcolor=gray!6!white,
+%	bracecolor=red!50!blue,
+%	bracketcolor=blue!50!white,
+%	commentcolor=green!40!black,
+%	alsoletter={$@_!|?$},
+}
+
+\updatehighlight{
+	name = default,
+	% 90% blue, remaining is black
+	color = {blue!90!black},
+	add = {
+		\knowncommand
+	},
+	% You can't have blank lines when providing these key-values
+	% (blank line means new paragraph, and that terminates this command)
+	% So use percent signs (%) to comment out the newline character.
+	%
+	name = structure,
+	add = {
+		% Default:
+		%\begin, \end
+	},
+	%^ This extra comma doesn't hurt. In fact, it helps when you're
+	% reordering code; you don't want missing comma's.
+}
+
+\updatehighlight{
+	% Some characters might not work as keyword. Don't go too
+	% crazy.
+	name = greenDollar,
+	style = {\itshape\color{green!70!black}},
+	add = {
+		% The dollar sign is provided an extra time just to
+		% calm down TeXstudio's code highlighting.
+		$, $
+	},
+%
+	name = accentA,
+	color = green!60!black,
+	add = {
+		\inAccA, Hi!
+	},
+%
+	name = accentB,
+	color = red!60!black,
+	add = {
+		\inAccB
+	},
+%
+	name = accentC,
+	color = orange!100!black,
+	add = {
+		\inAccC
+	}
+}
+
+\hllconfigure{
+	mathdollar = {
+		on,cumulative=false,color=red
+	}
+}
+
+\begin{document}
+	\begin{multicols}{2}
+		And look at this beautiful code
+		\begin{highlightblock}
+			% Here is some code
+			\setcounter{secnumdepth}{1}
+			\begin{document}
+				\section{My section (and Hi!)}
+				
+				\unknowncommand\knowncommand
+				\inAccA\inAccB\inAccC
+				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} cool!~
+				
+				Insert literal tildes like ~\textasciitilde~. Hi!
+			\end{document}
+		\end{highlightblock}
+		with some text after it.
+		
+		\vfill\leavevmode\columnbreak
+		
+		% The name allows us to modify what we had set for it.
+		\updatehighlight{
+			name = accentB,
+			% Removes all commands and keywords from it
+			clear,
+			name = accentA,
+			add = {
+				\inAccB	
+			}
+		}
+		
+		Let's also show square brackets:
+		\begin{highlightblock}
+			% File: document.tex
+			\documentclass[a4paper]{article}
+			\usepackage{amsmath}
+			
+			\begin{document}
+				Insert math like $\sqrt{2}$.
+				\inAccA\inAccB\inAccC
+				
+			\end{document}
+		\end{highlightblock}
+	
+		The first line was of the form \hll|\documentclass[]{}|. Very interesting.
+		Note the \hll|$| are only green because we defined it as a keyword.
+	\end{multicols}
+	\begin{center}
+		Go to \url{https://github.com/vkuhlmann/highlight-latex}
+	\end{center}
+\end{document}

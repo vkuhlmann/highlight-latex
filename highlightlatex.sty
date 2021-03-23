@@ -1,31 +1,33 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{highlightlatex}[2021/03/17 highlightlatex v1.0.0 + Dev]
+\ProvidesPackage{highlightlatex}[2021/03/23 highlightlatex v1.0.0 + Dev]
 
-% Repository: https://github.com/vkuhlmann/highlight-latex
-% Version: v1.0.0 + Dev
+%% Repository: https://github.com/vkuhlmann/highlight-latex
+%% Version: v1.0.0 + Dev
 
-% Copyright (c) 2021 Vincent Kuhlmann
-% 
-% Permission is hereby granted, free of charge, to any person
-% obtaining a copy of this software and associated documentation
-% files (the "Software"), to deal in the Software without
-% restriction, including without limitation the rights to use,
-% copy, modify, merge, publish, distribute, sublicense, and/or sell
-% copies of the Software, and to permit persons to whom the
-% Software is furnished to do so, subject to the following
-% conditions:
-% 
-% The above copyright notice and this permission notice shall be
-% included in all copies or substantial portions of the Software.
-% 
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-% OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-% HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-% OTHER DEALINGS IN THE SOFTWARE.
+%% Copyright (c) 2021 Vincent Kuhlmann
+%% 
+%% Permission is hereby granted, free of charge, to any person obtaining a copy of
+%% this software and associated documentation files (the "Software"), to deal in
+%% the Software without restriction, including without limitation the rights to
+%% use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+%% the Software, and to permit persons to whom the Software is furnished to do so,
+%% subject to the following conditions:
+%% 
+%% The above copyright notice and this permission notice shall be included in all
+%% copies or substantial portions of the Software.
+%% 
+%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+%% FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+%% COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+%% IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+%% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+\def\thehllversion{1.0.0 + Dev}
+\newcounter{hllmajorversion}
+\setcounter{hllmajorversion}{100}
+\newcounter{hllminorversion}
+\setcounter{hllminorversion}{\numexpr\value{hllmajorversion} * 100 + 1\relax}
 
 \RequirePackage{listings}
 \RequirePackage{xcolor}
@@ -54,20 +56,122 @@
 \setlength\hllBeforeSkip{2pt}
 \newlength\hllAfterSkip
 \setlength\hllAfterSkip{0pt}
+\newif\ifhllIsInitialized
+\hllIsInitializedfalse
 
 %    \end{macrocode}
 % \subsection{Package options}
 
 %    \begin{macrocode}
-\DeclareOptionX{frame}{
-	\setframe{#1}
+\newcounter{hlltabsize}
+\def\hll@alsoletter{}
+
+\newif\ifhll@ismathdollaron
+\newif\ifhll@mathdollarcumulative
+\hll@mathdollarcumulativetrue
+
+\def\hll@mathdollarstyle{\color{green!40!black}}
+\let\hll@mathdollaroff\relax
+
+\define@key{hllmathdollar}{on}[]{%
+	\unless\ifhll@ismathdollaron
+		\ifhll@mathdollarcumulative
+			\hll@mathdollar@setcumulative
+		\else
+			\hll@mathdollar@setnoncumulative
+		\fi
+	\fi
 }
 
-\DeclareOptionX{noframe}{
-	\setframe{none}
+\def\hll@mathdollar@setcumulative{%
+	\hll@mathdollaroff
+	\gdef\hll@mathdollaroff{%
+		\lstset{
+			classoffset=2,
+			deletedelim=**[s]{$}{$},
+			classoffset=0
+		}%
+		\hll@ismathdollaronfalse
+	}%
+	\lstset{
+		classoffset=2,
+		moredelim=**[s][\hll@mathdollarstyle]{$}{$},
+		classoffset=0
+	}%
+	\hll@ismathdollarontrue
 }
 
-\DeclareOptionX{debugframe}{
+\def\hll@mathdollar@setnoncumulative{
+	\hll@mathdollaroff
+	\gdef\hll@mathdollaroff{%
+		\lstset{
+			classoffset=2,
+			deletedelim=[s]{$}{$},
+			classoffset=0
+		}%
+		\hll@ismathdollaronfalse
+	}%
+	\lstset{
+		classoffset=2,
+		moredelim=[s][\hll@mathdollarstyle]{$}{$},
+		classoffset=0
+	}%	
+	\hll@ismathdollarontrue
+}
+
+\define@key{hllmathdollar}{off}[]{
+	\hll@mathdollaroff
+}
+
+\define@key{hllmathdollar}{style}{%
+	\def\hll@mathdollarstyle{#1}%
+}
+
+\define@key{hllmathdollar}{color}{%
+	\def\hll@mathdollarstyle{\color{#1}}%
+}
+
+\define@boolkey{hllmathdollar}[hll@mathdollar]{cumulative}[true]{%
+	\ifhll@mathdollarcumulative
+		\hll@mathdollar@setcumulative
+	\else
+		\hll@mathdollar@setnoncumulative
+	\fi
+}
+
+\newcommand\hllMathDollar[1]{%
+	\setkeys{hllmathdollar}{on,#1}%
+}
+
+\newcommand{\hllDelimDollar}[1][\color{green!40!black}]{%
+	\lstset{
+		classoffset=2,
+		moredelim=**[s][#1]{$}{$},
+		classoffset=0
+	}%
+}
+
+\newcommand{\hllDelimParen}[1][\color{green!40!black}]{%
+	\lstset{
+		classoffset=2,
+		moredelim=**[s][#1]{\(}{\)},
+		classoffset=0
+	}%
+}
+
+\define@key{hllglobal}{mathdollar}[]{%
+	\hllMathDollar{#1}%
+}
+
+\define@key{hllglobal}{frame}[]{%
+	\setframe{#1}%
+}
+
+\define@key{hllglobal}{noframe}[]{%
+	\setframe{none}%
+}
+
+\define@key{hllglobal}{debugframe}[]{%
 	\hllDebugFrametrue
 }
 
@@ -87,23 +191,108 @@
 	\fi
 }
 
-\DeclareOptionX{styleanywhere}{
+\define@key{hllglobal}{styleanywhere}{
 	\hllStyleAnywheretrue
 }
 
-\newcounter{hlltabsize}
-\setcounter{hlltabsize}{4}
-
-\DeclareOptionX{tabsize}{
-	\setcounter{hlltabsize}{#1}
+\define@key{hllglobal}{tabsize}{%
+	\setcounter{hlltabsize}{#1}%
+	\lstset{tabsize=#1}%
 }
 
-\DeclareOptionX{gobble}{
-	\def\defaultgobble{#1}
+\define@key{hllglobal}{mathdollarstyle}[]{%
+	\ifx\relax#1\relax
+		\hllDelimDollar
+	\else
+		\hllDelimDollar[#1]%
+	\fi
 }
 
-\DeclareOptionX*{\PackageWarning{highlightlatex}{`\CurrentOption' ignored}}
-\ExecuteOptionsX{frame=lines}
+\define@key{hllglobal}{mathdollarcolor}[]{%
+	\ifx\relax#1\relax
+		\hllDelimDollar%
+	\else
+		\hllDelimDollar[\color{#1}]%
+	\fi
+}
+
+\define@key{hllglobal}{mathparenstyle}[]{%
+	\ifx\relax#1\relax
+		\hllDelimParen
+	\else
+		\hllDelimParen[#1]%
+	\fi
+}
+\define@key{hllglobal}{mathparencolor}[]{%
+	\ifx\relax#1\relax
+		\hllDelimParen
+	\else
+		\hllDelimParen[\color{#1}]%
+	\fi
+}
+
+\define@key{hllglobal}{gobble}{%
+	\def\defaultgobble{#1}%
+}
+
+\define@key{hllglobal}{gobbletabs}{%
+	\def\defaultgobble{\numexpr\value{hlltabsize} * (#1)\relax}%
+}
+
+\define@key{hllglobal}{alsoletter}{%
+	\def\hll@alsoletter{#1}%
+	\lstset{alsoletter={#1}}%
+}
+
+\define@key{hllglobal}{backgroundcolor}{%
+	\colorlet{hllbackgroundcolor}{#1}%
+}
+
+\define@key{hllglobal}{bracecolor}{%
+	\colorlet{hllbracecolor}{#1}%
+}
+
+\define@key{hllglobal}{bracketcolor}{%
+	\colorlet{hllbracketcolor}{#1}%
+}
+
+\define@key{hllglobal}{commentcolor}{%
+	\colorlet{comment}{green!40!black}%
+}
+
+\newcommand{\hllconfigure}[1]{%
+	\setkeys{hllglobal}{#1}%
+}
+
+\newcommand{\hllConfigure}[1]{%
+	\hllconfigure{#1}%
+}
+
+%\DeclareOptionX*{\PackageWarning{highlightlatex}{`\CurrentOption' ignored}}
+\newif\ifhll@redirectingconfig
+
+\DeclareOptionX*{
+	\ifhll@redirectingconfig
+		\PackageWarning{highlightlatex}{`\CurrentOption' ignored}%
+	\else
+		\hll@redirectingconfigtrue
+		%\PackageInfo{highlightlatex}{Setting `\CurrentOption'}	
+		\expandafter\hllconfigure\expandafter{\CurrentOption}
+		\hll@redirectingconfigfalse
+	\fi
+}
+\ExecuteOptionsX{}
+
+\hllconfigure{
+	frame=lines,
+	tabsize=4,
+	gobble=0,
+	backgroundcolor=gray!6!white,
+	bracecolor=red!50!blue,
+	bracketcolor=blue!50!white,
+	commentcolor=green!40!black,
+	alsoletter={$@_!|?$},
+}
 
 \ProcessOptionsX\relax
 
@@ -111,15 +300,8 @@
 % \subsection{Initialization}
 
 %    \begin{macrocode}
-\colorlet{curlyBrackets}{red!50!blue}
-\colorlet{squareBrackets}{blue!50!white}
-\colorlet{codeBackground}{gray!6!white}
-\colorlet{comment}{green!40!black}
-
 \colorlet{accDefault}{blue!90!black}
 \definecolor{accStructure}{RGB}{0,149,255}
-
-\colorlet{accentB}{green!60!black}
 
 \catcode`\{=11
 \let\myopenbrace={
@@ -131,7 +313,7 @@
 
 \lstdefinelanguage{ColoredLaTeX}
 [LaTeX]{TeX}{
-	backgroundcolor=\color{codeBackground},
+	backgroundcolor=\color{hllbackgroundcolor},
 	keywordstyle=\bfseries\color{accDefault},
 	basicstyle=\footnotesize\ttfamily,
 	commentstyle=\color{comment},
@@ -143,7 +325,7 @@
 	classoffset=0,
 	keywordstyle=\color{accDefault},
 	texcsstyle=*\color{accDefault},
-	moretexcs={subsection,thesubsection,thesection,theoremstyle},
+	moretexcs={subsection},
 	deletetexcs={begin,end},
 %
 	classoffset=1,
@@ -157,15 +339,20 @@
 	classoffset=0,
 	%literate={textA}{textB}{3}%
 	%https://tex.stackexchange.com/questions/172945/coloring-in-listing
-	literate={\{}{{\textcolor{curlyBrackets}{\myopenbrace}}}{1}
-		{\}}{{\textcolor{curlyBrackets}{\myclosebrace}}}{1}
-		{[}{{\textcolor{squareBrackets}{[}}}{1}
-		{]}{{\textcolor{squareBrackets}{]}}}{1}%
-	%		{(}{{\textcolor{delimiterColor}{(}}}{1}
-	%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
-	%texcsstyle=\color{blue}
+	literate={\{}{{\textcolor{hllbracecolor}{\myopenbrace}}}{1}
+		{\}}{{\textcolor{hllbracecolor}{\myclosebrace}}}{1}
+		{[}{{\textcolor{hllbracketcolor}{[}}}{1}
+		{]}{{\textcolor{hllbracketcolor}{]}}}{1}%
+%		{(}{{\textcolor{delimiterColor}{(}}}{1}
+%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
 }
 \lstset{language=ColoredLaTeX}
+
+\def\setalsoletter#1{%
+	\lstset{alsoletter={#1}}%
+}
+
+\expandafter\setalsoletter\expandafter{\hll@alsoletter}
 
 \def\hll@assignlabel#1#2{%
 	\expandafter\gdef\csname hll@labeltoclassoffset@#1\endcsname{#2}%
@@ -174,73 +361,12 @@
 \hll@assignlabel{default}{0}
 \hll@assignlabel{structure}{1}
 
+\hllIsInitializedtrue
+
 %    \end{macrocode}
 % \subsection{Options}
 %
 %    \begin{macrocode}
-\newcommand{\hllDelimDollar}[1][\color{green!40!black}]{%
-	\lstset{
-		classoffset=2,
-		moredelim=**[s][#1]{$}{$},
-		classoffset=0
-	}%
-}
-
-\newcommand{\hllDelimParen}[1][\color{green!40!black}]{%
-	\lstset{
-		classoffset=2,
-		moredelim=**[s][#1]{\(}{\)},
-		classoffset=0
-	}%
-}
-
-\define@key{hllglobal}{tabsize}{%
-	
-}
-
-\define@key{hllglobal}{frame}{%
-	
-}
-
-\define@key{hllglobal}{noframe}{%
-	
-}
-
-\define@key{hllglobal}{mathdollarstyle}{%
-	
-}
-
-\define@key{hllglobal}{mathdollarcolor}{%
-	
-}
-
-\define@key{hllglobal}{mathparenstyle}{%
-	
-}
-\define@key{hllglobal}{mathparencolor}{%
-	
-}
-
-\define@key{hllglobal}{gobble}{%
-	
-}
-
-\define@key{hllglobal}{alsoletter}{%
-	
-}
-
-\define@key{hllglobal}{backgroundcolor}{%
-	
-}
-\define@key{hllglobal}{bracketcolor}{%
-	
-}
-\define@key{hllglobal}{bracecolor}{%
-	
-}
-
-
-
 
 %    \end{macrocode}
 % \subsection{Block and inline markup}
@@ -371,6 +497,10 @@
 	\setkeys{updatehighlight}{#1}%
 	%
 	\lstset{classoffset=0}%
+}
+
+\newcommand{\hllUpdateRules}[1]{%
+	\updatehighlight{#1}%
 }
 
 %    \end{macrocode}

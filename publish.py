@@ -4,14 +4,36 @@
 import sys
 import pathlib
 import re
+import shutil
 
 def main():
     if len(sys.argv) > 1:
         print("Script does not take any arguments")
         return
     #extract_doc_from_dtx("highlightlatex.dtx", "highlightlatex_doc.tex")
-    generate_dtx("highlightlatex_doc.tex", "highlightlatex.sty", "publish/highlightlatex.dtx")
+    generate_dtx("highlightlatex_doc.tex", "highlightlatex.sty",
+        "publish/highlightlatex.dtx")
 
+    with open("publish/demo.tex", "w") as publ:
+        with open("demo/demo.tex", "r") as f:
+            for l in f:
+                if l.startswith("% [unpublished]"):
+                    continue
+
+                if "\\usepackage" in l:
+                    l = l.replace("../highlightlatex", "highlightlatex")
+                publ.write(l)
+    with open("publish/beamerdemo.tex", "w") as publ:
+        with open("beamerdemo/beamerdemo.tex", "r") as f:
+            for l in f:
+                if l.startswith("% [unpublished]"):
+                    continue
+
+                if "\\usepackage" in l:
+                    l = l.replace("../highlightlatex", "highlightlatex")
+                publ.write(l)
+
+    shutil.copy2("LICENSE.txt", "publish/LICENSE.txt")
     pass
 
 def generate_dtx(docFile, styFile, path):

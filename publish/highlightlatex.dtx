@@ -18,7 +18,10 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 
-\iftrue \iffalse Use own package\fi
+\expandafter\newif\csname ifuseownpackage\endcsname
+\useownpackagetrue
+
+\ifuseownpackage
     \usepackage{highlightlatex}
     \updatehighlight{
     	name = default,
@@ -53,7 +56,6 @@
     }{}%
     \lstset{tabsize=2,escapeinside=~~}
 \fi
-\colorlet{codeBackground}{gray!6!white}
 
 \newcommand\fhref[2]{%
 	\href{#1}{#2}\;\footnote{\,\url{#1}}\,%
@@ -117,7 +119,7 @@
 	\begin{minipage}[t]{\centerlabelledwidth}%
 	\lstset{framexleftmargin=0.25em}%
 }{%
-	\end{minipage}\par
+	\end{minipage}\par%
 }
 
 \newenvironment{showcase}{%
@@ -126,6 +128,9 @@
 {%
 	\end{centerlabelled}
 }
+
+\def\sectionautorefname{Section}
+\def\subsectionautorefname{Subsection}
 
 
 \begin{document}
@@ -136,12 +141,12 @@
 %
 % 
 % \newbox\cmdintitle
-% \setbox\cmdintitle=\hbox{\hll|highlightlatex|}%
+% \setbox\cmdintitle=\hbox{\hll|highlightlatex|}
 % \setbox\cmdintitle=\hbox{\adjustbox{height=2.0\height}{\usebox\cmdintitle}}
 % \def\defaultgobble{10}
 % 
 % \title{Package \usebox\cmdintitle{} manual}
-% \author{%
+% \author{
 %     Vincent Kuhlmann\\
 %     \texttt{vincent.kuhlmann@hotmail.com}
 % }
@@ -151,8 +156,8 @@
 % \begin{abstract}
 %     This package provides colored syntax highlighting for \LaTeX{} source code, without aid from
 %     outside \LaTeX. This is in response to the general trend that people often fall back to verbatim
-%     for displaying code. This package aims to make good looking \LaTeX{} source code feasible for
-%     all users. For this, it builds further on the generic `listings' package. An example output is
+%     for displaying code. This package aims to make typesetting good looking \LaTeX{} source code accessible.
+%     For this, it builds further on the generic `listings' package. An example output is
 %     shown in \autoref{fig:demoOutput}\,.
 % \end{abstract}
 % 
@@ -171,7 +176,15 @@
 %     \rule{2cm}{1pt}
 % 
 %     \bigskip
-%     \includegraphics[width=\textwidth,trim=1cm 1cm 1cm 1cm, clip]{demo.pdf}
+%     \IfFileExists{demo/demo.pdf}{
+%         \includegraphics[width=\textwidth,trim=1cm 1cm 1cm 1cm, clip]{demo/demo.pdf}
+%     }{
+%         \IfFileExists{demo.pdf}{
+%             \includegraphics[width=\textwidth,trim=1cm 1cm 1cm 1cm, clip]{demo.pdf}
+%         }{
+%             [Generate \texttt{demo.pdf} for an illustration here]
+%         }
+%     }
 %     \caption{Output of `demo.tex'.}\label{fig:demoOutput}
 %     \bigskip
 %     \rule{2cm}{1pt}
@@ -187,13 +200,13 @@
 % 
 % After having added the package, you can add LaTeX in two ways.
 % 
-% \subsection{Inline style}%
+% \subsection{Inline style}
 % 
-% \begin{showcase}[label=example]%
-%     \begin{highlightblock}[gobble=10]
+% \begin{showcase}[label=example]
+%     \begin{highlightblock}
 %         Your file begins with a line of the form \hll~{}~|\documentclass[]{}|. The
 %         square brackets ...
-%     \end{highlightblock}%
+%     \end{highlightblock}
 % \end{showcase}
 % 
 % The first non-space character following \lstinline|\hll| delimits the argument to
@@ -205,10 +218,11 @@
 % \begin{showcase}[label=example]
 %     \begin{highlightblock}
 %         Your basic document now looks like
-%         \begin{highlightblock}[gobble=2]
+%         \begin{highlightblock}[gobble=4]
 %             \documentclass[a4paper]{article}
+%             
 %             \begin{document}
-%             Hello world!
+%                 Hello world!
 %             \end{document}
 %         \end{~{}~highlightblock}
 %     \end{highlightblock}
@@ -219,12 +233,9 @@
 % recommend to set this value globally using \hll|\def\defaultgobble{2}|. You can still override it on
 % a per-block basis, if necessary.
 % 
-% There are situations where width of the block could run out of the page. For example, when using
-% beamer and storing a block as described in the section `Fragile breaking situations', the normal
-% full-width of a slide is assumed. If you use multiple columns, set the \hll|linewidth| on the
+% There are situations the block could run out of the page, for example you need to save the block for use in a beamer document (see \autoref{sec:frag}). In that case, the normal full-width of a slide is assumed, but you might want to use it in a slide with multiple columns. Set the \hll|linewidth| on the
 % \hll|highlightblock|. This can be a fraction of the total slide width available, \hll|0.6\textwidth|
 % is 60\% of the width, or an absolute value, like \hll|10em|, which seems to equal 20 characters.
-% 
 % 
 % There are more keys you can provide. Check the
 % \fhref{https://www.ctan.org/pkg/listings}{\hll|listings| package
@@ -232,10 +243,10 @@
 % available to the \hll|lstlisting|-environment and \hll|lstset| command.
 % 
 % \newbox\uphbox
-% \setbox\uphbox=\hbox{\hll|\updatehighlight|}%
+% \setbox\uphbox=\hbox{\hll|\updatehighlight|}
 % \setbox\uphbox=\hbox{\adjustbox{height=1.4\height}{\usebox\uphbox}}
 % 
-% \section[Macro \textbackslash updatehighlight]{%
+% \section[Macro \textbackslash updatehighlight]{\ignorespaces
 %   Macro \texorpdfstring{\usebox\uphbox}{\textbackslash updatehighlight}}
 % \subsection{Adding a command to a highlighting rule}
 % 
@@ -291,10 +302,9 @@
 % it. Instead, just put a line with only a \hll|\%| sign. Spacing within the argument is often
 % irrelevant. If you need a comma in the value, surround your value with braces.
 % 
-% 
-% \begin{list}{}{%
-%         \itemindent-\leftmargin%
-%         \setlength{\itemsep}{10pt}%
+% \begin{list}{}{
+%         \itemindent-\leftmargin
+%         \setlength{\itemsep}{10pt}
 %     }
 %     \item\textbf{name}\par\nobreak
 % 
@@ -373,9 +383,9 @@
 % 
 % There are package options you can use as well:
 % 
-% \begin{list}{}{%
-%         \itemindent-\leftmargin%
-%         \setlength{\itemsep}{10pt}%
+% \begin{list}{}{
+%         \itemindent-\leftmargin
+%         \setlength{\itemsep}{10pt}
 %     }
 %     \item\textbf{frame} (default: \hll|lines|)\par\nobreak
 % 
@@ -398,6 +408,7 @@
 % 
 % 
 % \section{Fragile breaking situations (like beamer frames)}
+% \label{sec:frag}
 % 
 % When passing command arguments around, or storing environment content, LaTeX interprets all
 % characters. This includes seeing \hll|\maketitle| in \hll!\hll|\maketitle|! as a real command. To
@@ -406,16 +417,16 @@
 % of characters that are still to be read. The blackslash before maketitle in \hll!\hll|\maketitle|!
 % will be read as `just text' (a \textit{letter} technically).
 % 
-% When content has already been interpreted, like the \hll|frame|-environment in \hll|beamer| does,
+% When content gets interpreted early, like the \hll|frame|-environment in \hll|beamer| does,
 % this trick can't be done anymore. Instead, you either need to \emph{escape} code, or
 % \emph{pre-process} the code outside a fragile breaking situation.
 % 
-% Escaping is done by preceding the special character with a backslash. For example,
+% Escaping is done by preceding special characters with a backslash. For example,
 % \hll!\hll|\documentclass[]{}|! becomes \hll!\hll|\\!\hll!documentclass[]\{\}|!.
 % 
 % For large code blocks, this is undesirable. Therefore, the package provides for a companion to the
 % \hll|highlightblock|-environment: surround it with a \hll|saveblock|-environment which takes a
-% single argument: a name to assign it. We use it to refer to it later. For example:
+% single argument: a name to assign it. For example:
 % \begin{showcase}[label=example]
 %     \begin{highlightblock}[gobble=10]
 %         \begin{saveblock}{basicfigure}
@@ -436,11 +447,13 @@
 % 
 % Do this outside a fragile breaking situation. (For the \hll|frame|-environment example, that means
 % just before the \hll|frame| for example.) Then, where you want to use it, use
-% \hll|\useblock{basicfigure}|. There is also a variant \hll|\consumeblock{basicfigure}|. If you save
+% \hll|\useblock{basicfigure}|, where the argument
+% is the name used during saving.
+% There is also a variant \hll|\consumeblock{basicfigure}|. If you save
 % many blocks, these will all remain loaded in memory till your PDF has fully generated. The
 % \hll|\consumeblock| works like \hll|\useblock|, except the saved block is deleted from memory after
 % its use. Note this can also result in unexpected behavior, for example animations in a beamer frame
-% might need the code line to be executed multiple times. Use \hll|\useblock| when you can't make the
+% might need the code line to be executed multiple times. Use \hll|\useblock| when you can't
 % guarantee the last use of a block.
 % 
 % There is a separate demo for fragile breaking situations. You can find it at
@@ -448,7 +461,7 @@
 % 
 % \section{Adding extra space}
 % 
-% By default, highlight-latex follows an approach where it minimizes spacing. This gives you full
+% By default, \hll|highlightlatex| follows an approach where it minimizes spacing. This gives you full
 % control over how tight or spacious your document looks. Just use commands like \hll|\medskip| to add
 % extra spacing. The package doesn't currently include an option to do it everywhere automatically.
 % 
@@ -474,7 +487,6 @@
 % Thanks for contributing!
 % 
 % 
-% 
 %
 % \section{Implementation}
 %
@@ -482,31 +494,27 @@
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
 \ProvidesPackage{highlightlatex}[2021/03/17 highlightlatex v1.0.0 + Dev]
 
-% Repository: https://github.com/vkuhlmann/highlight-latex
-% Version: v1.0.0 + Dev
+%% Repository: https://github.com/vkuhlmann/highlight-latex
+%% Version: v1.0.0 + Dev
 
-% Copyright (c) 2021 Vincent Kuhlmann
-% 
-% Permission is hereby granted, free of charge, to any person
-% obtaining a copy of this software and associated documentation
-% files (the "Software"), to deal in the Software without
-% restriction, including without limitation the rights to use,
-% copy, modify, merge, publish, distribute, sublicense, and/or sell
-% copies of the Software, and to permit persons to whom the
-% Software is furnished to do so, subject to the following
-% conditions:
-% 
-% The above copyright notice and this permission notice shall be
-% included in all copies or substantial portions of the Software.
-% 
-% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-% OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-% NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-% HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-% OTHER DEALINGS IN THE SOFTWARE.
+%% Copyright (c) 2021 Vincent Kuhlmann
+%% 
+%% Permission is hereby granted, free of charge, to any person obtaining a copy of
+%% this software and associated documentation files (the "Software"), to deal in
+%% the Software without restriction, including without limitation the rights to
+%% use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+%% the Software, and to permit persons to whom the Software is furnished to do so,
+%% subject to the following conditions:
+%% 
+%% The above copyright notice and this permission notice shall be included in all
+%% copies or substantial portions of the Software.
+%% 
+%% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+%% FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+%% COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+%% IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+%% CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 \RequirePackage{listings}
 \RequirePackage{xcolor}
@@ -531,7 +539,6 @@
 \newif\ifhllStyleAnywhere
 \newcommand\defaultgobble{0}
 \newif\ifhllDebugFrame
-%\hllDebugFrametrue
 \newlength\hllBeforeSkip
 \setlength\hllBeforeSkip{2pt}
 \newlength\hllAfterSkip
@@ -547,6 +554,10 @@
 
 \DeclareOptionX{noframe}{
     \setframe{none}
+}
+
+\DeclareOptionX{debugframe}{
+    \hllDebugFrametrue
 }
 
 \def\setframe#1{%
@@ -569,6 +580,17 @@
     \hllStyleAnywheretrue
 }
 
+\newcounter{hlltabsize}
+\setcounter{hlltabsize}{4}
+
+\DeclareOptionX{tabsize}{
+    \setcounter{hlltabsize}{#1}
+}
+
+\DeclareOptionX{gobble}{
+    \def\defaultgobble{#1}
+}
+
 \DeclareOptionX*{\PackageWarning{highlightlatex}{`\CurrentOption' ignored}}
 \ExecuteOptionsX{frame=lines}
 
@@ -580,7 +602,7 @@
 %    \begin{macrocode}
 \colorlet{curlyBrackets}{red!50!blue}
 \colorlet{squareBrackets}{blue!50!white}
-\colorlet{codeBackground}{gray!10!white}
+\colorlet{codeBackground}{gray!6!white}
 \colorlet{comment}{green!40!black}
 
 \colorlet{accDefault}{blue!90!black}
@@ -603,7 +625,7 @@
     basicstyle=\footnotesize\ttfamily,
     commentstyle=\color{comment},
     numbers=none,
-    tabsize=4,
+    tabsize=\thehlltabsize,
     mathescape=false,
     alsoletter={$@_!|?$},
 %
@@ -660,6 +682,54 @@
         classoffset=0
     }%
 }
+
+\define@key{hllglobal}{tabsize}{%
+    
+}
+
+\define@key{hllglobal}{frame}{%
+    
+}
+
+\define@key{hllglobal}{noframe}{%
+    
+}
+
+\define@key{hllglobal}{mathdollarstyle}{%
+    
+}
+
+\define@key{hllglobal}{mathdollarcolor}{%
+    
+}
+
+\define@key{hllglobal}{mathparenstyle}{%
+    
+}
+\define@key{hllglobal}{mathparencolor}{%
+    
+}
+
+\define@key{hllglobal}{gobble}{%
+    
+}
+
+\define@key{hllglobal}{alsoletter}{%
+    
+}
+
+\define@key{hllglobal}{backgroundcolor}{%
+    
+}
+\define@key{hllglobal}{bracketcolor}{%
+    
+}
+\define@key{hllglobal}{bracecolor}{%
+    
+}
+
+
+
 
 %    \end{macrocode}
 % \subsection{Block and inline markup}
