@@ -8,6 +8,7 @@
 \usepackage{soul}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{amsmath}
 
 \expandafter\newif\csname ifuseownpackage\endcsname
 \useownpackagetrue
@@ -30,7 +31,7 @@
     	name = hllOth,
     	color = red!90!black,
     	add = {
-    		\useblock, \consumeblock, \updatehighlight, saveblock
+    		\useblock, \consumeblock, \updatehighlight, saveblock, \hllconfigure
     	},
 		% 	
     	name = vert,
@@ -120,6 +121,61 @@
 	\end{centerlabelled}
 }
 
+\makeatletter
+\def\option#1{%
+	%\item\textbf{#1}%
+	\def\term{}%
+	\@ifnextchar<{%
+		\def\term{\option@i{#1}}%
+		\term
+	}{%
+		\def\term{\option@i{#1}<>}%
+		\term
+	}%
+}
+
+\def\option@i#1<#2>{%
+	\@ifnextchar={%
+		\option@ii{#1}{#2}%
+	}{%
+		\option@ii{#1}{#2}={}%
+	}%
+}
+
+\def\option@ii#1#2=#3{%
+	\item\textbf{#1}\texttt{%
+		\ifx\relax#2\relax
+		\else
+			{} = \textlangle #2\textrangle%
+		\fi
+		,%
+		\ifx\relax#3\relax
+		\else
+			\;[= #3]%
+		\fi
+	}%
+	\par\nobreak
+}
+
+
+\makeatother
+
+\newenvironment{optionlist}{
+	\begin{list}{}{
+		\itemindent-\leftmargin
+		\setlength{\itemsep}{10pt}	
+	}
+%	\let\origitem\item
+%	\def\item##1{
+%		\origitem\textbf{##1}
+%	}
+%	\def\option##1{%
+%		\origitem\textbf{##1}%
+%	}
+}{
+	\end{list}
+}
+
 \def\sectionautorefname{Section}
 \def\subsectionautorefname{Subsection}
 
@@ -198,7 +254,6 @@ The first non-space character following \lstinline|\hll| delimits the argument t
 this command.
 
 \subsection{Block style}
-
 
 \begin{showcase}[label=example]
 	\begin{highlightblock}
@@ -287,11 +342,8 @@ You might be tempted to add a blank line for clarity; that means a new paragraph
 it. Instead, just put a line with only a \hll|\%| sign. Spacing within the argument is often
 irrelevant. If you need a comma in the value, surround your value with braces.
 
-\begin{list}{}{
-		\itemindent-\leftmargin
-		\setlength{\itemsep}{10pt}
-	}
-	\item\textbf{name}\par\nobreak
+\begin{optionlist}
+	\option{name}<character list>
 
 	Creates or modifies a named rule. This key is optional.
 
@@ -299,27 +351,25 @@ irrelevant. If you need a comma in the value, surround your value with braces.
 	a dark blue color, and \hll|structure|, which consists of \hll|\begin| and \hll|\end| and prints
 	them in light blue.
 
-
-	\item\textbf{classoffset}\par\nobreak
+	\option{classoffset}<integer>
 
 	Sets the \hll|listings| classoffset manually. Try to avoid this. Use \textbf{name} to refer to
 	existing rules instead.
 
 
-	\item\textbf{add}\par\nobreak
+	\option{add}<list>
 
 	Adds a command (\hll|\mycommand|) or keyword (\hll|Hi!|) to the current rule. The value can
 	contain multiple values by opening braces, and comma separating values within them.
 
 
-	\item\textbf{remove}\par\nobreak
+	\option{remove}<list>
 
 	Removes a commands or keywords from the current rule. The value
 	can contain multiple values by opening braces, and comma separating values
 	within them.
 
-
-	\item\textbf{clear}\par\nobreak
+	\option{clear}
 
 	Removes all commands and keywords from the current rule. Use
 	without value, for example
@@ -332,15 +382,14 @@ irrelevant. If you need a comma in the value, surround your value with braces.
 		\end{highlightblock}
 	\end{showcase}
 
-
-	\item\textbf{color}\par\nobreak
+	\option{color}<color>
 
 	Specifies a color for the rule. Equivalent to specifying \hll|style|
 	instead, with value \hll|\color{value}| where \hll|value| is the value for the
 	\textbf{color} key. So \hll|color=red| and \hll|style=\color{red}| are equivalent.
 
 
-	\item\textbf{style}\par\nobreak
+	\option{style}<\textrm{\LaTeX{}} code>
 
 	Specifies a style for the rule. A rule can have only one style. If
 	you specify a style after \hll|add| or \hll|remove|, this starts a new (unnamed)
@@ -348,53 +397,142 @@ irrelevant. If you need a comma in the value, surround your value with braces.
 	color. For that, using the `color' key is just a bit easier and neater. But
 	hey, you have the option to set whatever style you want. :)
 
-\end{list}
+\end{optionlist}
 
 \section{Global settings}
 
-There are some global parameters involved in the appearance:
-\begin{showcase}[label=overview]
-	\begin{highlightblock}[gobble=8]
-		\colorlet{curlyBrackets}{red!50!blue}
-		\colorlet{squareBrackets}{blue!50!white}
-		\colorlet{codeBackground}{gray!10!white}
-		\colorlet{comment}{green!40!black}
-		\def\defaultgobble{0}
+Global parameters can either be set as package option, or through invocation of the
+\hll|\hllconfigure|-command.
+\begin{showcase}[label=defaults]
+	\begin{highlightblock}
+		\hllconfigure{
+			frame=lines,
+			tabsize=4,
+			gobble=0,
+			backgroundcolor=gray!6!white,
+			bracecolor=red!50!blue,
+			bracketcolor=blue!50!white,
+			commentcolor=green!40!black,
+			alsoletter={$@_!|?$},
+		}
 	\end{highlightblock}
 \end{showcase}
 
-Each line can be set independent of each other, and each shows its default
-value.
+%There are some global parameters involved in the appearance:
+%\begin{showcase}[label=overview]
+%	\begin{highlightblock}[gobble=8]
+%		\colorlet{curlyBrackets}{red!50!blue}
+%		\colorlet{squareBrackets}{blue!50!white}
+%		\colorlet{codeBackground}{gray!10!white}
+%		\colorlet{comment}{green!40!black}
+%		\def\defaultgobble{0}
+%	\end{highlightblock}
+%\end{showcase}
 
-There are package options you can use as well:
+The package options and \hll|\hllconfigure| take a comma separated list of key-value pairs. Each key
+represents an option. These pairs will be processed in the order they are provided by the user.
+Hence when setting a value multiple times, the last value passed is decisive. However, options can
+involve more than simply setting a value. The exact behaviour is described in the specification
+below. The key-value scheme is processed by the package {\setulcolor{red}\ul{xkeyval}}.
 
-\begin{list}{}{
-		\itemindent-\leftmargin
-		\setlength{\itemsep}{10pt}
-	}
-	\item\textbf{frame} (default: \hll|lines|)\par\nobreak
+%\begin{showcase}[label=note]
+%	\begin{highlightblock}
+%		~The key-value scheme is processed by the package {\setulcolor{red}\ul{xkeyval}}.~
+%	\end{highlightblock}
+%\end{showcase}
 
+%Each line can be set independent of each other, and each shows its default
+%value.
+%
+%There are package options you can use as well:
+
+The value marked `default' is a value to be set when only the key is specified without being assigned a value. The options available are specified in the following subsections.
+
+\subsection{Block appearance}
+
+\begin{optionlist}
+		
+\option{frame}<choice>={lines}
+	
 	Specifies the frame you want around code. My
 	favorites are \hll|lines| and \hll|none|. Check the
 	\fhref{https://www.ctan.org/pkg/listings}{listings package documentation} for all
 	possibilities.
-
-
-	\item\textbf{noframe} (use without value)\par\nobreak
-
+	
+	
+\option{noframe}
+	
 	Equivalent to \hll|frame=none|.
+	
+\option{debugframe}
+	
+	Shows a colored frame around boxes loaded using the \hll|saveblock|/\hll|\useblock| scheme. This can be useful for debugging unexpected offsets. Not for production use.
+	
+\option{backgroundcolor}<color>
 
+TODO	
 
-	\item\textbf{styleanywhere} (use without value)\par\nobreak
+\end{optionlist}
 
-	Overrides the default behavior that \hll|style| starts a new style after commands like \hll|add| and \hll|remove|.
+\subsection{General appearance}
 
-\end{list}
+\begin{optionlist}
+\option{mathdollar}<key-value list>={on}
+	
+	Configures styling of code between dollar signs.
+	
+	The command takes a key-value list. The allowed keys are
+	\begin{itemize}
+		\item\hll|on| (use without value)
+		\item\hll|off| (use without value)
+		\item\hll|style|
+		\item\hll|color|
+		\item\hll|cumulative| (default: \hll|true|): Apply normal coloring rules on top of the style provided.
+	\end{itemize}
+	
+	By default, \textbf{mathdollar} is off and has default color \hll|green!40!black| and cumulative enabled. Each invocation of the \textbf{mathdollar} key is implicitly preceded with the \hll|on|.
+		
+\option{bracecolor}<color>
+	
+	TODO
+	
+\option{bracketcolor}<color>
+	
+	TODO
+	
+\option{commentcolor}<color>
+	
+	TODO
 
+\end{optionlist}
 
-\section{Fragile breaking situations (like beamer frames)}
+\subsection{Other}
+
+\begin{optionlist}
+\option{styleanywhere}
+	
+	Overrides the default behavior that \hll|style| starts a new highlighting rule after commands like \hll|add| and \hll|remove|.
+	
+\option{tabsize}<integer>
+	
+	Sets the amount of space characters a tab character is converted to, when no non-tab character has preceded on the line. Behaviour of tab characters is undefined if a non-tab character has preceded on the line.
+	
+\option{gobble}<integer>
+	
+	Sets the default amount of characters that will be stripped of code lines within a code block. This is useful to combat indentation used for structuring your \hll|.tex| file to show up in the code block.
+	
+\option{gobbletabs}<integer>
+	
+	For a value \hll|x|, equivalent to setting \hll|gobble=y| at the start of each code block, where $ y = \text{tabsize}\cdot \text{gobbletabs} $.		\texttt{ = \textlangle integer\textrangle,}
+	
+\option{alsoletter}<character list>
+	
+	TODO
+\end{optionlist}
+
+\section{Fragility}
 \label{sec:frag}
-
+5
 When passing command arguments around, or storing environment content, LaTeX interprets all
 characters. This includes seeing \hll|\maketitle| in \hll!\hll|\maketitle|! as a real command. To
 prevent this behavior, everything from \hll|\verb|, \iffalse|\fi to the \hll|verbatim|-environment,
