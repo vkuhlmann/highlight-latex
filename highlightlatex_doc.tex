@@ -9,6 +9,11 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\def\sectionbreak{\clearpage}
+
+\pagestyle{fancy}
 
 \expandafter\newif\csname ifuseownpackage\endcsname
 \useownpackagetrue
@@ -39,14 +44,19 @@
     	add = {
     		|
 	    }
-	}   
+	}
+
+	\hllconfigure{
+		tabsize=4,
+		gobbletabs=2
+	}
 \else
     \let\hll\lstinline
     \lstnewenvironment{highlightblock}[1][]
     {%
         \lstset{#1}%
     }{}%
-    \lstset{tabsize=2,escapeinside=~~}
+    \lstset{tabsize=4,escapeinside=~~}
 \fi
 
 \newcommand\fhref[2]{%
@@ -184,7 +194,6 @@
 \newbox\cmdintitle
 \setbox\cmdintitle=\hbox{\hll|highlightlatex|}
 \setbox\cmdintitle=\hbox{\adjustbox{height=2.0\height}{\usebox\cmdintitle}}
-\def\defaultgobble{8}
 
 \title{Package \usebox\cmdintitle{} manual}
 \author{
@@ -195,11 +204,9 @@
 
 \maketitle
 \begin{abstract}
-	This package provides colored syntax highlighting for \LaTeX{} source code, without aid from
-	outside \LaTeX. This is in response to the general trend that people often fall back to verbatim
-	for displaying code. This package aims to make typesetting good looking \LaTeX{} source code accessible.
-	For this, it builds further on the generic `listings' package. An example output is
-	shown in \autoref{fig:demoOutput}\,.
+	The \hll|highlightlatex| package provides colored syntax highlighting for \LaTeX{} source code, without aid from
+	outside \LaTeX. The aim is to make this accessible enough so people stop falling back to plain verbatim for this.
+	For this, it builds further on the generic `listings' package. An example output is	shown in \autoref{fig:demoOutput}\,.
 \end{abstract}
 
 \bigskip
@@ -239,7 +246,7 @@
 
 \section{Getting started}
 
-After having added the package, you can add LaTeX in two ways.
+Include the package using \hll|\usepackage{highlightlatex}|. If not recognized, refresh your installation's package repository and set it to install \hll|highlightlatex|. There are two ways in which code can be shown.
 
 \subsection{Inline style}
 
@@ -248,6 +255,17 @@ After having added the package, you can add LaTeX in two ways.
 		Your file begins with a line of the form \hll~{}~|\documentclass[]{}|. The
 		square brackets ...
 	\end{highlightblock}
+\end{showcase}
+
+\begin{showcase}[label=result]%
+	\begingroup
+	\adjustbox{cfbox=blue!40!white 2pt 10pt,valign=t,bgcolor=blue!5!white}{%
+		\begin{minipage}[t]{\dimexpr\linewidth-24pt\relax}
+			Your file begins with a line of the form \hll|\documentclass[]{}|. The
+			square brackets ...
+		\end{minipage}%
+	}%
+	\endgroup
 \end{showcase}
 
 The first non-space character following \lstinline|\hll| delimits the argument to
@@ -268,19 +286,45 @@ this command.
 	\end{highlightblock}
 \end{showcase}
 
-To prevent indentation of our \hll|highlightblock| (here one tab) to be shown as part of the code,
-the \hll|gobble| parameter strips them off. Play around with it until everything looks right. I
-recommend to set this value globally using \hll|\def\defaultgobble{2}|. You can still override it on
-a per-block basis, if necessary.
+\begin{showcase}[label=result]%
+	\begingroup
+	\adjustbox{cfbox=blue!40!white 2pt 10pt,valign=t,bgcolor=blue!5!white}{%
+		\begin{minipage}[t]{\dimexpr\linewidth-24pt\relax}
+			Your basic document now looks like
+			\begin{highlightblock}[gobble=16]
+				\documentclass[a4paper]{article}
+				
+				\begin{document}
+					Hello world!
+				\end{document}
+			\end{highlightblock}
+		\end{minipage}%
+	}%
+	\endgroup
+\end{showcase}
 
-There are situations the block could run out of the page, for example you need to save the block for use in a beamer document (see \autoref{sec:frag}). In that case, the normal full-width of a slide is assumed, but you might want to use it in a slide with multiple columns. Set the \hll|linewidth| on the
-\hll|highlightblock|. This can be a fraction of the total slide width available, \hll|0.6\textwidth|
-is 60\% of the width, or an absolute value, like \hll|10em|, which seems to equal 20 characters.
+\textbf{gobble}. The \hll|gobble| parameter specifies how many characters need to be stripped of the start of each line.
+In the example, we had an indentation of four spaces for the literal code. Without the gobble, those spaces would
+be shown. See \autoref{sec:globalOther} for setting a global default, and how tabs are interpreted.
+
+% To prevent indentation of our \hll|highlightblock| (here one tab) to be shown as part of the code,
+% the \hll|gobble| parameter strips them off. Play around with it until everything looks right. I
+% recommend to set this value globally using \hll|\def\defaultgobble{2}|. You can still override it on
+% a per-block basis, if necessary.
+
+\textbf{linewidth}. The gray box extends to the width of the page. To set it to only use 60\%, use \hll|linewidth=0.6\linewidth|, or for
+a width of 20 characters, set \hll|linewidth=10em|.
+
+%There are situations the block could run out of the page, for example you need to save the block for use in a beamer document (see \autoref{sec:frag}). In that case, the normal full-width of a slide is assumed, but you might want to use it in a slide with multiple columns. Set the \hll|linewidth| on the
+%\hll|highlightblock|. This can be a fraction of the total slide width available, \hll|0.6\textwidth|
+%is 60\% of the width, or an absolute value, like \hll|10em|, which seems to equal 20 characters.
 
 There are more keys you can provide. Check the
 \fhref{https://www.ctan.org/pkg/listings}{\hll|listings| package
 	documentation} for options
 available to the \hll|lstlisting|-environment and \hll|lstset| command.
+
+\textbf{beamer}. Troubles using beamer? Or troubles with it working at some places, and failing at others? Check \autoref{sec:frag}.
 
 \newbox\uphbox
 \setbox\uphbox=\hbox{\hll|\updatehighlight|}
@@ -288,11 +332,14 @@ available to the \hll|lstlisting|-environment and \hll|lstset| command.
 
 \section[Macro \textbackslash updatehighlight]{\ignorespaces
   Macro \texorpdfstring{\usebox\uphbox}{\textbackslash updatehighlight}}
-\subsection{Adding a command to a highlighting rule}
+
+\subsection{Examples}
+
+\subsubsection{Adding a command to a highlighting rule}
 
 By default, only some LaTeX commands will be highlighted in blue. If there are others you need, like
 \hll|\tableofcontents| and \hll|\figref|, update the highlighting rules:
-\begin{showcase}[label=use]
+\begin{showcase}[label=example]
 	\begin{highlightblock}
 		\updatehighlight{
 			name = default,
@@ -307,8 +354,7 @@ The change will only affect code after it. I recommend issuing \hll|updatehighli
 preamble (before the \hll|\begin{document}|). In some situations you might want to change things
 mid-document. That's possible too.
 
-\subsection{Custom highlighting rules}
-\subsubsection{Example}
+\subsubsection{Coloring a command differently}
 
 As shown in \hll|demo.tex|, you can put any command or keyword you want to highlight in a different
 color. You do this with
@@ -331,25 +377,38 @@ information on color definitions and name, refer to
 \fhref{https://en.wikibooks.org/wiki/LaTeX/Colors}{LaTeX/Colors on Wikibooks}.
 
 
-\subsubsection{Specification}
+\subsection{Specification}
 
-The argument to \hll|\updatehighlight| is a key-value list. Keys are processed sequentially. For
-example, use \hll|color| before \hll|add| rather than after it, and a key can appear multiple times.
-Each one will be processed. You can merge any two \hll|\updatehighlight| in one. No need to close
-and reopen \hll|\updatehighlight| for each highlighting rule.
+%\begin{showcase}[label=use]
+%	\begin{highlightblock}
+%		\updatehighlight{
+%			option1 = value1,
+%			option2 = value2,
+%			option3,
+%			option4 = value4
+%		}
+%	\end{highlightblock}
+%\end{showcase}
 
-You might be tempted to add a blank line for clarity; that means a new paragraph to LaTeX, don't do
-it. Instead, just put a line with only a \hll|\%| sign. Spacing within the argument is often
-irrelevant. If you need a comma in the value, surround your value with braces.
+The argument to \hll|\updatehighlight| is a key-value list. Keys are processed in order
+and can appear multiple times. If a value contains special characters, like a `=' or `,',
+enclose the value with braces. If you want to create some space in your code, don't use
+a blank line, they are interpreted by \LaTeX{} as a paragraph end. You can use an empty
+line with only a percent sign (\hll|%|) instead.
+The processing is done using the package {\setulcolor{red}\ul{xkeyval}}.
+
+You can merge any two \hll|\updatehighlight| in one. No need to close and reopen
+\hll|\updatehighlight| for each highlighting rule.
 
 \begin{optionlist}
-	\option{name}<character list>
+	\option{name}<characters>
 
-	Creates or modifies a named rule. This key is optional.
+	Sets the named rule to be modified. If a rule with the name does not exist, a new rule will be created.
 
-	The default keys are \hll|default|, which includes a bunch of basic commands, and has by default
-	a dark blue color, and \hll|structure|, which consists of \hll|\begin| and \hll|\end| and prints
+	There are two default named rules. The first one is \hll|default|, which includes a bunch of basic commands, and has by default
+	a dark blue color. The second one is \hll|structure|, which consists of \hll|\begin| and \hll|\end| and prints
 	them in light blue.
+
 
 	\option{classoffset}<integer>
 
@@ -360,19 +419,20 @@ irrelevant. If you need a comma in the value, surround your value with braces.
 	\option{add}<list>
 
 	Adds a command (\hll|\mycommand|) or keyword (\hll|Hi!|) to the current rule. The value can
-	contain multiple values by opening braces, and comma separating values within them.
+	contain multiple commands and keywords by seperating them with comma's. The value needs to
+	be surrounded with braces.
 
 
 	\option{remove}<list>
 
-	Removes a commands or keywords from the current rule. The value
-	can contain multiple values by opening braces, and comma separating values
-	within them.
+	Removes a commands or keywords from the current rule. The value can
+	contain multiple commands and keywords by seperating them with comma's. The value needs to
+	be surrounded with braces.
+
 
 	\option{clear}
 
-	Removes all commands and keywords from the current rule. Use
-	without value, for example
+	Removes all commands and keywords from the current rule.
 	\begin{showcase}[label=example]
 		\begin{highlightblock}[gobble=12]
 			\updatehighlight{
@@ -383,15 +443,14 @@ irrelevant. If you need a comma in the value, surround your value with braces.
 	\end{showcase}
 
 	\option{color}<color>
-
-	Specifies a color for the rule. Equivalent to specifying \hll|style|
-	instead, with value \hll|\color{value}| where \hll|value| is the value for the
-	\textbf{color} key. So \hll|color=red| and \hll|style=\color{red}| are equivalent.
-
+	
+	Specifies the current rule's style to color text in the given color. This can also be done using
+	the \textbf{style} option, for example \hll|color=red| is equivalent to
+	\hll|style=\color{red}|.
 
 	\option{style}<\textrm{\LaTeX{}} code>
 
-	Specifies a style for the rule. A rule can have only one style. If
+	Specifies the current rule's style. A rule can have only one style. If
 	you specify a style after \hll|add| or \hll|remove|, this starts a new (unnamed)
 	rule. In practice, the only style which will probably work for you is just a
 	color. For that, using the `color' key is just a bit easier and neater. But
@@ -429,11 +488,22 @@ Global parameters can either be set as package option, or through invocation of 
 %	\end{highlightblock}
 %\end{showcase}
 
-The package options and \hll|\hllconfigure| take a comma separated list of key-value pairs. Each key
-represents an option. These pairs will be processed in the order they are provided by the user.
-Hence when setting a value multiple times, the last value passed is decisive. However, options can
-involve more than simply setting a value. The exact behaviour is described in the specification
-below. The key-value scheme is processed by the package {\setulcolor{red}\ul{xkeyval}}.
+%The package options and \hll|\hllconfigure| take a comma-separated list of key-value pairs.
+
+% The \hll|\hllconfigure| command and package options take a comma-separated list of key-value pairs.
+% Each key represents an option. These pairs will be processed in the order they are provided by the user.
+% Hence when setting a value multiple times, the last value passed is decisive. However, options can
+% involve more than simply setting a value. The exact behavior is described in the specification
+% below. The key-value scheme is processed by the package {\setulcolor{red}\ul{xkeyval}}.
+
+
+The argument to \hll|\hllconfigure| and the value of the package options is a key-value list.
+Keys are processed in order
+and can appear multiple times. If a value contains special characters, like a `=' or `,',
+enclose the value with braces. If you want to create some space in your code, don't use
+a blank line, they are interpreted by \LaTeX{} as a paragraph end. You can use an empty
+line with only a percent sign (\hll|%|) instead.
+The processing is done using the package {\setulcolor{red}\ul{xkeyval}}.
 
 %\begin{showcase}[label=note]
 %	\begin{highlightblock}
@@ -446,7 +516,9 @@ below. The key-value scheme is processed by the package {\setulcolor{red}\ul{xke
 %
 %There are package options you can use as well:
 
-The value marked `default' is a value to be set when only the key is specified without being assigned a value. The options available are specified in the following subsections.
+%The value marked `default' is a value to be set when only the key is specified without being assigned a value. The options available are specified in the following subsections.
+
+The options available are specified in the following subsections.
 
 \subsection{Block appearance}
 
@@ -454,11 +526,13 @@ The value marked `default' is a value to be set when only the key is specified w
 		
 \option{frame}<choice>={lines}
 	
-	Specifies the frame you want around code. My
+	Specifies the frame you want around code blocks. My
 	favorites are \hll|lines| and \hll|none|. Check the
 	\fhref{https://www.ctan.org/pkg/listings}{listings package documentation} for all
 	possibilities.
 	
+	The square brackets in the syntax definition above mean you
+	can specify `\hll|frame,|' and that this is equivalent to `\hll|frame=lines,|'.
 	
 \option{noframe}
 	
@@ -466,11 +540,11 @@ The value marked `default' is a value to be set when only the key is specified w
 	
 \option{debugframe}
 	
-	Shows a colored frame around boxes loaded using the \hll|saveblock|/\hll|\useblock| scheme. This can be useful for debugging unexpected offsets. Not for production use.
+	Shows a colored frame around boxes loaded using the \hll|saveblock|+\hll|\useblock| scheme. This can be useful for debugging unexpected offsets. Not for production use.
 	
 \option{backgroundcolor}<color>
 
-TODO	
+	Sets the background color of code blocks.
 
 \end{optionlist}
 
@@ -482,31 +556,40 @@ TODO
 	Configures styling of code between dollar signs.
 	
 	The command takes a key-value list. The allowed keys are
-	\begin{itemize}
-		\item\hll|on| (use without value)
-		\item\hll|off| (use without value)
-		\item\hll|style|
-		\item\hll|color|
-		\item\hll|cumulative| (default: \hll|true|): Apply normal coloring rules on top of the style provided.
-	\end{itemize}
+	\begin{optionlist}
+		\option{on}
+		Enables mathdollar styling.
+		\option{off}
+		Disables mathdollar styling.
+		
+		\option{style}<\textrm{\LaTeX} code>
+		Sets style.
+		
+		\option{color}<color>
+		Sets style to color text with this color. Hence \hll|color=XXX| is equivalent to \hll|style=\color{XXX}|.
+		
+		\option{cumulative}<boolean>={true}
+		Applies normal coloring rules on top of the style provided.
+	\end{optionlist}
 	
-	By default, \textbf{mathdollar} is off and has default color \hll|green!40!black| and cumulative enabled. Each invocation of the \textbf{mathdollar} key is implicitly preceded with the \hll|on|.
+	By default, \textbf{mathdollar} is off and has default color \hll|green!40!black| and cumulative enabled. Each invocation of the \textbf{mathdollar} key is implicitly preceded with the option \hll|on|.
 		
 \option{bracecolor}<color>
 	
-	TODO
+	Sets the color for displaying curly braces (\hll|{| and \hll|}|).
 	
 \option{bracketcolor}<color>
 	
-	TODO
+	Sets the color for displaying square brackets (\hll|[| and \hll|]|).
 	
 \option{commentcolor}<color>
 	
-	TODO
+	Sets the color for displaying comments, that is a percent sign (\hll|%|)
+	and the text following it.
 
 \end{optionlist}
 
-\subsection{Other}
+\subsection{Other}\label{sec:globalOther}
 
 \begin{optionlist}
 \option{styleanywhere}
@@ -515,7 +598,7 @@ TODO
 	
 \option{tabsize}<integer>
 	
-	Sets the amount of space characters a tab character is converted to, when no non-tab character has preceded on the line. Behaviour of tab characters is undefined if a non-tab character has preceded on the line.
+	Sets the amount of space characters a tab character is converted to, when no non-tab character has preceded on the line. Behavior of tab characters is left undefined by this package if a non-tab character has preceded on the line.
 	
 \option{gobble}<integer>
 	
@@ -523,35 +606,47 @@ TODO
 	
 \option{gobbletabs}<integer>
 	
-	For a value \hll|x|, equivalent to setting \hll|gobble=y| at the start of each code block, where $ y = \text{tabsize}\cdot \text{gobbletabs} $.		\texttt{ = \textlangle integer\textrangle,}
+	Sets the gobble in amount of \textbf{tabsize}'s. The amount of \textbf{tabsize}'s is evaluated at the start of each code block. The result of \hll|tabsize=4,gobbletabs=2| is equivalent to \hll|gobble=8|. However, when you indent with tabs, this option allows you to quickly change the \textbf{tabsize} without having to update \textbf{gobble} everywhere.
 	
-\option{alsoletter}<character list>
+\option{alsoletter}<characters>
 	
-	TODO
+	Specifies the character list of special characters to be treated like `letter'. This makes them usable in highlighting rules. However, beware using special characters can conflict with other typesetting routines. Setting this option overrides the previous value.
+	
 \end{optionlist}
 
 \section{Fragility}
 \label{sec:frag}
-5
-When passing command arguments around, or storing environment content, LaTeX interprets all
+
+\subsection{Introduction}
+
+When passing command arguments around, or storing environment content, \LaTeX{} interprets all
 characters. This includes seeing \hll|\maketitle| in \hll!\hll|\maketitle|! as a real command. To
 prevent this behavior, everything from \hll|\verb|, \iffalse|\fi to the \hll|verbatim|-environment,
 to the \hll|listings| package (which this package depends on) temporarily changes the interpretation
 of characters that are still to be read. The blackslash before maketitle in \hll!\hll|\maketitle|!
 will be read as `just text' (a \textit{letter} technically).
 
-When content gets interpreted early, like the \hll|frame|-environment in \hll|beamer| does,
-this trick can't be done anymore. Instead, you either need to \emph{escape} code, or
-\emph{pre-process} the code outside a fragile breaking situation.
+This reliance on interpretation being done at the last moment is called `fragility'. When content
+gets interpreted early, like the \hll|frame|-environment in \hll|beamer| does, this fragility is
+broken. A \hll|frame|-environment allows a \hll|fragile| option to be set, which probably solves this,
+but I would avoid this. In situations where fragility is broken, you need to either \emph{escape} the
+displayed code, or \emph{pre-processing} the displayed code outside a fragile breaking situation.
 
-Escaping is done by preceding special characters with a backslash. For example,
+\subsection{Escaping}
+
+Escaping is done by preceding certain special characters with a backslash. For example,
 \hll!\hll|\documentclass[]{}|! becomes \hll!\hll|\\!\hll!documentclass[]\{\}|!.
 
-For large code blocks, this is undesirable. Therefore, the package provides for a companion to the
-\hll|highlightblock|-environment: surround it with a \hll|saveblock|-environment which takes a
-single argument: a name to assign it. For example:
+\subsection{Pre-processing}
+
+For large code blocks, escaping is undesirable. Therefore we pre-process the code when we
+have fragility preserved, and load the result in our fragile breaking situation. The storing
+is done through the \hll|saveblock|-environment. This environment takes a name under which
+the result will be stored. A name can be re-used and will silently overwrite any existing save.
+
+\leavevmode
 \begin{showcase}[label=example]
-	\begin{highlightblock}[gobble=8]
+	\begin{highlightblock}
 		\begin{saveblock}{basicfigure}
 			\begin{highlightblock}[linewidth=0.6\textwidth]
 				\begin{figure}
@@ -567,22 +662,23 @@ single argument: a name to assign it. For example:
 	\end{highlightblock}
 \end{showcase}
 
+To load the result, use the \hll|\useblock| or \hll|\consumeblock| command
+with the save name provided as argument. For the example, these are \hll|\useblock{basicfigure}|
+and \hll|\consumeblock{basicfigure}| respectively.
 
-Do this outside a fragile breaking situation. (For the \hll|frame|-environment example, that means
-just before the \hll|frame| for example.) Then, where you want to use it, use
-\hll|\useblock{basicfigure}|, where the argument
-is the name used during saving.
-There is also a variant \hll|\consumeblock{basicfigure}|. If you save
-many blocks, these will all remain loaded in memory till your PDF has fully generated. The
-\hll|\consumeblock| works like \hll|\useblock|, except the saved block is deleted from memory after
-its use. Note this can also result in unexpected behavior, for example animations in a beamer frame
+The \hll|\consumeblock| variant
+deletes the result from memory after use. This is useful if you have many different save names
+occupied. Not deleting them keeps them loaded till the PDF has fully generated. Note \hll|\consumeblock| can
+result in unexpected behavior, for example animations in a beamer frame
 might need the code line to be executed multiple times. Use \hll|\useblock| when you can't
 guarantee the last use of a block.
 
-There is a separate demo for fragile breaking situations. You can find it at
-\hll|deamerdemo/deamerdemo.tex|.
+There is a separate demo for fragile breaking situations. You can find it as
+\hll|deamerdemo.tex|.
 
 \section{Adding extra space}
+
+\def\sectionbreak{}
 
 By default, \hll|highlightlatex| follows an approach where it minimizes spacing. This gives you full
 control over how tight or spacious your document looks. Just use commands like \hll|\medskip| to add
