@@ -3,7 +3,7 @@
 % [unpublished] Relative path to the highlightlatex.sty. When it is in the same
 % [unpublished] directory as this file, remove the '../'. Also do this if you
 % [unpublished] have properly installed highlightlatex.
-\usepackage{../highlightlatex}
+\usepackage[debugframe]{../highlightlatex}
 
 \usetheme{Dresden}
 \usecolortheme{dolphin}
@@ -72,6 +72,14 @@
 	}
 }
 
+% https://tex.stackexchange.com/questions/8260/what-are-the-various-units-ex-em-in-pt-bp-dd-pc-expressed-in-mm
+\makeatletter
+%http://groups.google.com/group/comp.text.tex/msg/7e812e5d6e67fcc5
+\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1}
+\makeatother
+
+\newlength\mystdim
+
 \begin{document}
 	\section{Beautiful code}
 	\begin{frame}
@@ -81,7 +89,8 @@
 	\end{frame}
 
 	\begin{saveblock}{arealjumble}
-		\begin{highlightblock}[linewidth=19em,gobble=6]
+%		\the\ht\strutbox, \the\baselineskip, \the\dimexpr .7\baselineskip\relax, \the\dimexpr .3\baselineskip\relax
+		\begin{highlightblock}[linewidth=19em,gobble=6,framerule=5.251792907714844pt]
 			% Here is some code
 			\setcounter{secnumdepth}{1}
 			\begin{document}
@@ -100,7 +109,12 @@
 		\frametitle{Beautiful code}
 		And look at this beautiful code
 		\useblock{arealjumble}
-		with some text after it.
+		%with some text after it.
+		
+		%\the\ht\csname @codebox@arealjumble\endcsname, \the\dp\csname @codebox@arealjumble\endcsname,
+		%\the\wd\csname @codebox@arealjumble\endcsname
+		
+		%\the\ht\strutbox, \the\baselineskip, \the\dimexpr .7\baselineskip\relax, \the\dimexpr .3\baselineskip\relax
 		
 	\end{frame}
 
@@ -110,6 +124,13 @@
 		\begin{center}
 			\consumeblock{arealjumble}
 		\end{center}
+	
+		\setlength\mystdim{5.251792907714844pt}
+		
+		pt: \convertto{pt}{\mystdim}, mm: \convertto{mm}{\mystdim},
+		ex: \convertto{ex}{\mystdim}, pc: \convertto{pc}{\mystdim},
+		in: \convertto{in}{\mystdim}, baselinefrac \convertto{\baselineskip}{\mystdim},
+		pageheightfrac \convertto{\paperheight}{\mystdim}
 	\end{frame}
 
 	% The name allows us to modify what we had set for it.
@@ -124,7 +145,7 @@
 	}
 	
 	\begin{saveblock}{nextpart}
-		\begin{highlightblock}[linewidth=0.6\textwidth]
+		\begin{highlightblock}[linewidth=0.6\textwidth,framerule=3pt]
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
