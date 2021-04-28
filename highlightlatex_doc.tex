@@ -38,7 +38,7 @@
     	add = {
     		\useblock, \consumeblock, \updatehighlight, saveblock, \hllconfigure
     	},
-		% 	
+		%
     	name = vert,
     	color = red,
     	add = {
@@ -173,7 +173,7 @@
 \newenvironment{optionlist}{
 	\begin{list}{}{
 		\itemindent-\leftmargin
-		\setlength{\itemsep}{10pt}	
+		\setlength{\itemsep}{10pt}
 	}
 %	\let\origitem\item
 %	\def\item##1{
@@ -278,7 +278,7 @@ this command.
 		Your basic document now looks like
 		\begin{highlightblock}[gobble=4]
 			\documentclass[a4paper]{article}
-			
+
 			\begin{document}
 				Hello world!
 			\end{document}
@@ -293,7 +293,7 @@ this command.
 			Your basic document now looks like
 			\begin{highlightblock}[gobble=16]
 				\documentclass[a4paper]{article}
-				
+
 				\begin{document}
 					Hello world!
 				\end{document}
@@ -443,7 +443,7 @@ You can merge any two \hll|\updatehighlight| in one. No need to close and reopen
 	\end{showcase}
 
 	\option{color}<color>
-	
+
 	Specifies the current rule's style to color text in the given color. This can also be done using
 	the \textbf{style} option, for example \hll|color=red| is equivalent to
 	\hll|style=\color{red}|.
@@ -530,25 +530,25 @@ The options available are specified in the following subsections.
 \subsection{Block appearance}
 
 \begin{optionlist}
-		
+
 \option{frame}<choice>={lines}
-	
+
 	Specifies the frame you want around code blocks. My
 	favorites are \hll|lines| and \hll|none|. Check the
 	\fhref{https://www.ctan.org/pkg/listings}{listings package documentation} for all
 	possibilities.
-	
+
 	The square brackets in the syntax definition above mean you
 	can specify `\hll|frame,|' and that this is equivalent to `\hll|frame=lines,|'.
-	
+
 \option{noframe}
-	
+
 	Equivalent to \hll|frame=none|.
-	
+
 \option{debugframe}
-	
+
 	Shows a colored frame around boxes loaded using the \hll|saveblock|+\hll|\useblock| scheme. This can be useful for debugging unexpected offsets. Not for production use.
-	
+
 \option{backgroundcolor}<color>
 
 	Sets the background color of code blocks.
@@ -559,38 +559,38 @@ The options available are specified in the following subsections.
 
 \begin{optionlist}
 \option{mathdollar}<key-value list>={on}
-	
+
 	Configures styling of code between dollar signs.
-	
+
 	The command takes a key-value list. The allowed keys are
 	\begin{optionlist}
 		\option{on}
 		Enables mathdollar styling.
 		\option{off}
 		Disables mathdollar styling.
-		
+
 		\option{style}<\textrm{\LaTeX} code>
 		Sets style.
-		
+
 		\option{color}<color>
 		Sets style to color text with this color. Hence \hll|color=XXX| is equivalent to \hll|style=\color{XXX}|.
-		
+
 		\option{cumulative}<boolean>={true}
 		Applies normal coloring rules on top of the style provided.
 	\end{optionlist}
-	
+
 	By default, \textbf{mathdollar} is off and has default color \hll|green!40!black| and cumulative enabled. Each invocation of the \textbf{mathdollar} key is implicitly preceded with the option \hll|on|.
-		
+
 \option{bracecolor}<color>
-	
+
 	Sets the color for displaying curly braces (\hll|{| and \hll|}|).
-	
+
 \option{bracketcolor}<color>
-	
+
 	Sets the color for displaying square brackets (\hll|[| and \hll|]|).
-	
+
 \option{commentcolor}<color>
-	
+
 	Sets the color for displaying comments, that is a percent sign (\hll|%|)
 	and the text following it.
 
@@ -600,25 +600,25 @@ The options available are specified in the following subsections.
 
 \begin{optionlist}
 \option{styleanywhere}
-	
+
 	Overrides the default behavior that \hll|style| starts a new highlighting rule after commands like \hll|add| and \hll|remove|.
-	
+
 \option{tabsize}<integer>
-	
+
 	Sets the amount of space characters a tab character is converted to, when no non-tab character has preceded on the line. Behavior of tab characters is left undefined by this package if a non-tab character has preceded on the line.
-	
+
 \option{gobble}<integer>
-	
+
 	Sets the default amount of characters that will be stripped of code lines within a code block. This is useful to combat indentation used for structuring your \hll|.tex| file to show up in the code block.
-	
+
 \option{gobbletabs}<integer>
-	
+
 	Sets the gobble in amount of \textbf{tabsize}'s. The amount of \textbf{tabsize}'s is evaluated at the start of each code block. The result of \hll|tabsize=4,gobbletabs=2| is equivalent to \hll|gobble=8|. However, when you indent with tabs, this option allows you to quickly change the \textbf{tabsize} without having to update \textbf{gobble} everywhere.
-	
+
 \option{alsoletter}<characters>
-	
+
 	Specifies the character list of special characters to be treated like `letter'. This makes them usable in highlighting rules. However, beware using special characters can conflict with other typesetting routines. Setting this option overrides the previous value.
-	
+
 \end{optionlist}
 
 \section{Fragility}

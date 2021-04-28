@@ -15,14 +15,30 @@
 \author{Vincent Kuhlmann}
 \date{14 March 2021}
 
-% Override if you want. Else you can delete it.
-%\colorlet{curlyBrackets}{red!50!blue}
-%\colorlet{squareBrackets}{blue!50!white}
-%\colorlet{codeBackground}{gray!10!white}
-%\colorlet{comment}{green!40!black}
-\def\defaultgobble{6}
+% Default config. These options can be set as package options as well.
+\hllConfigure{
+%	frame=lines,
+%	tabsize=4,
+%	gobble=0,
+%	backgroundcolor=gray!6!white,
+%	bracecolor=red!50!blue,
+%	bracketcolor=blue!50!white,
+%	commentcolor=green!40!black,
+%	alsoletter={$@_!|?$},
+%	inlinemath={
+%		inner,
+%		color={green!40!black},
+%		%
+%		outer,
+%		style={\itshape\color{green!70!black}},
+%		%
+%		dollar=true,
+%		paren=true,
+%		outer%, inner, innerplain, off
+%	},
+}
 
-\updatehighlight{
+\hllUpdateRules{
 	name = default,
 	% 90% blue, remaining is black
 	color = {blue!90!black},
@@ -30,7 +46,7 @@
 		\knowncommand
 	},
 	% You can't have blank lines when providing these key-values
-	% (blank line means new paragraph, and that terminates this command)
+	% (blank line means 'new paragraph', and that terminates this command)
 	% So use percent signs (%) to comment out the newline character.
 	%
 	name = structure,
@@ -39,19 +55,10 @@
 		%\begin, \end
 	},
 	%^ This extra comma doesn't hurt. In fact, it helps when you're
-	% reordering code; you don't want missing comma's.
+	% reordering code; missing comma's create very unhelpful error messages.
 }
 
-\updatehighlight{
-	% Some characters might not work as keyword. Don't go too
-	% crazy.
-%	name = greenDollar,
-%	style = {\itshape\color{green!70!black}},
-%	add = {
-%		% The dollar sign is provided an extra time just to
-%		% calm down TeXstudio's code highlighting.
-%		$, $
-%	},
+\hllUpdateRules{
 	%
 	name = accentA,
 	color = green!60!black,
@@ -78,7 +85,7 @@
 %\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1}
 %\makeatother
 
-\hllconfigure{
+\hllConfigure{
 	gobbletabs=3,
 	%mathdollar=outer
 %	framerule=5.251792907714pt,
@@ -94,6 +101,11 @@
 		Let's start
 	\end{frame}
 
+	\hllUpdateRules{
+		name = accentA,
+		%color = white
+	}
+
 	\begin{saveblock}{arealjumble}
 %		\the\ht\strutbox, \the\baselineskip, \the\dimexpr .7\baselineskip\relax, \the\dimexpr .3\baselineskip\relax
 		%\begin{highlightblock}[linewidth=19em,gobble=6,framerule=5.251792907714844pt]
@@ -102,22 +114,22 @@
 			\setcounter{secnumdepth}{1}
 			\begin{document}
 				\section{My section (and Hi!)}
-				
+
 				\unknowncommand\knowncommand
 				\inAccA\inAccB\inAccC
 				\section ~\smash{\ensuremath{\sqrt{2}\;\leftarrow}} cool!~
-				
+
 				Insert literal tildes like ~\textasciitilde~. Hi!
 			\end{document}
 		\end{highlightblock}
 	\end{saveblock}
-		
+
 	\begin{frame}
 		\frametitle{Beautiful code}
 		And look at this beautiful code
 		\useblock{arealjumble}
 		with some text after it.
-		
+
 	\end{frame}
 
 	\begin{frame}
@@ -135,57 +147,57 @@
 		clear,
 		name = accentA,
 		add = {
-			\inAccB	
+			\inAccB
 		}
 	}
-	
+
 	\begin{saveblock}{nextpart}
-		\begin{highlightblock}[linewidth=0.6\textwidth]
+		\begin{hllblock}[linewidth=0.6\textwidth]
 			% File: document.tex
 			\documentclass[a4paper]{article}
 			\usepackage{amsmath}
-			
+
 			\begin{document}
 				Insert math like $\sqrt{2}$.
 				\inAccA\inAccB\inAccC
-				
+
 			\end{document}
-		\end{highlightblock}
+		\end{hllblock}
 	\end{saveblock}
 
 	\begin{frame}
 		\frametitle{Continuing}
 		Let's also show square brackets:
-		
+
 		\begin{center}
 			\useblock{nextpart}
 		\end{center}
-		
+
 		\pause
 		% Note we need to escape characters!
 		The first line was of the form \hll|\\documentclass[]\{\}|. Very interesting.
-		
+
 		\pause
 		Note the \hll|\$| are only green because we defined it as a keyword.
 	\end{frame}
 
 	\begin{saveblock}{basicfigure}
-		\begin{highlightblock}[linewidth=0.6\textwidth]
+		\begin{hllblock}[linewidth=0.6\textwidth]
 			\begin{figure}
 				\includegraphics
 				[width=0.9\linewidth]
 				{myPlot.pdf}
-				
+
 				\caption{My plot}
 				\label{fig:myplot}
 			\end{figure}
-		\end{highlightblock}
+		\end{hllblock}
 	\end{saveblock}
 
 	\begin{saveblock}{figureplacement}
-		\begin{highlightblock}[linewidth=0.4\textwidth]
+		\begin{hllblock}[linewidth=0.4\textwidth]
 			\begin{figure}[htbp]
-		\end{highlightblock}
+		\end{hllblock}
 	\end{saveblock}
 
 	\begin{frame}
@@ -197,7 +209,7 @@
 			\begin{column}{0.4\textwidth}
 				You could have here code too:
 				\consumeblock{figureplacement}
-				
+
 			\end{column}
 		\end{columns}
 	\end{frame}
@@ -209,5 +221,5 @@
 			\url{https://github.com/vkuhlmann/highlight-latex}
 		\end{center}
 	\end{frame}
-	
+
 \end{document}

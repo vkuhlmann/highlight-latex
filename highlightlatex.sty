@@ -5,17 +5,17 @@
 %% Version: v1.0.0 + Dev
 
 %% Copyright (c) 2021 Vincent Kuhlmann
-%% 
+%%
 %% Permission is hereby granted, free of charge, to any person obtaining a copy of
 %% this software and associated documentation files (the "Software"), to deal in
 %% the Software without restriction, including without limitation the rights to
 %% use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 %% the Software, and to permit persons to whom the Software is furnished to do so,
 %% subject to the following conditions:
-%% 
+%%
 %% The above copyright notice and this permission notice shall be included in all
 %% copies or substantial portions of the Software.
-%% 
+%%
 %% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 %% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 %% FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -36,19 +36,7 @@
 \RequirePackage{etoolbox}
 \RequirePackage{adjustbox}
 
-%% Snippet source:
-%% https://tex.stackexchange.com/questions/406015/defining-macro-gsetlength-as-global-setlength-reliable
-\gdef\gsetlength#1#2{%
-	\begingroup
-		\setlength\skip@{#2}%
-		\global#1=\skip@
-	\endgroup
-}
-
-
 \def\@highlight@frame{none}
-%\newlength{\hll@offset@fixskip}
-%\setlength{\hll@offset@fixskip}{0pt}
 \gdef\hll@offset@fixskip{0pt}
 
 \newif\ifhllStyleAnywhere
@@ -68,6 +56,159 @@
 \newcounter{hlltabsize}
 \def\hll@alsoletter{}
 
+%%\DeclareOptionX*{\PackageWarning{highlightlatex}{`\CurrentOption' ignored}}
+%\newif\ifhll@optionnoredirect
+%\newif\ifhll@redirectoption
+%\let\hll@redirectto\relax
+%
+%\DeclareOptionX*{
+%	\hll@redirectoptionfalse
+%	\ifhll@optionnoredirect
+%		\hll@redirectoptiontrue
+%	\fi
+%	\ifx\hll@redirectto\relax
+%		\PackageWarning{highlightlatex}{Empty redirectto}
+%		\hll@redirectoptiontrue
+%	\fi
+%	\ifhll@redirectoption
+%		\PackageWarning{highlightlatex}{`\CurrentOption' ignored}%
+%	\else
+%		\hll@optionnoredirecttrue
+%		%\PackageInfo{highlightlatex}{Setting `\CurrentOption'}
+%		\expandafter\expandafter\hll@redirectto\expandafter{\CurrentOption}
+%		\hll@optionnoredirectfalse
+%	\fi
+%}
+%\def\hll@redirectto{\hllconfigure}
+
+\def\hlllangname{ColoredLaTeX}
+\newif\ifhll@preambleToLangDef
+\hll@preambleToLangDeftrue
+
+%\def\hll@escapeinside{~~}
+
+%\DeclareOptionX{langname}{%
+%	\def\hlllangname{#1}%
+%}
+
+%\DeclareOptionX{notildeescape}[]{%
+%	\hll@tildeescapefalse
+%}
+
+% Configuration from package options
+\def\hll@conffrompo{}
+
+\DeclareOptionX*{%
+	\def\mytemptemp#1{%
+		\expandafter\gdef\expandafter\hll@conffrompo\expandafter{\hll@conffrompo,#1}%
+	}%
+	\expandafter\mytemptemp\expandafter{\CurrentOption}%
+}
+
+\ExecuteOptionsX{}
+\ProcessOptionsX\relax
+
+\catcode`\{=11
+\let\@letterbraceopen={
+\catcode`\{=1
+
+\catcode`\}=11
+\let\@letterbraceclose=}
+\catcode`\}=2
+
+\def\hll@definelstlanguage#1#2#3{
+	%\expandafter\lstdefinelanguage\expandafter{\hlllangname}
+	\lstdefinelanguage{#1}#2{
+		backgroundcolor=\color{hllbackgroundcolor},
+		keywordstyle=\bfseries\color{accDefault},
+		basicstyle=\footnotesize\ttfamily,
+		commentstyle=\color{comment},
+		numbers=none,
+		tabsize=4,
+		mathescape=false,
+		alsoletter={$@_!|?$},
+		%
+		classoffset=0,
+		keywordstyle=\color{accDefault},
+		texcsstyle=*\color{accDefault},
+		moretexcs={subsection},
+		deletetexcs={begin,end},
+		%
+		classoffset=1,
+		keywordstyle=\color{accStructure},
+		texcsstyle=*\color{accStructure},
+		moretexcs={begin,end},
+		%
+		classoffset=2,
+		escapeinside=~~,
+		%
+		classoffset=0,
+		%literate={textA}{textB}{3}%
+		%https://tex.stackexchange.com/questions/172945/coloring-in-listing
+		literate={\{}{{\textcolor{hllbracecolor}{\@letterbraceopen}}}{1}
+		{\}}{{\textcolor{hllbracecolor}{\@letterbraceclose}}}{1}
+		{[}{{\textcolor{hllbracketcolor}{[}}}{1}
+		{]}{{\textcolor{hllbracketcolor}{]}}}{1},
+		%		{(}{{\textcolor{delimiterColor}{(}}}{1}
+		%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
+		#3
+	}
+}
+
+\ifhll@preambleToLangDef
+	\def\hll@preambleaccum{}%
+	\def\hll@lstset#1{%
+		\expandafter\def\expandafter\hll@preambleaccum\expandafter{\hll@preambleaccum,#1}%
+	}
+	\AtBeginDocument{
+%		\typeout{
+%			Highlightlatex: preambleaccum is
+%			\meaning\hll@preambleaccum
+%		}
+
+		\edef\@langdefparams{%
+			{\hlllangname}%
+			{[LaTeX]{TeX}}%
+		}
+
+		\def\@addlangdefparam#1{%
+			\expandafter\def\expandafter\@langdefparams\expandafter{\@langdefparams {#1}}%
+		}
+
+		\expandafter\@addlangdefparam\expandafter{\hll@preambleaccum}
+
+		\expandafter\hll@definelstlanguage\@langdefparams
+
+		\def\@setlstlang#1{%
+			\lstset{language=#1}%
+		}
+
+		\expandafter\@setlstlang\expandafter{\hlllangname}
+
+		\def\hll@lstset#1{%
+			\lstset{#1}%
+		}
+	}
+\else
+	\edef\@langdefparams{%
+		{\hlllangname}%
+		{[LaTeX]{TeX}}%
+		{}%
+	}
+
+	\expandafter\hll@definelstlanguage\@langdefparams
+
+	\def\@setlstlang#1{%
+		\lstset{language=#1}%
+	}
+
+	\expandafter\@setlstlang\expandafter{\hlllangname}
+
+	\def\hll@lstset#1{%
+		\lstset{#1}%
+	}
+\fi
+
 \newif\ifhll@ismathdollaron
 \newif\ifhll@mathdollarcumulative
 \hll@mathdollarcumulativetrue
@@ -81,15 +222,25 @@
 
 \define@key{hllmathdollar}{on}[]{%
 	\setkeys{hllmathdollar}{\hll@mathdollarmode}
-%	\unless\ifhll@ismathdollaron
-%		\ifhll@mathdollarcumulative
-%			%\hll@mathdollar@setinner
-%			\hll@mathdollar@setouter
-%		\else
-%			\hll@mathdollar@setinnerplain
-%		\fi
-%	\fi
 }
+
+\define@boolkey{hllmathdollar}[hll@mathdollar@]{dollar}[true]{
+	%\PackageWarning{highlightlatex}{MathInline bool dollar set. Conditional is \expandafter\meaning\csname ifhll@mathdollar@dollar\endcsname}
+	\ifhll@ismathdollaron
+		\setkeys{hllmathdollar}{off,on}%
+	\fi
+}
+
+\define@boolkey{hllmathdollar}[hll@mathdollar@]{paren}[true]{
+	%\PackageWarning{highlightlatex}{MathInline bool paren set. Conditional is \expandafter\meaning\csname ifhll@mathdollar@paren\endcsname}
+	\ifhll@ismathdollaron
+		\setkeys{hllmathdollar}{off,on}%
+	\fi
+}
+
+%\define@boolkey{hllmathdollar}[hll@mathdollar@]{parentheses}[true]{
+%	\let\ifhll@mathdollar@paren\ifhll@mathdollar@parentheses
+%}
 
 \define@key{hllmathdollar}{inner}[]{%
 	\def\hll@mathdollarmode{inner}%
@@ -112,36 +263,54 @@
 \def\hll@mathdollar@setinner{%
 	\hll@mathdollaroff
 	\gdef\hll@mathdollaroff{%
-		\lstset{
+		\hll@lstset{
 			classoffset=2,
 			deletedelim=**[s]{$}{$},
+			deletedelim=**[s]{\(}{\)},
 			classoffset=0
 		}%
 		\hll@ismathdollaronfalse
 	}%
-	\lstset{
-		classoffset=2,
-		moredelim=**[s][\csname hll@mathdollar\hll@mathdollarpalette style\endcsname]{$}{$},
-		classoffset=0
-	}%
+	\hll@lstset{classoffset=2}%
+	\ifhll@mathdollar@dollar
+		\hll@lstset{
+			moredelim=**[s][\csname hll@mathdollar\hll@mathdollarpalette style\endcsname]{$}{$}
+		}%
+	\fi
+	\ifhll@mathdollar@paren
+		\hll@lstset{
+			moredelim=**[s][\csname hll@mathdollar\hll@mathdollarpalette style\endcsname]{\(}{\)}
+		}%
+	\fi
+	%
+	\hll@lstset{classoffset=0}%
 	\hll@ismathdollarontrue
 }
 
 \def\hll@mathdollar@setinnerplain{%
 	\hll@mathdollaroff
 	\gdef\hll@mathdollaroff{%
-		\lstset{
+		\hll@lstset{
 			classoffset=2,
 			deletedelim=[s]{$}{$},
+			deletedelim=[s]{\(}{\)},
 			classoffset=0
 		}%
 		\hll@ismathdollaronfalse
 	}%
-	\lstset{
-		classoffset=2,
-		moredelim=[s][\csname hll@mathdollar\hll@mathdollarpalette style\endcsname]{$}{$},
-		classoffset=0
-	}%	
+	\hll@lstset{classoffset=2}%
+	\ifhll@mathdollar@dollar
+		\hll@lstset{
+			moredelim=[s][\csname hll@mathdollar\hll@mathdollarpalette style\endcsname]{$}{$},
+		}
+	\fi
+	\ifhll@mathdollar@paren
+		\hll@lstset{
+			moredelim=[s][\csname hll@mathdollar\hll@mathdollarpalette style\endcsname]{\(}{\)},
+		}
+	\fi
+	%
+	\hll@lstset{classoffset=0}%
 	\hll@ismathdollarontrue
 }
 
@@ -149,19 +318,31 @@
 \def\hll@mathdollar@setouter{%
 	\hll@mathdollaroff
 	\gdef\hll@mathdollaroff{%
-		\lstset{
+		\hll@lstset{
 			classoffset=2,
-			deletekeywords={$, $}
+			deletekeywords={$, $},
+			deletekeywords={\(, \)},
 			classoffset=0
 		}%
 		\hll@ismathdollaronfalse
 	}%
-	\lstset{
+	\hll@lstset{
 		classoffset=2,
-		morekeywords={$, $},
-		keywordstyle={\csname hll@mathdollar\hll@mathdollarpalette style\endcsname},
-		classoffset=0
-	}%	
+		keywordstyle={\csname hll@mathdollar\hll@mathdollarpalette style\endcsname}
+	}%
+	%\PackageWarning{highlightlatex}{Setting outer. Dollar conditional is \meaning\ifhll@mathdollar@dollar, paren conditional is \meaning\ifhll@mathdollar@paren}
+	\ifhll@mathdollar@dollar
+		\hll@lstset{
+			morekeywords={$, $}
+		}
+	\fi
+	\ifhll@mathdollar@paren
+		\hll@lstset{
+			morekeywords={\(, \)}
+		}
+	\fi
+	%
+	\hll@lstset{classoffset=0}%
 	\hll@ismathdollarontrue
 }
 
@@ -177,44 +358,24 @@
 	\expandafter\def\csname hll@mathdollar\hll@mathdollarpalette style\endcsname{\color{#1}}%
 }
 
-%\define@boolkey{hllmathdollar}[hll@mathdollar]{cumulative}[true]{%
-%	\ifhll@mathdollarcumulative
-%		\hll@mathdollar@setcumulative
-%	\else
-%		\hll@mathdollar@setnoncumulative
-%	\fi
-%}
-
 \newcommand\hllMathDollar[1]{%
 	\setkeys{hllmathdollar}{on,#1}%
-}
-
-\newcommand{\hllDelimDollar}[1][\color{green!40!black}]{%
-	\lstset{
-		classoffset=2,
-		moredelim=**[s][#1]{$}{$},
-		classoffset=0
-	}%
-}
-
-\newcommand{\hllDelimParen}[1][\color{green!40!black}]{%
-	\lstset{
-		classoffset=2,
-		moredelim=**[s][#1]{\(}{\)},
-		classoffset=0
-	}%
 }
 
 \define@key{hllglobal}{mathdollar}[on]{%
 	\hllMathDollar{#1}%
 }
 
+\define@key{hllglobal}{inlinemath}[on]{%
+	\hllMathDollar{#1}%
+}
+
 \define@key{hllglobal}{frame}[]{%
-	\setframe{#1}%
+	\hll@setframe{#1}%
 }
 
 \define@key{hllglobal}{noframe}[]{%
-	\setframe{none}%
+	\hll@setframe{none}%
 }
 
 \newlength\hllframerule
@@ -228,27 +389,27 @@
 	\hllDebugFrametrue
 }
 
-\def\setframe#1{%
+\def\hll@setframe#1{%
 	\def\frameval{#1}%
 	\ifx\relax#1\relax
-		\def\frameval{lines}%
+	\def\frameval{lines}%
 	\fi
 	\def\linesvalue{lines}%
 	%
 	\xdef\@highlight@frame{\frameval}%
 	%
 	\ifx\frameval\linesvalue
-		%\gdef\hll@offset@fixskip{\dimexpr 5.651792907714846pt-\hllframerule\relax}
-		%\gdef\hll@offset@fixskip{\dimexpr 5.5pt-\hllframerule\relax}
-		\gdef\hll@offset@fixskip{%
-			\ifdim\dimexpr 5.236pt-\hllframerule\relax>-2pt%
-				\dimexpr 5.236pt-\hllframerule\relax
-			\else
-				\dimexpr -2pt\relax
-			\fi
-		}
+	%\gdef\hll@offset@fixskip{\dimexpr 5.651792907714846pt-\hllframerule\relax}
+	%\gdef\hll@offset@fixskip{\dimexpr 5.5pt-\hllframerule\relax}
+	\gdef\hll@offset@fixskip{%
+		\ifdim\dimexpr 5.236pt-\hllframerule\relax>-2pt%
+		\dimexpr 5.236pt-\hllframerule\relax
+		\else
+		\dimexpr -2pt\relax
+		\fi
+	}
 	\else
-		\gdef\hll@offset@fixskip{-2pt}%
+	\gdef\hll@offset@fixskip{-2pt}%
 	\fi
 	\PackageInfo{highlightlatex}{Test}
 }
@@ -259,7 +420,7 @@
 
 \define@key{hllglobal}{tabsize}{%
 	\setcounter{hlltabsize}{#1}%
-	\lstset{tabsize=#1}%
+	\hll@lstset{tabsize=#1}%
 }
 
 \define@key{hllglobal}{mathdollarstyle}[]{%
@@ -303,7 +464,7 @@
 
 \define@key{hllglobal}{alsoletter}{%
 	\def\hll@alsoletter{#1}%
-	\lstset{alsoletter={#1}}%
+	\hll@lstset{alsoletter={#1}}%
 }
 
 \define@key{hllglobal}{backgroundcolor}{%
@@ -330,70 +491,6 @@
 	\hllconfigure{#1}%
 }
 
-%%\DeclareOptionX*{\PackageWarning{highlightlatex}{`\CurrentOption' ignored}}
-%\newif\ifhll@optionnoredirect
-%\newif\ifhll@redirectoption
-%\let\hll@redirectto\relax
-%
-%\DeclareOptionX*{
-%	\hll@redirectoptionfalse
-%	\ifhll@optionnoredirect
-%		\hll@redirectoptiontrue
-%	\fi
-%	\ifx\hll@redirectto\relax
-%		\PackageWarning{highlightlatex}{Empty redirectto}
-%		\hll@redirectoptiontrue
-%	\fi
-%	\ifhll@redirectoption
-%		\PackageWarning{highlightlatex}{`\CurrentOption' ignored}%
-%	\else
-%		\hll@optionnoredirecttrue
-%		%\PackageInfo{highlightlatex}{Setting `\CurrentOption'}	
-%		\expandafter\expandafter\hll@redirectto\expandafter{\CurrentOption}
-%		\hll@optionnoredirectfalse
-%	\fi
-%}
-%\def\hll@redirectto{\hllconfigure}
-
-\def\hlllangname{ColoredLaTeX}
-
-\DeclareOption{langname}{%
-	\def\hlllangname{#1}%
-}
-
-\def\hll@conffrompo{}
-
-\DeclareOptionX*{%
-	\def\mytemptemp#1{%
-		\expandafter\gdef\expandafter\hll@conffrompo\expandafter{\hll@conffrompo,#1}%
-	}
-	\expandafter\mytemptemp\expandafter{\CurrentOption}%
-}
-
-
-%
-\ExecuteOptionsX{}
-%
-%\hllconfigure{
-%	frame=lines,
-%	tabsize=4,
-%	gobble=0,
-%	backgroundcolor=gray!6!white,
-%	bracecolor=red!50!blue,
-%	bracketcolor=blue!50!white,
-%	commentcolor=green!40!black,
-%	alsoletter={$@_!|?$},
-%	mathdollar={
-%		inner,
-%		color={green!40!black},
-%		outer,
-%		style={\itshape\color{green!70!black}},
-%		outer%, inner, innerplain, off
-%	}
-%}
-%
-\ProcessOptionsX\relax
-
 %\def\hll@processpackageoptions#1{%
 %	\setkeys*{hllpackageoption}{#1}%
 %	%\global\let\hll@conffrompo\XKV@rm
@@ -409,18 +506,14 @@
 % \subsection{Initialization}
 
 %    \begin{macrocode}
+\colorlet{hllbackgroundcolor}{white}
 \colorlet{accDefault}{blue!90!black}
 \definecolor{accStructure}{RGB}{0,149,255}
+\colorlet{comment}{green!40!black}
+\colorlet{hllbracecolor}{black}
+\colorlet{hllbracketcolor}{black}
 
-\catcode`\{=11
-\let\myopenbrace={
-\catcode`\{=1
-
-\catcode`\}=11
-\let\myclosebrace=}
-\catcode`\}=2
-
-\hllconfigure{
+\hllConfigure{
 	frame=lines,
 	tabsize=4,
 	gobble=0,
@@ -429,71 +522,15 @@
 	bracketcolor=blue!50!white,
 	commentcolor=green!40!black,
 	alsoletter={$@_!|?$},
-	mathdollar={
+	inlinemath={
 		inner,
 		color={green!40!black},
+		%
 		outer,
 		style={\itshape\color{green!70!black}},
-		outer%, inner, innerplain, off
-	}
-}
-
-\expandafter\lstdefinelanguage\expandafter{\hlllangname}
-[LaTeX]{TeX}{
-	backgroundcolor=\color{hllbackgroundcolor},
-	keywordstyle=\bfseries\color{accDefault},
-	basicstyle=\footnotesize\ttfamily,
-	commentstyle=\color{comment},
-	numbers=none,
-	tabsize=\thehlltabsize,
-	mathescape=false,
-	alsoletter={$@_!|?$},
-%
-	classoffset=0,
-	keywordstyle=\color{accDefault},
-	texcsstyle=*\color{accDefault},
-	moretexcs={subsection},
-	deletetexcs={begin,end},
-%
-	classoffset=1,
-	keywordstyle=\color{accStructure},
-	texcsstyle=*\color{accStructure},
-	moretexcs={begin,end},
-%
-	classoffset=2,
-	escapeinside=~~,
-%	
-	classoffset=0,
-	%literate={textA}{textB}{3}%
-	%https://tex.stackexchange.com/questions/172945/coloring-in-listing
-	literate={\{}{{\textcolor{hllbracecolor}{\myopenbrace}}}{1}
-		{\}}{{\textcolor{hllbracecolor}{\myclosebrace}}}{1}
-		{[}{{\textcolor{hllbracketcolor}{[}}}{1}
-		{]}{{\textcolor{hllbracketcolor}{]}}}{1}%
-%		{(}{{\textcolor{delimiterColor}{(}}}{1}
-%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
-}
-
-\def\@setlstlang#1{%
-	\lstset{language=#1}%
-}
-
-\expandafter\@setlstlang\expandafter{\hlllangname}
-
-\hllconfigure{
-	frame=lines,
-	tabsize=4,
-	gobble=0,
-	backgroundcolor=gray!6!white,
-	bracecolor=red!50!blue,
-	bracketcolor=blue!50!white,
-	commentcolor=green!40!black,
-	alsoletter={$@_!|?$},
-	mathdollar={
-		inner,
-		color={green!40!black},
-		outer,
-		style={\itshape\color{green!70!black}},
+		%
+		dollar=true,
+		paren=true,
 		outer%, inner, innerplain, off
 	}
 }
@@ -505,11 +542,11 @@
 
 %\setrmkeys{hllglobal}
 
-\def\setalsoletter#1{%
-	\lstset{alsoletter={#1}}%
+\def\hll@setalsoletter#1{%
+	\hll@lstset{alsoletter={#1}}%
 }
 
-\expandafter\setalsoletter\expandafter{\hll@alsoletter}
+\expandafter\hll@setalsoletter\expandafter{\hll@alsoletter}
 
 \def\hll@assignlabel#1#2{%
 	\expandafter\gdef\csname hll@labeltoclassoffset@#1\endcsname{#2}%
@@ -535,53 +572,66 @@
 %    \begin{macrocode}
 \define@key{hllblock}{gobbletabs}
 {
-	\lstset{gobble=\numexpr\value{hlltabsize} * (#1)\relax}
+	\hll@lstset{gobble=\numexpr\value{hlltabsize} * (#1)\relax}
 }
 
+\define@choicekey{hllblock}{style}[\val\nr]{tight,normal,spacious}
+{%
+	\ifcase\nr\relax
+		\setlength\hllBeforeSkip{0pt}%
+		\setlength\hllAfterSkip{0pt}%
+	\or
+		\setlength\hllBeforeSkip{4pt}%
+		\setlength\hllAfterSkip{0pt}%
+	\or
+		\setlength\hllBeforeSkip{\baselineskip}%
+		\setlength\hllAfterSkip{1.5\baselineskip}%
+	\fi
+}
 
-\newcommand\hllblockset[1]{%
-%	\def\hll@redirectto##1{%
-%		\PackageWarning{highlightlatex}{Redirecting `##1'.}%
-%		\lstset{##1}%
-%	}%
+\newcommand\hll@blockset[1]{%
 	\setkeys*{hllblock}{#1}%
-	\expandafter\lstset\expandafter{\XKV@rm}%
-	%\let\hll@redirectto\relax
+	\expandafter\hll@lstset\expandafter{\XKV@rm}%
 }
 
 \newcommand{\hllPrepareBlock}
 {%
-	\lstset{framesep=0.1cm,framerule=\hllframerule}%
+	\hll@lstset{framesep=0.1cm,framerule=\hllframerule}%
 	\def\setHighlightFrame##1{%
-		\lstset{frame=##1}%
+		\hll@lstset{frame=##1}%
 	}%
 	\expandafter\setHighlightFrame\expandafter{\@highlight@frame}%
-	\lstset{belowskip=0pt,aboveskip=0pt,belowcaptionskip=0pt,gobble=\defaultgobble}%
+	\hll@lstset{belowskip=0pt,aboveskip=0pt,belowcaptionskip=0pt,gobble=\defaultgobble}%
 	\setlength\parskip{0pt}%
 	\setlength\parindent{0pt}%
 }
 
-\lstnewenvironment{highlightblock}[1][]
-{%
-	\vspace{\hllBeforeSkip}%
+\def\hll@blockbegin#1{
 	\begingroup
 	\hllPrepareBlock
-	%\lstset{#1}%
-	\hllblockset{#1}%
-}{%
+	\hll@blockset{style=normal,#1}%
+	\vspace{\hllBeforeSkip}%
+}
+
+\def\hll@blockend#1{
 	\nointerlineskip
-	\endgroup
 	\vspace{\hllAfterSkip}%
+	\endgroup
+	%\leavevmode
+}
+
+\lstnewenvironment{highlightblock}[1][]
+{%
+	\hll@blockbegin{#1}%
+}{%
+	\hll@blockend{#1}%
 }
 
 \lstnewenvironment{hllblock}[1][]
 {%
-	\vspace{\hllBeforeSkip}%
-	\begingroup
-	\hllPrepareBlock\lstset{#1}%
+	\hll@blockbegin{#1}%
 }{%
-	\endgroup
-	\vspace{\hllAfterSkip}%
+	\hll@blockend{#1}%
 }
 
 \def\hll{\lstinline}
@@ -609,7 +659,7 @@
 	\@bracehack
 	\edef\aa{\hll@offset@fixskip}
 	\PackageWarning{highlightlatex}{aa: \meaning\aa}
-	
+
 	\begingroup\vspace{\hll@offset@fixskip}
 	\ignorespaces%
 }{%
@@ -680,7 +730,11 @@
 	\gdef\hll@update@label{}%
 	\setkeys{updatehighlight}{#1}%
 	%
-	\lstset{classoffset=0}%
+	\hll@lstset{classoffset=0}%
+}
+
+\newcommand{\hllupdaterules}[1]{%
+	\updatehighlight{#1}%
 }
 
 \newcommand{\hllUpdateRules}[1]{%
@@ -763,7 +817,7 @@
 }
 
 \def\hll@update@addmacro#1#2{%
-	\lstset{
+	\hll@lstset{
 		classoffset=0,deletetexcs={#2},
 		classoffset=1,deletetexcs={#2},
 		classoffset=#1,moretexcs={#2},
@@ -772,7 +826,7 @@
 }
 
 \def\hll@update@addkeyword#1#2{%
-	\lstset{
+	\hll@lstset{
 		classoffset=0,deletekeywords={#2},
 		classoffset=1,deletekeywords={#2},
 		classoffset={#1},otherkeywords={#2},morekeywords={#2},
@@ -810,7 +864,7 @@
 }
 
 \def\hll@update@removemacro#1#2{%
-	\lstset{
+	\hll@lstset{
 		classoffset={#1},
 		deletetexcs={#2},
 		classoffset=0
@@ -818,7 +872,7 @@
 }
 
 \def\hll@update@removekeyword#1#2{%
-	\lstset{
+	\hll@lstset{
 		classoffset={#1},
 		deletekeywords={#2},
 		classoffset=0
@@ -845,7 +899,7 @@
 }
 
 \def\hll@update@setstyle#1#2{%
-	\lstset{%
+	\hll@lstset{%
 		classoffset={#1},
 		keywordstyle={#2},
 		texcsstyle={*#2},
@@ -872,7 +926,7 @@
 }
 
 \def\hll@update@setcolor#1#2{%
-	\lstset{%
+	\hll@lstset{%
 		classoffset={#1},
 		keywordstyle={\color{#2}},
 		texcsstyle={*\color{#2}},
@@ -892,7 +946,7 @@
 }
 
 \def\hll@update@clear#1{%
-	\lstset{
+	\hll@lstset{
 		classoffset={#1},
 		texcs={},
 		keywords={},
