@@ -79,18 +79,8 @@
 	}
 }
 
-%% https://tex.stackexchange.com/questions/8260/what-are-the-various-units-ex-em-in-pt-bp-dd-pc-expressed-in-mm
-%\makeatletter
-%%http://groups.google.com/group/comp.text.tex/msg/7e812e5d6e67fcc5
-%\def\convertto#1#2{\strip@pt\dimexpr #2*65536/\number\dimexpr 1#1}
-%\makeatother
-
 \hllConfigure{
 	gobbletabs=3,
-	%mathdollar=outer
-%	framerule=5.251792907714pt,
-%	framerule=0.5pt,
-	%framerule=5.2359pt
 }
 
 \begin{document}
@@ -101,15 +91,8 @@
 		Let's start
 	\end{frame}
 
-	\hllUpdateRules{
-		name = accentA,
-		%color = white
-	}
-
 	\begin{saveblock}{arealjumble}
-%		\the\ht\strutbox, \the\baselineskip, \the\dimexpr .7\baselineskip\relax, \the\dimexpr .3\baselineskip\relax
-		%\begin{highlightblock}[linewidth=19em,gobble=6,framerule=5.251792907714844pt]
-		\begin{highlightblock}[linewidth=19em,gobbletabs=3]
+		\begin{hllblock}[linewidth=19em,gobbletabs=3]
 			% Here is some code
 			\setcounter{secnumdepth}{1}
 			\begin{document}
@@ -121,7 +104,7 @@
 
 				Insert literal tildes like ~\textasciitilde~. Hi!
 			\end{document}
-		\end{highlightblock}
+		\end{hllblock}
 	\end{saveblock}
 
 	\begin{frame}
@@ -140,10 +123,10 @@
 		\end{center}
 	\end{frame}
 
-	% The name allows us to modify what we had set for it.
-	\updatehighlight{
+	% Update an existing rule.
+	\hllUpdateRules{
 		name = accentB,
-		% Removes all commands and keywords from it
+		% 'clear' removes all commands and keywords from it
 		clear,
 		name = accentA,
 		add = {
@@ -174,7 +157,7 @@
 		\end{center}
 
 		\pause
-		% Note we need to escape characters!
+		% Note we need to escape special characters!
 		The first line was of the form \hll|\\documentclass[]\{\}|. Very interesting.
 
 		\pause
@@ -209,7 +192,6 @@
 			\begin{column}{0.4\textwidth}
 				You could have here code too:
 				\consumeblock{figureplacement}
-
 			\end{column}
 		\end{columns}
 	\end{frame}

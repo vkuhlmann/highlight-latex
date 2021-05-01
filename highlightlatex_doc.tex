@@ -19,116 +19,48 @@
 \useownpackagetrue
 
 \ifuseownpackage
-    \usepackage{highlightlatex}
-    \updatehighlight{
-    	name = default,
-    	add = {
-    		\defaultgobble, \colorlet, \includegraphics, \maketitle, \mycommand,
+	\usepackage{highlightlatex}
+	\hllUpdateRules{
+		name = default,
+		add = {
+			\defaultgobble, \colorlet, \includegraphics, \maketitle, \mycommand,
 			\tableofcontents, \figref, \color
-	    },
+		},
 		%
-    	name = hll,
-    	color = orange!90!black,
-    	add = {
-    		\hll, highlightblock
-    	},
+		name = hll,
+		color = orange!90!black,
+		add = {
+			\hll, hllblock, hllblock
+		},
 		%
-    	name = hllOth,
-    	color = red!90!black,
-    	add = {
-    		\useblock, \consumeblock, \updatehighlight, saveblock, \hllconfigure
-    	},
+		name = hllOth,
+		color = red!90!black,
+		add = {
+			\useblock, \consumeblock, \updatehighlight, saveblock, \hllconfigure
+		},
 		%
-    	name = vert,
-    	color = red,
-    	add = {
-    		|
-	    }
+		name = vert,
+		color = red,
+		add = {
+			|
+		}
 	}
 
-	\hllconfigure{
+	\hllConfigure{
 		tabsize=4,
 		gobbletabs=2
 	}
 \else
-    \let\hll\lstinline
-    \lstnewenvironment{highlightblock}[1][]
-    {%
-        \lstset{#1}%
-    }{}%
-    \lstset{tabsize=4,escapeinside=~~}
+	\let\hll\lstinline
+	\lstnewenvironment{hllblock}[1][]
+	{%
+		\lstset{#1}%
+	}{}%
+	\lstset{tabsize=4,escapeinside=~~}
 \fi
 
 \newcommand\fhref[2]{%
 	\href{#1}{#2}\;\footnote{\,\url{#1}}\,%
-}
-
-\newlength\centerlabelledwidth
-\newlength\centerlabelledminleft
-\def\centerlabelledlabel{}
-\setlength\centerlabelledminleft{5em}
-\expandafter\newif\csname ifshowcasecenter\endcsname
-
-\makeatletter
-\define@key{centerlabelled}{label}{%
-	\def\centerlabelledlabel{#1}%
-}
-
-\define@key{centerlabelled}{width}{%
-	\setlength\centerlabelledwidth{\dimexpr #1\relax}%
-}
-
-\define@key{centerlabelled}{frac}{%
-	\setlength\centerlabelledwidth{\dimexpr #1\textwidth\relax}%
-}
-
-\define@key{centerlabelled}{left}[]{%
-	\showcasecenterfalse
-}
-
-\define@key{centerlabelled}{center}[]{%
-	\showcasecentertrue
-}
-
-\define@key{centerlabelled}{minleft}{%
-	\setlength\centerlabelledminleft{#1}%
-}
-\makeatother
-
-\newlength\showcaseleft
-
-\newenvironment{centerlabelled}[1][]{%
-	\setlength\centerlabelledwidth{\linewidth}%
-	\setkeys{centerlabelled}{#1}%
-	\setlength\showcaseleft{\dimexpr(\linewidth-\centerlabelledwidth)/2\relax}%
-	\ifshowcasecenter
-		\ifdim\centerlabelledminleft>\showcaseleft\relax
-			\showcasecenterfalse
-		\fi
-	\fi
-	%
-	\unless\ifshowcasecenter
-		\setlength\showcaseleft\centerlabelledminleft
-		\ifdim\dimexpr\textwidth-\centerlabelledminleft\relax<\centerlabelledwidth\relax
-			\setlength\centerlabelledwidth{\dimexpr\linewidth-\centerlabelledminleft\relax}%
-		\fi
-	\fi
-	%
-	\par\penalty 10000%
-	\hspace{\showcaseleft}%
-	\adjustbox{raise=-6pt,lap=-\width-1em}{\setulcolor{red}%
-	\expandafter\ul\expandafter{\expandafter\textsc\expandafter{\centerlabelledlabel}}}%
-	\begin{minipage}[t]{\centerlabelledwidth}%
-	\lstset{framexleftmargin=0.25em}%
-}{%
-	\end{minipage}\par%
-}
-
-\newenvironment{showcase}{%
-	\begin{centerlabelled}%
-}
-{%
-	\end{centerlabelled}
 }
 
 \makeatletter
@@ -204,9 +136,10 @@
 
 \maketitle
 \begin{abstract}
-	The \hll|highlightlatex| package provides colored syntax highlighting for \LaTeX{} source code, without aid from
-	outside \LaTeX. The aim is to make this accessible enough so people stop falling back to plain verbatim for this.
-	For this, it builds further on the generic `listings' package. An example output is	shown in \autoref{fig:demoOutput}\,.
+	The \hll|highlightlatex| package provides colored syntax highlighting for \LaTeX{} source code,
+	without aid from outside \LaTeX. The aim is to make this accessible enough so people stop
+	falling back to plain verbatim for this. For this, it builds further on the generic `listings'
+	package. An example output is	shown in \autoref{fig:demoOutput}\,.
 \end{abstract}
 
 \bigskip
@@ -246,18 +179,20 @@
 
 \section{Getting started}
 
-Include the package using \hll|\usepackage{highlightlatex}|. If not recognized, refresh your installation's package repository and set it to install \hll|highlightlatex|. There are two ways in which code can be shown.
+Include the package using \hll|\usepackage{highlightlatex}|. If not recognized, refresh your
+installation's package repository and set it to install \hll|highlightlatex|. There are two ways in
+which code can be shown.
 
 \subsection{Inline style}
 
-\begin{showcase}[label=example]
-	\begin{highlightblock}
+\begin{hllshowcase}[role=example]
+	\begin{hllblock}
 		Your file begins with a line of the form \hll~{}~|\documentclass[]{}|. The
 		square brackets ...
-	\end{highlightblock}
-\end{showcase}
+	\end{hllblock}
+\end{hllshowcase}
 
-\begin{showcase}[label=result]%
+\begin{hllshowcase}[role=result]%
 	\begingroup
 	\adjustbox{cfbox=blue!40!white 2pt 10pt,valign=t,bgcolor=blue!5!white}{%
 		\begin{minipage}[t]{\dimexpr\linewidth-24pt\relax}
@@ -266,57 +201,57 @@ Include the package using \hll|\usepackage{highlightlatex}|. If not recognized, 
 		\end{minipage}%
 	}%
 	\endgroup
-\end{showcase}
+\end{hllshowcase}
 
-The first non-space character following \lstinline|\hll| delimits the argument to
-this command.
+The first non-space character following \lstinline|\hll| delimits the argument to this command.
 
 \subsection{Block style}
 
-\begin{showcase}[label=example]
-	\begin{highlightblock}
+\begin{hllshowcase}[role=example]
+	\begin{hllblock}
 		Your basic document now looks like
-		\begin{highlightblock}[gobble=4]
+		\begin{hllblock}[gobble=4]
 			\documentclass[a4paper]{article}
 
 			\begin{document}
 				Hello world!
 			\end{document}
-		\end{~{}~highlightblock}
-	\end{highlightblock}
-\end{showcase}
+		\end{~{}~hllblock}
+	\end{hllblock}
+\end{hllshowcase}
 
-\begin{showcase}[label=result]%
+\begin{hllshowcase}[role=result]%
 	\begingroup
 	\adjustbox{cfbox=blue!40!white 2pt 10pt,valign=t,bgcolor=blue!5!white}{%
 		\begin{minipage}[t]{\dimexpr\linewidth-24pt\relax}
 			Your basic document now looks like
-			\begin{highlightblock}[gobble=16]
+			\begin{hllblock}[gobble=16]
 				\documentclass[a4paper]{article}
 
 				\begin{document}
 					Hello world!
 				\end{document}
-			\end{highlightblock}
+			\end{hllblock}
 		\end{minipage}%
 	}%
 	\endgroup
-\end{showcase}
+\end{hllshowcase}
 
-\textbf{gobble}. The \hll|gobble| parameter specifies how many characters need to be stripped of the start of each line.
-In the example, we had an indentation of four spaces for the literal code. Without the gobble, those spaces would
-be shown. See \autoref{sec:globalOther} for setting a global default, and how tabs are interpreted.
+\textbf{gobble}. The \hll|gobble| parameter specifies how many characters need to be stripped of the
+start of each line. In the example, we had an indentation of four spaces for the literal code.
+Without the gobble, those spaces would be shown. See \autoref{sec:globalOther} for setting a global
+default, and how tabs are interpreted.
 
-% To prevent indentation of our \hll|highlightblock| (here one tab) to be shown as part of the code,
+% To prevent indentation of our \hll|hllblock| (here one tab) to be shown as part of the code,
 % the \hll|gobble| parameter strips them off. Play around with it until everything looks right. I
 % recommend to set this value globally using \hll|\def\defaultgobble{2}|. You can still override it on
 % a per-block basis, if necessary.
 
-\textbf{linewidth}. The gray box extends to the width of the page. To set it to only use 60\%, use \hll|linewidth=0.6\linewidth|, or for
-a width of 20 characters, set \hll|linewidth=10em|.
+\textbf{linewidth}. The gray box extends to the width of the page. To set it to only use 60\%, use
+\hll|linewidth=0.6\linewidth|, or for a width of 20 characters, set \hll|linewidth=10em|.
 
 %There are situations the block could run out of the page, for example you need to save the block for use in a beamer document (see \autoref{sec:frag}). In that case, the normal full-width of a slide is assumed, but you might want to use it in a slide with multiple columns. Set the \hll|linewidth| on the
-%\hll|highlightblock|. This can be a fraction of the total slide width available, \hll|0.6\textwidth|
+%\hll|hllblock|. This can be a fraction of the total slide width available, \hll|0.6\textwidth|
 %is 60\% of the width, or an absolute value, like \hll|10em|, which seems to equal 20 characters.
 
 There are more keys you can provide. Check the
@@ -324,7 +259,8 @@ There are more keys you can provide. Check the
 	documentation} for options
 available to the \hll|lstlisting|-environment and \hll|lstset| command.
 
-\textbf{beamer}. Troubles using beamer? Or troubles with it working at some places, and failing at others? Check \autoref{sec:frag}.
+\textbf{beamer}. Troubles using beamer? Or troubles with it working at some places, and failing at
+others? Check \autoref{sec:frag}.
 
 \newbox\uphbox
 \setbox\uphbox=\hbox{\hll|\updatehighlight|}
@@ -339,16 +275,16 @@ available to the \hll|lstlisting|-environment and \hll|lstset| command.
 
 By default, only some LaTeX commands will be highlighted in blue. If there are others you need, like
 \hll|\tableofcontents| and \hll|\figref|, update the highlighting rules:
-\begin{showcase}[label=example]
-	\begin{highlightblock}
+\begin{hllshowcase}[role=example]
+	\begin{hllblock}
 		\updatehighlight{
 			name = default,
 			add = {
 				\tableofcontents, \figref
 			}
 		}
-	\end{highlightblock}
-\end{showcase}
+	\end{hllblock}
+\end{hllshowcase}
 
 The change will only affect code after it. I recommend issuing \hll|updatehighlight| in your
 preamble (before the \hll|\begin{document}|). In some situations you might want to change things
@@ -358,8 +294,8 @@ mid-document. That's possible too.
 
 As shown in \hll|demo.tex|, you can put any command or keyword you want to highlight in a different
 color. You do this with
-\begin{showcase}[label=example]
-	\begin{highlightblock}
+\begin{hllshowcase}[role=example]
+	\begin{hllblock}
 		\updatehighlight{
 			% The name allows you to modify the style later.
 			name = spotlight,
@@ -368,8 +304,8 @@ color. You do this with
 				\tableofcontents
 			}
 		}
-	\end{highlightblock}
-\end{showcase}
+	\end{hllblock}
+\end{hllshowcase}
 
 You can use the \hll|xcolor| syntax for describing colors as well. If you find the orange too
 bright, you can replace it with \hll|orange!90!black|: 90\% orange, remaining is black. For more
@@ -379,22 +315,22 @@ information on color definitions and name, refer to
 
 \subsection{Specification}
 
-%\begin{showcase}[label=use]
-%	\begin{highlightblock}
+%\begin{hllshowcase}[role=use]
+%	\begin{hllblock}
 %		\updatehighlight{
 %			option1 = value1,
 %			option2 = value2,
 %			option3,
 %			option4 = value4
 %		}
-%	\end{highlightblock}
-%\end{showcase}
+%	\end{hllblock}
+%\end{hllshowcase}
 
-The argument to \hll|\updatehighlight| is a key-value list. Keys are processed in order
-and can appear multiple times. If a value contains special characters, like a `=' or `,',
-enclose the value with braces. If you want to create some space in your code, don't use
-a blank line, they are interpreted by \LaTeX{} as a paragraph end. You can use an empty
-line with only a percent sign (\hll|%|) instead.
+The argument to \hll|\updatehighlight| is a key-value list. Keys are processed in order and can
+appear multiple times. If a value contains special characters, like a `=' or `,', enclose the value
+with braces. If you want to create some space in your code, don't use a blank line, they are
+interpreted by \LaTeX{} as a paragraph end. You can use an empty line with only a percent sign
+(\hll|%|) instead.
 The processing is done using the package {\setulcolor{red}\ul{xkeyval}}.
 
 You can merge any two \hll|\updatehighlight| in one. No need to close and reopen
@@ -403,11 +339,12 @@ You can merge any two \hll|\updatehighlight| in one. No need to close and reopen
 \begin{optionlist}
 	\option{name}<characters>
 
-	Sets the named rule to be modified. If a rule with the name does not exist, a new rule will be created.
+	Sets the named rule to be modified. If a rule with the name does not exist, a new rule will be
+	created.
 
-	There are two default named rules. The first one is \hll|default|, which includes a bunch of basic commands, and has by default
-	a dark blue color. The second one is \hll|structure|, which consists of \hll|\begin| and \hll|\end| and prints
-	them in light blue.
+	There are two default named rules. The first one is \hll|default|, which includes a bunch of
+	basic commands, and has by default a dark blue color. The second one is \hll|structure|, which
+	consists of \hll|\begin| and \hll|\end| and prints them in light blue.
 
 
 	\option{classoffset}<integer>
@@ -419,42 +356,39 @@ You can merge any two \hll|\updatehighlight| in one. No need to close and reopen
 	\option{add}<list>
 
 	Adds a command (\hll|\mycommand|) or keyword (\hll|Hi!|) to the current rule. The value can
-	contain multiple commands and keywords by seperating them with comma's. The value needs to
-	be surrounded with braces.
+	contain multiple commands and keywords by seperating them with comma's. The value needs to be
+	surrounded with braces.
 
 
 	\option{remove}<list>
 
-	Removes a commands or keywords from the current rule. The value can
-	contain multiple commands and keywords by seperating them with comma's. The value needs to
-	be surrounded with braces.
+	Removes a commands or keywords from the current rule. The value can contain multiple commands
+	and keywords by seperating them with comma's. The value needs to be surrounded with braces.
 
 
 	\option{clear}
 
 	Removes all commands and keywords from the current rule.
-	\begin{showcase}[label=example]
-		\begin{highlightblock}[gobble=12]
+	\begin{hllshowcase}[role=example]
+		\begin{hllblock}[gobble=12]
 			\updatehighlight{
 				name = default,
 				clear
 			}
-		\end{highlightblock}
-	\end{showcase}
+		\end{hllblock}
+	\end{hllshowcase}
 
 	\option{color}<color>
 
 	Specifies the current rule's style to color text in the given color. This can also be done using
-	the \textbf{style} option, for example \hll|color=red| is equivalent to
-	\hll|style=\color{red}|.
+	the \textbf{style} option, for example \hll|color=red| is equivalent to \hll|style=\color{red}|.
 
 	\option{style}<\textrm{\LaTeX{}} code>
 
-	Specifies the current rule's style. A rule can have only one style. If
-	you specify a style after \hll|add| or \hll|remove|, this starts a new (unnamed)
-	rule. In practice, the only style which will probably work for you is just a
-	color. For that, using the `color' key is just a bit easier and neater. But
-	hey, you have the option to set whatever style you want. :)
+	Specifies the current rule's style. A rule can have only one style. If you specify a style after
+	\hll|add| or \hll|remove|, this starts a new (unnamed) rule. In practice, the only style which
+	will probably work for you is just a color. For that, using the `color' key is just a bit easier
+	and neater. But hey, you have the option to set whatever style you want. :)
 
 \end{optionlist}
 
@@ -462,8 +396,8 @@ You can merge any two \hll|\updatehighlight| in one. No need to close and reopen
 
 Global parameters can either be set as package option, or through invocation of the
 \hll|\hllconfigure|-command.
-\begin{showcase}[label=defaults]
-	\begin{highlightblock}
+\begin{hllshowcase}[role=defaults]
+	\begin{hllblock}
 		\hllconfigure{
 			frame=lines,
 			tabsize=4,
@@ -481,27 +415,28 @@ Global parameters can either be set as package option, or through invocation of 
 				outer%, inner, innerplain, off
 			}
 		}
-	\end{highlightblock}
-\end{showcase}
+	\end{hllblock}
+\end{hllshowcase}
 
 %There are some global parameters involved in the appearance:
-%\begin{showcase}[label=overview]
-%	\begin{highlightblock}[gobble=8]
+%\begin{hllshowcase}[role=overview]
+%	\begin{hllblock}[gobble=8]
 %		\colorlet{curlyBrackets}{red!50!blue}
 %		\colorlet{squareBrackets}{blue!50!white}
 %		\colorlet{codeBackground}{gray!10!white}
 %		\colorlet{comment}{green!40!black}
 %		\def\defaultgobble{0}
-%	\end{highlightblock}
-%\end{showcase}
+%	\end{hllblock}
+%\end{hllshowcase}
 
 %The package options and \hll|\hllconfigure| take a comma-separated list of key-value pairs.
 
-% The \hll|\hllconfigure| command and package options take a comma-separated list of key-value pairs.
-% Each key represents an option. These pairs will be processed in the order they are provided by the user.
-% Hence when setting a value multiple times, the last value passed is decisive. However, options can
-% involve more than simply setting a value. The exact behavior is described in the specification
-% below. The key-value scheme is processed by the package {\setulcolor{red}\ul{xkeyval}}.
+% The \hll|\hllconfigure| command and package options take a comma-separated list of key-value
+% pairs. Each key represents an option. These pairs will be processed in the order they are provided
+% by the user. Hence when setting a value multiple times, the last value passed is decisive.
+% However, options can involve more than simply setting a value. The exact behavior is described in
+% the specification below. The key-value scheme is processed by the package
+% {\setulcolor{red}\ul{xkeyval}}.
 
 
 The argument to \hll|\hllconfigure| and the value of the package options is a key-value list.
@@ -512,18 +447,19 @@ a blank line, they are interpreted by \LaTeX{} as a paragraph end. You can use a
 line with only a percent sign (\hll|%|) instead.
 The processing is done using the package {\setulcolor{red}\ul{xkeyval}}.
 
-%\begin{showcase}[label=note]
-%	\begin{highlightblock}
+%\begin{hllshowcase}[role=note]
+%	\begin{hllblock}
 %		~The key-value scheme is processed by the package {\setulcolor{red}\ul{xkeyval}}.~
-%	\end{highlightblock}
-%\end{showcase}
+%	\end{hllblock}
+%\end{hllshowcase}
 
 %Each line can be set independent of each other, and each shows its default
 %value.
 %
 %There are package options you can use as well:
 
-%The value marked `default' is a value to be set when only the key is specified without being assigned a value. The options available are specified in the following subsections.
+%The value marked `default' is a value to be set when only the key is specified without being
+%assigned a value. The options available are specified in the following subsections.
 
 The options available are specified in the following subsections.
 
@@ -547,7 +483,8 @@ The options available are specified in the following subsections.
 
 \option{debugframe}
 
-	Shows a colored frame around boxes loaded using the \hll|saveblock|+\hll|\useblock| scheme. This can be useful for debugging unexpected offsets. Not for production use.
+	Shows a colored frame around boxes loaded using the \hll|saveblock|+\hll|\useblock| scheme. This
+	can be useful for debugging unexpected offsets. Not for production use.
 
 \option{backgroundcolor}<color>
 
@@ -572,14 +509,16 @@ The options available are specified in the following subsections.
 		\option{style}<\textrm{\LaTeX} code>
 		Sets style.
 
-		\option{color}<color>
-		Sets style to color text with this color. Hence \hll|color=XXX| is equivalent to \hll|style=\color{XXX}|.
+		\option{color}<color> Sets style to color text with this color. Hence \hll|color=XXX| is
+		equivalent to \hll|style=\color{XXX}|.
 
 		\option{cumulative}<boolean>={true}
 		Applies normal coloring rules on top of the style provided.
 	\end{optionlist}
 
-	By default, \textbf{mathdollar} is off and has default color \hll|green!40!black| and cumulative enabled. Each invocation of the \textbf{mathdollar} key is implicitly preceded with the option \hll|on|.
+	By default, \textbf{mathdollar} is off and has default color \hll|green!40!black| and cumulative
+	enabled. Each invocation of the \textbf{mathdollar} key is implicitly preceded with the option
+	\hll|on|.
 
 \option{bracecolor}<color>
 
@@ -601,23 +540,33 @@ The options available are specified in the following subsections.
 \begin{optionlist}
 \option{styleanywhere}
 
-	Overrides the default behavior that \hll|style| starts a new highlighting rule after commands like \hll|add| and \hll|remove|.
+	Overrides the default behavior that \hll|style| starts a new highlighting rule after commands
+	like \hll|add| and \hll|remove|.
 
 \option{tabsize}<integer>
 
-	Sets the amount of space characters a tab character is converted to, when no non-tab character has preceded on the line. Behavior of tab characters is left undefined by this package if a non-tab character has preceded on the line.
+	Sets the amount of space characters a tab character is converted to, when no non-tab character
+	has preceded on the line. Behavior of tab characters is left undefined by this package if a
+	non-tab character has preceded on the line.
 
 \option{gobble}<integer>
 
-	Sets the default amount of characters that will be stripped of code lines within a code block. This is useful to combat indentation used for structuring your \hll|.tex| file to show up in the code block.
+	Sets the default amount of characters that will be stripped of code lines within a code block.
+	This is useful to combat indentation used for structuring your \hll|.tex| file to show up in the
+	code block.
 
 \option{gobbletabs}<integer>
 
-	Sets the gobble in amount of \textbf{tabsize}'s. The amount of \textbf{tabsize}'s is evaluated at the start of each code block. The result of \hll|tabsize=4,gobbletabs=2| is equivalent to \hll|gobble=8|. However, when you indent with tabs, this option allows you to quickly change the \textbf{tabsize} without having to update \textbf{gobble} everywhere.
+	Sets the gobble in amount of \textbf{tabsize}'s. The amount of \textbf{tabsize}'s is evaluated
+	at the start of each code block. The result of \hll|tabsize=4,gobbletabs=2| is equivalent to
+	\hll|gobble=8|. However, when you indent with tabs, this option allows you to quickly change the
+	\textbf{tabsize} without having to update \textbf{gobble} everywhere.
 
 \option{alsoletter}<characters>
 
-	Specifies the character list of special characters to be treated like `letter'. This makes them usable in highlighting rules. However, beware using special characters can conflict with other typesetting routines. Setting this option overrides the previous value.
+	Specifies the character list of special characters to be treated like `letter'. This makes them
+	usable in highlighting rules. However, beware using special characters can conflict with other
+	typesetting routines. Setting this option overrides the previous value.
 
 \end{optionlist}
 
@@ -635,9 +584,10 @@ will be read as `just text' (a \textit{letter} technically).
 
 This reliance on interpretation being done at the last moment is called `fragility'. When content
 gets interpreted early, like the \hll|frame|-environment in \hll|beamer| does, this fragility is
-broken. A \hll|frame|-environment allows a \hll|fragile| option to be set, which probably solves this,
-but I would avoid this. In situations where fragility is broken, you need to either \emph{escape} the
-displayed code, or \emph{pre-processing} the displayed code outside a fragile breaking situation.
+broken. A \hll|frame|-environment allows a \hll|fragile| option to be set, which probably solves
+this, but I would avoid this. In situations where fragility is broken, you need to either
+\emph{escape} the displayed code, or \emph{pre-processing} the displayed code outside a fragile
+breaking situation.
 
 \subsection{Escaping}
 
@@ -646,16 +596,15 @@ Escaping is done by preceding certain special characters with a backslash. For e
 
 \subsection{Pre-processing}
 
-For large code blocks, escaping is undesirable. Therefore we pre-process the code when we
-have fragility preserved, and load the result in our fragile breaking situation. The storing
-is done through the \hll|saveblock|-environment. This environment takes a name under which
-the result will be stored. A name can be re-used and will silently overwrite any existing save.
+For large code blocks, escaping is undesirable. Therefore we pre-process the code when we have
+fragility preserved, and load the result in our fragile breaking situation. The storing is done
+through the \hll|saveblock|-environment. This environment takes a name under which the result will
+be stored. A name can be re-used and will silently overwrite any existing save.
 
-\leavevmode
-\begin{showcase}[label=example]
-	\begin{highlightblock}
+\begin{hllshowcase}[role=example]
+	\begin{hllblock}
 		\begin{saveblock}{basicfigure}
-			\begin{highlightblock}[linewidth=0.6\textwidth]
+			\begin{hllblock}[linewidth=0.6\textwidth]
 				\begin{figure}
 					\includegraphics
 					[width=0.9\linewidth]
@@ -664,24 +613,22 @@ the result will be stored. A name can be re-used and will silently overwrite any
 					\caption{My plot}
 					\label{fig:myplot}
 				\end{figure}
-			\end{highlightblock~{}~}
+			\end{hllblock~{}~}
 		\end{saveblock}
-	\end{highlightblock}
-\end{showcase}
+	\end{hllblock}
+\end{hllshowcase}
 
-To load the result, use the \hll|\useblock| or \hll|\consumeblock| command
-with the save name provided as argument. For the example, these are \hll|\useblock{basicfigure}|
-and \hll|\consumeblock{basicfigure}| respectively.
+To load the result, use the \hll|\useblock| or \hll|\consumeblock| command with the save name
+provided as argument. For the example, these are \hll|\useblock{basicfigure}| and
+\hll|\consumeblock{basicfigure}| respectively.
 
-The \hll|\consumeblock| variant
-deletes the result from memory after use. This is useful if you have many different save names
-occupied. Not deleting them keeps them loaded till the PDF has fully generated. Note \hll|\consumeblock| can
-result in unexpected behavior, for example animations in a beamer frame
-might need the code line to be executed multiple times. Use \hll|\useblock| when you can't
-guarantee the last use of a block.
+The \hll|\consumeblock| variant deletes the result from memory after use. This is useful if you have
+many different save names occupied. Not deleting them keeps them loaded till the PDF has fully
+generated. Note \hll|\consumeblock| can result in unexpected behavior, for example animations in a
+beamer frame might need the code line to be executed multiple times. Use \hll|\useblock| when you
+can't guarantee the last use of a block.
 
-There is a separate demo for fragile breaking situations. You can find it as
-\hll|deamerdemo.tex|.
+There is a separate demo for fragile breaking situations. You can find it as \hll|deamerdemo.tex|.
 
 \section{Adding extra space}
 
@@ -704,11 +651,11 @@ gemmaro
 For any bug, feature request, unclarity, or whatever else related to this package, you're welcome to
 open an issue or pull-request. Issues can be opened on
 
-\begin{showcase}[label=url]
-	\begin{highlightblock}[gobble=8]
+\begin{hllshowcase}[role=url]
+	\begin{hllblock}[gobble=8]
 		~\url{https://github.com/vkuhlmann/highlight-latex/issues}~
-	\end{highlightblock}
-\end{showcase}
+	\end{hllblock}
+\end{hllshowcase}
 
 Thanks for contributing!
 

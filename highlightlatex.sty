@@ -31,6 +31,7 @@
 
 \RequirePackage{listings}
 \RequirePackage{xcolor}
+\RequirePackage{soul}
 
 \RequirePackage{xkeyval}
 \RequirePackage{etoolbox}
@@ -151,6 +152,7 @@
 		{]}{{\textcolor{hllbracketcolor}{]}}}{1},
 		%		{(}{{\textcolor{delimiterColor}{(}}}{1}
 		%		{)}{{\textcolor{delimiterColor}{)}}}{1}%
+		framexleftmargin=0.25em,
 		#3
 	}
 }
@@ -535,7 +537,7 @@
 	}
 }
 
-\PackageWarning{higlightlatex}{Rmkeys are (\hll@conffrompo)}
+%\PackageWarning{higlightlatex}{Rmkeys are (\hll@conffrompo)}
 %\let\XKV@rm\hll@conffrompo
 
 \expandafter\hllconfigure\expandafter{\hll@conffrompo}
@@ -570,6 +572,8 @@
 %%% =========================
 %%%
 %    \begin{macrocode}
+\newif\ifhll@isInSaveblock
+
 \define@key{hllblock}{gobbletabs}
 {
 	\hll@lstset{gobble=\numexpr\value{hlltabsize} * (#1)\relax}
@@ -617,7 +621,9 @@
 	\nointerlineskip
 	\vspace{\hllAfterSkip}%
 	\endgroup
-	%\leavevmode
+	\unless\ifhll@isInSaveblock
+		\leavevmode
+	\fi
 }
 
 \lstnewenvironment{highlightblock}[1][]
@@ -658,11 +664,13 @@
 		\def\noexpand\@currenvline{\on@line}}%
 	\@bracehack
 	\edef\aa{\hll@offset@fixskip}
-	\PackageWarning{highlightlatex}{aa: \meaning\aa}
+	%\PackageWarning{highlightlatex}{aa: \meaning\aa}
 
-	\begingroup\vspace{\hll@offset@fixskip}
-	\ignorespaces%
+	\hll@isInSaveblocktrue
+	\begingroup\vspace{\hll@offset@fixskip}%
+	\ignorespaces
 }{%
+	\hll@isInSaveblockfalse
 	\endgroup
 }
 
@@ -954,5 +962,94 @@
 	}%
 }
 
+%    \end{macrocode}
+% \subsection{Labelled block style}
 
+%%% ============
+%%%   showcase
+%%% ============
+
+%    \begin{macrocode}
+\newlength\hll@showcase@width
+\newlength\hll@showcase@minleft
+\def\hll@showcase@label{}
+
+\setlength\hll@showcase@minleft{5em}
+\expandafter\newif\csname ifhll@showcase@center\endcsname
+
+\define@key{hll@showcase}{role}{%
+	\def\hll@showcase@label{#1}%
+}
+
+\define@key{hll@showcase}{width}{%
+	\setlength\hll@showcase@width{\dimexpr #1\relax}%
+}
+
+\define@key{hll@showcase}{frac}{%
+	\setlength\hll@showcase@width{\dimexpr #1\textwidth\relax}%
+}
+
+\define@key{hll@showcase}{left}[]{%
+	\hll@showcase@centerfalse
+}
+
+\define@key{hll@showcase}{center}[]{%
+	\hll@showcase@centertrue
+}
+
+\define@key{hll@showcase}{minleft}{%
+	\setlength\hll@showcase@minleft{#1}%
+}
+
+\newlength\hll@showcase@left
+
+\def\hll@showcase@int@begin#1{%
+	\setlength\hll@showcase@width{\linewidth}%
+	\setkeys*{hll@showcase}{#1}%
+	\setlength\hll@showcase@left{\dimexpr(\linewidth-\hll@showcase@width)/2\relax}%
+	\ifhll@showcase@center
+		\ifdim\hll@showcase@minleft>\hll@showcase@left\relax
+			\hll@showcase@centerfalse
+		\fi
+	\fi
+	%
+	\unless\ifhll@showcase@center
+		\setlength\hll@showcase@left\hll@showcase@minleft
+		\ifdim\dimexpr\textwidth-\hll@showcase@minleft\relax<\hll@showcase@width\relax
+			\setlength\hll@showcase@width{\dimexpr\linewidth-\hll@showcase@minleft\relax}%
+		\fi
+	\fi
+	%
+	\par\penalty 10000%
+	\hspace{\hll@showcase@left}%
+	\adjustbox{raise=-6pt,lap=-\width-1em}{
+		\setulcolor{red}%
+		\expandafter\ul\expandafter{%
+			\expandafter\textsc\expandafter{\hll@showcase@label}%
+		}%
+	}%
+	\begin{minipage}[t]{\hll@showcase@width}%
+%		\lstset{framexleftmargin=0.25em}%
+}
+
+\def\hll@showcase@int@end{
+	\end{minipage}\par%
+}
+
+\newenvironment{hllshowcase}[1][]{%
+	\hll@showcase@int@begin{#1}%
+}{%
+	\hll@showcase@int@end
+}
+
+%\lstnewenvironment{hllshowcase}[1][]
+%{
+%	\hll@showcase@int@begin{#1}%
+%	%\expandafter\hll@blockbegin\expandafter{\XKV@rm}%
+%	%\expandafter\hll@blockbegin\expandafter{#1}%
+%}
+%{
+%	%\hll@blockend{}%
+%	\hll@showcase@int@end
+%}
 
